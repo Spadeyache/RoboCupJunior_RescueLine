@@ -27,8 +27,10 @@ yacheVL53L1X distanceSensor(&Wire, SHUTDOWN_PIN_LEFT, SHUTDOWN_PIN_RIGHT);
 void setup(void)
 {
   Wire.begin();
-  distanceSensor.init();
   Serial.begin(115200);
+  
+  distanceSensor.init();
+  
 }
 
 void loop(void)
