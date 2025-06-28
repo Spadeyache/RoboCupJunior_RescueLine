@@ -16,8 +16,8 @@ void yacheVL53L1X::init() {
     _wire->begin();
     pinMode(_leftPin, OUTPUT);
     pinMode(_rightPin, OUTPUT);
-    digitalWrite(_leftPin, LOW);
-    digitalWrite(_rightPin, LOW);
+    digitalWrite(_leftPin, HIGH);
+    digitalWrite(_rightPin, HIGH);
     if(_leftTofSensor.begin() != 0) {//Begin returns 0 on a good init
         Serial.println("Sensor failed to begin. Please check wiring. Freezing...");
     }
