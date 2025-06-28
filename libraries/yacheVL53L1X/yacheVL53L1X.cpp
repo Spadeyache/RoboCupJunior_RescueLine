@@ -16,15 +16,17 @@ void yacheVL53L1X::init() {
     _wire->begin();
     pinMode(_leftPin, OUTPUT);
     pinMode(_rightPin, OUTPUT);
-    digitalWrite(_leftPin, HIGH);
+    digitalWrite(_leftPin, LOW);
     digitalWrite(_rightPin, HIGH);
-    if(_leftTofSensor.begin() != 0) {//Begin returns 0 on a good init
-        Serial.println("Sensor failed to begin. Please check wiring. Freezing...");
-    }
+    _rightTofSensor.setI2CAddress(0x30);
     if(_rightTofSensor.begin() != 0) {
-        Serial.println("Sensor failed to begin. Please check wiring. Freezing...");
+        Serial.println("Right ToF failed to begin. Please check wiring. Freezing...");
     }
-    Serial.println("Sensor online!");
+    digitalWrite(_leftPin, HIGH);
+    if(_leftTofSensor.begin() != 0) {//Begin returns 0 on a good init
+        Serial.println("Left ToF failed to begin. Please check wiring. Freezing...");
+    }
+    Serial.println("ToF online!");
     // Short mode max distance is limited to 1.3 m but has a better ambient immunity.
     // Above 1.3 meter error 4 is thrown (wrap around).
     _leftTofSensor.setDistanceModeShort();
@@ -86,10 +88,3 @@ int yacheVL53L1X::getDistanceRight() {
 
   return distance;
 }
-
-// {
-//   if(distance > 100){
-//     digitalWrite(SHUTDOWN_PIN, HIGH);
-//     delay(1000);
-//   }
-// }
