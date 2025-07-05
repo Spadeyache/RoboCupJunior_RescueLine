@@ -88,3 +88,47 @@ int yacheVL53L1X::getDistanceRight() {
 
   return distance;
 }
+
+void yacheVL53L1X::plotToFData() {
+
+  _leftTofSensor.startRanging();
+  while (!_leftTofSensor.checkForDataReady())
+  {
+    delay(1);
+  }
+  byte rangeStatusLeft = _leftTofSensor.getRangeStatus();
+  unsigned int distanceLeft = _leftTofSensor.getDistance(); //Get the result of the measurement from the sensor
+  _leftTofSensor.clearInterrupt();
+
+  /*
+     * With signed int we get overflow at short distances.
+     * With unsigned we get an overflow below around 2.5 cm.
+     */
+  unsigned int tSignalRateLeft = _leftTofSensor.getSignalRate();
+  unsigned int tAmbientRateLeft = _leftTofSensor.getAmbientRate();
+
+  if (rangeStatusLeft == 0)
+  {
+#if !defined(ESP32) && !defined(ARDUINO_SAM_DUE) && !defined(__SAM3X8E__)
+    tone(11, distanceLeft + 500);
+#endif
+  }
+  else
+  {
+    // if tAmbientRate > tSignalRate we likely get a signal fail error condition
+    // in Distance mode short we get error 4 (out of bounds) or 7 (wrap around) if the distance is greater than 1.3 meter.
+    distanceLeft = rangeStatusLeft;
+#if !defined(ESP32) && !defined(ARDUINO_SAM_DUE) && !defined(__SAM3X8E__)
+    noTone(11);
+#endif
+  }
+
+  Serial.print("DistanceLeft(mm):");
+  Serial.print(distanceLeft);
+  Serial.print(' ');
+  Serial.print("SignalRate:");
+  Serial.print(tSignalRateLeft / 100);//受信する光量
+  Serial.print(' ');
+  Serial.print("AmbientRate:");
+  Serial.println(tAmbientRateLeft / 100);//センサーが発光した光ではない光の受信光量　sunlight, etc.
+}

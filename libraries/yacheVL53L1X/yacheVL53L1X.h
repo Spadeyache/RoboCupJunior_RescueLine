@@ -15,6 +15,7 @@ class yacheVL53L1X {
         void init();
         int getDistanceLeft();
         int getDistanceRight();
+        void plotToFData();
     private:
         int _leftPin;
         int _rightPin;
