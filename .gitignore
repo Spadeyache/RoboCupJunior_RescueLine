@@ -1,5 +1,3 @@
-fp-info-cache
-
-sym-lib-table
-
+Electronics/fp-info-cache
+Electronics/sym-lib-table
 *.lck
