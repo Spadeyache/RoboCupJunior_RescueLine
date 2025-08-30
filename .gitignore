@@ -2,4 +2,4 @@ fp-info-cache
 
 sym-lib-table
 
-.lck
+*.lck
