@@ -4507,16 +4507,6 @@
 		)
 		(uuid "08a58d35-4448-423c-a296-8204bf6e0ec4")
 	)
-	(text "led (?) then we can use 6.6v"
-		(exclude_from_sim no)
-		(at 357.124 33.782 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "2f41396f-b4a1-4ce2-b78a-588eaf0da17e")
-	)
 	(text "Motor Output"
 		(exclude_from_sim no)
 		(at 350.012 92.71 0)
@@ -4526,16 +4516,6 @@
 			)
 		)
 		(uuid "8807510b-9177-45a0-8596-f147c6e47add")
-	)
-	(text "what on earth is J4"
-		(exclude_from_sim no)
-		(at 306.07 25.908 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "a932536f-e46a-4f85-9e96-708b48453dfd")
 	)
 	(text "Motor Driver"
 		(exclude_from_sim no)
@@ -5020,16 +5000,6 @@
 			(type default)
 		)
 		(uuid "20d6cb99-746c-4861-b7f2-20677354c886")
-	)
-	(wire
-		(pts
-			(xy 306.07 38.1) (xy 300.99 38.1)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "21d6b037-61b8-43cb-bd10-fba1b0989194")
 	)
 	(wire
 		(pts
@@ -8963,138 +8933,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:GND")
-		(at 309.88 64.77 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "3fa1a0ff-e993-4a18-9c88-70928ba5edc3")
-		(property "Reference" "#PWR037"
-			(at 309.88 71.12 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "MGND"
-			(at 309.88 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 309.88 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 309.88 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 309.88 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9d169f8c-dffe-480b-8f95-bb0d5cf21bca")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "#PWR037")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+1V0")
-		(at 309.88 62.23 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "44f4eaea-29f6-415a-99fc-b9bb21565ee4")
-		(property "Reference" "#PWR036"
-			(at 309.88 66.04 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+6.6V"
-			(at 309.88 57.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 309.88 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 309.88 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+1V0\""
-			(at 309.88 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "66975ab8-2641-4768-978f-e968e035fb9e")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "#PWR036")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 198.12 30.48 0)
 		(unit 1)
@@ -9158,72 +8996,6 @@
 			(project "Main"
 				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
 					(reference "C5")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+1V0")
-		(at 300.99 38.1 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "475ea763-d5ee-4465-9ec9-2c402b6796f1")
-		(property "Reference" "#PWR034"
-			(at 300.99 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5.3V"
-			(at 300.99 33.02 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 300.99 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 300.99 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+1V0\""
-			(at 300.99 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "8c12ca80-6cac-4e91-b47f-84e106c95c8f")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "#PWR034")
 					(unit 1)
 				)
 			)
@@ -9663,76 +9435,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 353.06 41.91 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "58bd0c61-c2a2-43b3-a4cc-5ea6fbf19a36")
-		(property "Reference" "J15"
-			(at 355.6 41.9099 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Conn_01x02"
-			(at 355.6 44.4499 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_TE-Connectivity:TE_440054-2_1x02_P2.00mm_Vertical"
-			(at 353.06 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 353.06 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 353.06 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "092715a9-074d-4a2e-9193-e24db0fc2a9b")
-		)
-		(pin "1"
-			(uuid "6472a67a-d40f-4bc0-865b-72c2920f2d0d")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "J15")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 232.41 53.34 0)
 		(unit 1)
@@ -9797,76 +9499,6 @@
 			(project "Main"
 				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
 					(reference "C2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 318.77 38.1 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5d5cc39f-b34b-4c27-ad46-2a58a41b0425")
-		(property "Reference" "J4"
-			(at 321.31 38.0999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Conn_01x02"
-			(at 321.31 40.6399 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_TE-Connectivity:TE_440054-2_1x02_P2.00mm_Vertical"
-			(at 318.77 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 318.77 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 318.77 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "b15b9901-cf31-468e-96ae-fd645877e964")
-		)
-		(pin "1"
-			(uuid "7dd41fb3-4f39-4c28-ace3-96690187ae89")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "J4")
 					(unit 1)
 				)
 			)
@@ -10616,76 +10248,6 @@
 			(project "Main"
 				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
 					(reference "C20")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Connector_Generic:Conn_01x02")
-		(at 314.96 62.23 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "89c0b92b-a9c7-435e-907d-e852e2037edf")
-		(property "Reference" "J5-servoPower1"
-			(at 317.5 62.2299 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "Conn_01x02"
-			(at 317.5 64.7699 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Connector_TE-Connectivity:TE_440054-2_1x02_P2.00mm_Vertical"
-			(at 314.96 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 314.96 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 314.96 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "4593b625-353d-4979-96ba-3489755f1383")
-		)
-		(pin "1"
-			(uuid "2d553bc5-8f31-4001-99a8-2dbe7547d483")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "J5-servoPower1")
 					(unit 1)
 				)
 			)
@@ -11530,72 +11092,6 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 313.69 40.64 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a3be11c1-3ab7-4c8f-86a2-7212b1aa8490")
-		(property "Reference" "#PWR035"
-			(at 313.69 46.99 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 313.69 45.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 313.69 40.64 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 313.69 40.64 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 313.69 40.64 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "510b514d-4bb2-4180-a230-2c7c74d3445d")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "#PWR035")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
 		(at 217.17 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
@@ -11808,72 +11304,6 @@
 			(project ""
 				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
 					(reference "#PWR02")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
-		(at 347.98 44.45 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "af5538af-7081-4499-99c3-a4c00d3b5c84")
-		(property "Reference" "#PWR039"
-			(at 347.98 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "GND"
-			(at 347.98 49.53 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 347.98 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 347.98 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 347.98 44.45 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9690c47c-41a9-46b2-9661-fa85dc2dc3d2")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "#PWR039")
 					(unit 1)
 				)
 			)
@@ -12384,92 +11814,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Diode:1N4148WT")
-		(at 309.88 38.1 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d5eed7d6-695e-4312-b3b4-c989225745fb")
-		(property "Reference" "D4"
-			(at 309.88 31.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "1N4148WT"
-			(at 309.88 34.29 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-523"
-			(at 309.88 33.655 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/ds30396.pdf"
-			(at 309.88 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "75V 0.15A Fast switching Diode, SOD-523"
-			(at 309.88 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" "D"
-			(at 309.88 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Pins" "1=K 2=A"
-			(at 309.88 38.1 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "fc0c60d9-1b14-445a-95fe-2d93882500bb")
-		)
-		(pin "1"
-			(uuid "858a02f2-a73c-476d-85d8-9589da0365e3")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "D4")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:C")
 		(at 275.59 33.02 0)
 		(unit 1)
@@ -12534,72 +11878,6 @@
 			(project "Main"
 				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
 					(reference "C8")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:+1V0")
-		(at 347.98 41.91 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d68a9be9-2d90-433b-a566-f6b84eadc3be")
-		(property "Reference" "#PWR038"
-			(at 347.98 45.72 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Value" "+5.3V"
-			(at 347.98 36.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 347.98 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 347.98 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Power symbol creates a global label with name \"+1V0\""
-			(at 347.98 41.91 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b0ba7694-69ad-4ec1-9d36-76ad015947ce")
-		)
-		(instances
-			(project "Main"
-				(path "/19a410f9-e231-4fc4-81cd-0810fe5c6ac3"
-					(reference "#PWR038")
 					(unit 1)
 				)
 			)
