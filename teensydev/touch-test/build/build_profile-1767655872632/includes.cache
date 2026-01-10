@@ -1,0 +1,52 @@
+[
+  {
+    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\internal\\teensy_avr_1.59.0_26e88c82f9286fcb\\cores\\teensy4"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\touch-test\\build\\build_profile-1767655872632\\sketch\\touch-test.ino.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\touch-test\\build\\build_profile-1767655872632\\sketch\\touch-test.ino.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\touch-test\\build\\build_profile-1767655872632\\sketch\\touch-test.ino.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\internal\\teensy_teensy-compile_11.3.1_eaa5db3800e75766/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\internal\\teensy_avr_1.59.0_26e88c82f9286fcb\\cores\\teensy4",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\touch-test\\build\\build_profile-1767655872632\\sketch\\touch-test.ino.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  }
+]
