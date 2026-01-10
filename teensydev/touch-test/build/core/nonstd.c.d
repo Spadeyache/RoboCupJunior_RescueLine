@@ -1,0 +1,3 @@
+c:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\touch-test\build\core\nonstd.c.o: \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.59.0\cores\teensy4\nonstd.c \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.59.0\cores\teensy4\avr_functions.h

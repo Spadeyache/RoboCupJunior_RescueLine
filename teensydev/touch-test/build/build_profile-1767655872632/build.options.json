@@ -1,0 +1,9 @@
+{
+  "additionalFiles": "..\\..\\..,..\\..\\..",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "teensy:avr:teensy41:usb=serial,speed=600,opt=o2std,keys=en-us",
+  "hardwareFolders": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\internal\\teensy_avr_1.59.0_26e88c82f9286fcb,C:\\Users\\magic\\AppData\\Local\\Arduino15\\internal\\teensy_avr_1.59.0_26e88c82f9286fcb",
+  "otherLibrariesFolders": "C:\\Users\\magic\\Documents\\Arduino\\libraries",
+  "sketchLocation": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\touch-test"
+}
