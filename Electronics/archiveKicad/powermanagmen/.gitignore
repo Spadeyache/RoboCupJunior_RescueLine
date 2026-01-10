@@ -66,3 +66,28 @@ __pycache__/
 
 # Simulation files
 *.cir
+
+# =========================================
+# EasyEDA specific files
+# =========================================
+
+# EasyEDA backup files
+*.json~
+*-backup-*.json
+*.eprj~
+*_Backup_*
+
+# EasyEDA auto-save files
+*.auto
+
+# EasyEDA cache and temporary files
+.easyeda/
+*.tmp
+
+# EasyEDA Gerber and fabrication outputs
+Gerber_*.zip
+PCB_*.zip
+
+# EasyEDA BOM exports
+BOM_*.csv
+BOM_*.xlsx
