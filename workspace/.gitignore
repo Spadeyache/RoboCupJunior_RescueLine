@@ -1,0 +1,74 @@
+# K230D Development Workspace .gitignore
+# =========================================
+
+# Large model files
+*.pt
+*.pth
+*.onnx
+*.kmodel
+*.weights
+
+# Training outputs
+runs/
+weights/
+results/
+
+# Datasets and images
+datasets/
+images/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.gif
+*.tiff
+
+# Labels and annotations
+labels/
+*.txt
+!requirements.txt
+!data.yaml
+
+# Checkpoints
+checkpoints/
+*.ckpt
+
+# Temporary and cache files
+tmp/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Log files
+*.log
+wandb/
+tensorboard/
+
+# nncase intermediate files
+*.bin
+*.json
+dump_ir/
+dump_asm/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Compressed files
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Keep example files
+!*.example
+!README.md

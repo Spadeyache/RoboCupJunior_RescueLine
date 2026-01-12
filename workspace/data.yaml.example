@@ -1,0 +1,29 @@
+# YOLOv8 Dataset Configuration for K230D
+# Copy this file to data.yaml and customize for your dataset
+
+# Dataset paths (relative to this file)
+path: /workspace/datasets  # Root directory
+train: images/train       # Training images (relative to 'path')
+val: images/val          # Validation images (relative to 'path')
+test: images/test        # Test images (optional)
+
+# Number of classes
+nc: 3
+
+# Class names (customize for your RoboCup rescue line task)
+names:
+  0: victim          # Silver/reflective victim marker
+  1: obstacle        # Obstacles on the line
+  2: checkpoint      # Checkpoint markers
+
+# Example for RoboCup rescue line specific detection:
+# names:
+#   0: green_marker     # Green rescue zone
+#   1: speed_bump       # Speed bump obstacle
+#   2: ramp             # Ramp section
+#   3: intersection     # Line intersection
+#   4: victim_silver    # Silver victim marker
+#   5: victim_heated    # Heated victim
+
+# Optional: Dataset info
+download: false  # Set to true if dataset needs to be downloaded
