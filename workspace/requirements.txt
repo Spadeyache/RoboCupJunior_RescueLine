@@ -1,0 +1,33 @@
+# K230D Development Requirements
+# Install with: pip install -r requirements.txt
+
+# Core dependencies (already in containers, listed for reference)
+# ultralytics>=8.0.0  # YOLOv8 (in train container)
+# nncase>=2.0.0       # K230D conversion (in convert container)
+# nncase-kpu>=2.0.0   # K230 KPU support (in convert container)
+
+# Optional: For dataset preparation and analysis
+opencv-python>=4.8.0
+numpy>=1.24.0
+matplotlib>=3.7.0
+pillow>=10.0.0
+
+# Optional: For annotation and data management
+labelImg>=1.8.6
+pandas>=2.0.0
+
+# Optional: For model analysis and visualization
+tensorboard>=2.13.0
+onnx>=1.14.0
+onnxruntime>=1.15.0
+
+# Optional: For dataset augmentation
+albumentations>=1.3.0
+imgaug>=0.4.0
+
+# Optional: For training monitoring
+wandb>=0.15.0
+
+# Optional: For advanced preprocessing
+scikit-image>=0.21.0
+scipy>=1.11.0
