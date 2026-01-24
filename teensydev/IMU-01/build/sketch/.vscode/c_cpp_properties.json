@@ -1,0 +1,63 @@
+#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\.vscode\\c_cpp_properties.json"
+{
+  "configurations": [
+    {
+      "name": "Arduino",
+      "includePath": [
+        "C:\\Users\\magic\\Documents\\Arduino\\libraries/**",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01/**"
+      ],
+      "forcedInclude": [],
+      "compilerPath": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+      "compilerArgs": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-c",
+        "-O2",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-MMD",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build/pch",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+        "-o",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.o"
+      ],
+      "defines": [
+        "__IMXRT1062__",
+        "TEENSYDUINO=159",
+        "ARDUINO=10607",
+        "ARDUINO_TEENSY41",
+        "F_CPU=600000000",
+        "USB_SERIAL",
+        "LAYOUT_US_ENGLISH",
+        "USBCON"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "c++17"
+    }
+  ],
+  "version": 4
+}

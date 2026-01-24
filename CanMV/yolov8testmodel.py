@@ -14,6 +14,9 @@ if __name__=="__main__":
     confidence_threshold = 0.5
     nms_threshold=0.45
     img,img_ori=read_image(img_path)
+#    img = np.array(img[:, ::-1, :])
+
+
     rgb888p_size=[img.shape[2],img.shape[1]]
     # 初始化YOLOv8实例
     yolo=YOLOv8(task_type="detect",mode="image",kmodel_path=kmodel_path,labels=labels,rgb888p_size=rgb888p_size,model_input_size=model_input_size,conf_thresh=confidence_threshold,nms_thresh=nms_threshold,max_boxes_num=50,debug_mode=0)
