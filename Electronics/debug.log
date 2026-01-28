@@ -3,3 +3,30 @@
 [0113/112033.831:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:401] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
 [0113/143829.871:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
 [0113/154620.154:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:401] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
+[0125/164250.860:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0125/164255.869:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/085114.564:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/085119.795:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/085124.812:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/085404.501:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/090918.067:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/091403.763:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/091403.815:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/091403.854:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/101103.210:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/141739.649:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/141744.659:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/141754.663:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/141814.673:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0126/190228.365:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/070817.358:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/070817.687:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/070818.402:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/111023.848:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/111023.964:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/182343.609:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/182858.422:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/182901.635:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/182901.655:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/190054.596:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0127/201904.237:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
