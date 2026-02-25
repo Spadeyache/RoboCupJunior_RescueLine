@@ -29,6 +29,7 @@ public:
     void update(); // to update the quaternion.
     void calibrate();
     void loadOffsetsFromEEPROM();
+    void printQuat();
     
 
     float32_t getPitch() { return pitch; }
