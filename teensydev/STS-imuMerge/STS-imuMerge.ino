@@ -24,4 +24,6 @@ void loop() {
                       imu.getPitch(), imu.getRoll(), imu.getYaw());
         lastPrint = millis();
     }
+
+    // printQuat();
 }

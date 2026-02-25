@@ -171,3 +171,12 @@ void yacheMPU6050::saveOffsetsToEEPROM() {
     EEPROM.put(EEPROM_ADDR, data);
     Serial.println("Offsets saved to EEPROM.");
 }
+
+void yacheMPU6050::printQuat() {
+    static uint32_t lastPrint = 0;
+    if (millis() - lastPrint >= 50) {
+        Serial.printf("Pitch: %.2f | Roll: %.2f | Yaw: %.2f\n",
+                      pitch, roll, yaw);
+        lastPrint = millis();
+    }
+}
