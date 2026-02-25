@@ -1,5 +1,5 @@
 {
-  "port": "",
+  "port": "COM10",
   "configuration": "usb=serial,speed=600,opt=o2std,keys=en-us",
   "output": "build",
   "board": "teensy:avr:teensy41",
@@ -9,11 +9,14 @@
   "configurationRequired": true,
   "compile_profile": "",
   "monitorPortSettings": {
-    "port": "",
-    "baudRate": 115200,
-    "lineEnding": "\r\n",
-    "dataBits": 8,
-    "parity": "none",
-    "stopBits": "one"
+    "settings": {
+      "port": "COM13",
+      "baudRate": 115200,
+      "lineEnding": "\r\n",
+      "dataBits": 8,
+      "parity": "none",
+      "stopBits": "one"
+    },
+    "profile_name": ""
   }
 }
