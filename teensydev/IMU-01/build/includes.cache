@@ -98,6 +98,111 @@
     }
   },
   {
+    "missing_include_h": "I2Cdev.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "MPU6050.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
     "missing_include_h": "MadgwickAHRS.h"
   },
   {
@@ -142,7 +247,64 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "EEPROM.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\IMU-01.ino.cpp",
         "-o",
         "nul"
@@ -191,7 +353,10 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\sketch\\RobotIMU.cpp",
         "-o",
         "nul"
@@ -241,7 +406,10 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\utility",
         "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\Wire.cpp",
         "-o",
@@ -292,7 +460,10 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\utility",
         "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\WireIMXRT.cpp",
         "-o",
@@ -343,7 +514,10 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\utility",
         "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\WireKinetis.cpp",
         "-o",
@@ -394,9 +568,272 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\utility",
         "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire\\utility\\twi.c",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev\\I2Cdev.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\I2Cdev\\I2Cdev.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\I2Cdev\\I2Cdev.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev\\I2Cdev.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps20.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps20.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps20.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps20.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps612.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps612.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps612.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050_6Axis_MotionApps612.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050_9Axis_MotionApps41.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050_9Axis_MotionApps41.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\MPU6050\\MPU6050_9Axis_MotionApps41.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050\\MPU6050_9Axis_MotionApps41.cpp",
         "-o",
         "nul"
       ]
@@ -444,8 +881,63 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "C:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src\\MadgwickAHRS.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM\\EEPROM.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\EEPROM\\EEPROM.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\IMU-01\\build\\libraries\\EEPROM\\EEPROM.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=159",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM\\EEPROM.cpp",
         "-o",
         "nul"
       ]
