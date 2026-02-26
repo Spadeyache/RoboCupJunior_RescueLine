@@ -46,4 +46,6 @@ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensydev\STS-imuMerge
  C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SCS.h \
  C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/INST.h \
  C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SMS_STS.h \
- C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/HLSCL.h
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/HLSCL.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.59.0\cores\teensy4/arm_math.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.59.0\cores\teensy4/core_cmInstr.h

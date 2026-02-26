@@ -7,7 +7,7 @@ yacheMPU6050::yacheMPU6050() : _wire(&Wire), mpu() {}
 void yacheMPU6050::begin(TwoWire &w, float32_t sampleRate) {
     _wire = &w;
     _wire->begin();
-    // Teensy can handle 400kHz or even 1MHz I2C clocks
+    // Teensy can handle 400kHz or even 1MHz I2C clocks but MPU6050 cant
     _wire->setClock(400000); 
 
     // the libraly I2Cdev only supports wire so ther is no point setting begin(Wire)
@@ -20,10 +20,8 @@ void yacheMPU6050::begin(TwoWire &w, float32_t sampleRate) {
 
     // Load from EEPROM. If magic number fails, it triggers calibrate()
     loadOffsetsFromEEPROM();
-
-    Serial.println("applyfilteroffsets");
     applyOffsets();
-    Serial.println("begin filter");
+
     filter.begin(sampleRate);
     microsPerReading = (uint32_t)(1000000.0f / sampleRate);
     microsPrevious = micros();
@@ -38,21 +36,29 @@ void yacheMPU6050::applyOffsets() {
     mpu.setZGyroOffset(gz_offset);
 }
 
-void yacheMPU6050::update() {
+
+
+FASTRUN void yacheMPU6050::update() {
     uint32_t microsNow = micros();
     if (microsNow - microsPrevious >= microsPerReading) {
-        // MPU6050 library uses I2Cdev which defaults to the primary Wire bus
-        // If using Wire1, ensure your I2Cdev is configured for it.
+        
+        // 1. Get raw data from I2C
         mpu.getMotion6(&axRaw, &ayRaw, &azRaw, &gxRaw, &gyRaw, &gzRaw);
 
-        ax = convertRawAcceleration(axRaw);
-        ay = convertRawAcceleration(ayRaw);
-        az = convertRawAcceleration(azRaw);
-        gx = convertRawGyro(gxRaw);
-        gy = convertRawGyro(gyRaw);
-        gz = convertRawGyro(gzRaw);
+        // 2. Optimization: Multiplication is faster than division on FPU
+        // Using 'f' suffix ensures 32-bit hardware math
+        static const float32_t accelScale = 1.0f / 16384.0f;
+        static const float32_t gyroScale = 1.0f / 131.0f;
 
-        // Your specific axis mapping
+        ax = (float32_t)axRaw * accelScale;
+        ay = (float32_t)ayRaw * accelScale;
+        az = (float32_t)azRaw * accelScale;
+        gx = (float32_t)gxRaw * gyroScale;
+        gy = (float32_t)gyRaw * gyroScale;
+        gz = (float32_t)gzRaw * gyroScale;
+
+        // 3. Madgwick filter (Heavy Math - benefits from FASTRUN)
+        // Ensure your axis mapping is correct for your mounting
         filter.updateIMU(gy, gz, gx, ay, az, ax);
 
         roll = filter.getRoll();
@@ -63,13 +69,13 @@ void yacheMPU6050::update() {
     }
 }
 
-float32_t yacheMPU6050::convertRawAcceleration(int16_t aRaw) {
-    return ((float32_t)aRaw) / 16384.0f;
-}
+// float32_t yacheMPU6050::convertRawAcceleration(int16_t aRaw) {
+//     return ((float32_t)aRaw) / 16384.0f;
+// }
 
-float32_t yacheMPU6050::convertRawGyro(int16_t gRaw) {
-    return ((float32_t)gRaw) / 131.0f;
-}
+// float32_t yacheMPU6050::convertRawGyro(int16_t gRaw) {
+//     return ((float32_t)gRaw) / 131.0f;
+// }
 
 void yacheMPU6050::calibrate() {
     Serial.println("Starting calibration...");
@@ -171,4 +177,13 @@ void yacheMPU6050::saveOffsetsToEEPROM() {
     // EEPROM.put uses update() internally to save flash wear
     EEPROM.put(EEPROM_ADDR, data);
     Serial.println("Offsets saved to EEPROM.");
+}
+
+void yacheMPU6050::printQuat() {
+    static uint32_t lastPrint = 0;
+    if (millis() - lastPrint >= 200) {
+        Serial.printf("Yaw: %.2f | Pitch: %.2f | Roll: %.2f\n",
+                      yaw, pitch, roll);
+        lastPrint = millis();
+    }
 }

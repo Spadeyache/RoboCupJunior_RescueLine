@@ -3,25 +3,11 @@
 
 yacheSTS::yacheSTS() {}
 
-void yacheSTS::begin(HardwareSerial &serialPort, int enablePin, unsigned long baud) {
-// byte ID[4] = {4, 1, 2, 3};      // Servo IDs
-// s16 Speed[4] = {0, 0, 0, 0};    // Target speeds 0-4000
-// byte ACC[4] = {150, 150, 150, 150};     // Acceleration values 0-254
-    _enPin = enablePin;
-    pinMode(_enPin, OUTPUT);
-    digitalWrite(_enPin, HIGH); // Power up the bus
-    
+void yacheSTS::begin(HardwareSerial &serialPort, unsigned long baud) {
     serialPort.begin(baud);
     _sts.pSerial = &serialPort;
-    
-    // delay(500); // Wait for servos to boot
-
-    // // Initialize all servos into Wheel Mode immediately
-    // for(int i = 0; i < 4; i++) {
-    //     _sts.WheelMode(_ids[i]);
-    // }
+//     // delay(500); // Wait for servos to boot
 }
-
 
 void yacheSTS::setWheelMode() {
     for(int i = 0; i < 4; i++) {
@@ -30,21 +16,30 @@ void yacheSTS::setWheelMode() {
 }
 
 void yacheSTS::setWheelMode(bool enable) {
-    stop(); // Safety: Stop moving before switching modes
+    stop(); 
     delay(10); 
     for(int i = 0; i < 4; i++) {
         if(enable) _sts.WheelMode(_ids[i]);
-        else _sts.ServoMode(_ids[i]); // unWheelMode = Position/Step Mode
+        else _sts.ServoMode(_ids[i]);
     }
 }
 
-void yacheSTS::power(int8_t lf, int8_t rf, int8_t lb, int8_t rb) {
-    // linear mapping of -100, 100 to -4000, 4000
-    // Use int32_t for the middle calculation to prevent overflow before assignment
-    _speeds[0] = (int16_t)lf * 40;
-    _speeds[1] = (int16_t)rf * -40; // Inverted
-    _speeds[2] = (int16_t)lb * 40;
-    _speeds[3] = (int16_t)rb * -40; // Inverted
+// FASTRUN moves this function to ITCM RAM (600MHz zero-wait-state)
+FASTRUN void yacheSTS::power(float32_t lf, float32_t rf, float32_t lb, float32_t rb) {
+    float32_t inputs[4] = {lf, rf, lb, rb};
+
+    for(int i = 0; i < 4; i++) {
+        // Hardware-level clipping (VMAX.F32 / VMIN.F32 instructions)
+        inputs[i] = fmaxf(-100.0f, fminf(inputs[i], 100.0f));
+    }
+
+    // Mapping: 100.0f -> 4000
+    // Using 'f' suffix ensures 32-bit FPU usage instead of 64-bit software double
+    // Inverting rf and rb
+    _speeds[0] = (int16_t)(inputs[0] * 40.0f);
+    _speeds[1] = (int16_t)(inputs[1] * -40.0f); 
+    _speeds[2] = (int16_t)(inputs[2] * 40.0f);
+    _speeds[3] = (int16_t)(inputs[3] * -40.0f);
 
     _sts.SyncWriteSpe(_ids, 4, _speeds, _accs);
 }
@@ -52,3 +47,6 @@ void yacheSTS::power(int8_t lf, int8_t rf, int8_t lb, int8_t rb) {
 void yacheSTS::stop() {
     power(0, 0, 0, 0);
 }
+
+
+
