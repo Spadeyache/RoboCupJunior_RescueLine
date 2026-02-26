@@ -1,34 +1,51 @@
 #include <Arduino.h>
 #line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 #include "yacheMPU6050.h"
+#include "yacheSTS.h"
 
-yacheMPU6050 imu;
+yacheMPU6050 _imu;
+yacheSTS _sts;
 
-#line 5 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+elapsedMillis imuTimer;
+
+#line 9 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void setup();
-#line 17 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 29 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void loop();
-#line 5 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 9 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void setup() {
     Serial.begin(115200);
+
+    _sts.begin(Serial1); 
     
-    imu.begin(Wire, 100.0f);
+    _imu.begin(Wire, 200.0f);
 
+    int _enPin = 2;
+    pinMode(_enPin, OUTPUT);
+    digitalWrite(_enPin, HIGH); // Power up the bus
 
+    delay(500); // Allow servos to power up
 
-    // imu.calibrate(); 
-    imu.loadOffsetsFromEEPROM(); 
-    Serial.println("IMU Ready.");
+    _sts.setWheelMode(true);
+    _imu.loadOffsetsFromEEPROM();
+    
+    Serial.println("System Ready.");
+    imuTimer = 0;
 }
 
 void loop() {
-    imu.update();
+    // 200Hz Control Loop
 
-    // Standard output
-    static uint32_t lastPrint = 0;
-    if (millis() - lastPrint >= 50) {
-        Serial.printf("Pitch: %.2f | Roll: %.2f | Yaw: %.2f\n", 
-                      imu.getPitch(), imu.getRoll(), imu.getYaw());
-        lastPrint = millis();
+    
+    if (imuTimer >= 5) {
+        // Now using optimized float inputs
+        _sts.power(20.0f, 20.0f, 20.0f, 20.0f); 
+        _imu.update(); 
+        imuTimer -= 5; 
     }
+
+    _imu.printQuat();
+    
 }
+
+

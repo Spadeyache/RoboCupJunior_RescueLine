@@ -33,6 +33,3 @@ void loop() {
     _sts.stop();
     delay(200);
 }
-
-
-

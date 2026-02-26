@@ -27,9 +27,10 @@ public:
     
 
     void begin(TwoWire &w = Wire, float32_t sampleRate = 25.0); // paramter to spesify the I2C port and data samplerate
-    void update(); // to update the quaternion.
+    void update() FASTRUN; // to update the quaternion.
     void calibrate();
     void loadOffsetsFromEEPROM();
+    void printQuat();
     
 
     float32_t getPitch() { return pitch; }
@@ -62,8 +63,8 @@ private:
 
     void meansensors();
     void runAutoCalibration();
-    float32_t convertRawAcceleration(int16_t aRaw);
-    float32_t convertRawGyro(int16_t gRaw);
+    inline float32_t convertRawAcceleration(int16_t aRaw) { return ((float32_t)aRaw) / 16384.0f; }
+    inline float32_t convertRawGyro(int16_t gRaw) { return ((float32_t)gRaw) / 131.0f; }
     void applyOffsets();
     void saveOffsetsToEEPROM();
 };

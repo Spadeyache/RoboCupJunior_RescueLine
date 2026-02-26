@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <SCServo.h>
+#include <arm_math.h>
 
 class yacheSTS {
     public:
@@ -12,15 +13,15 @@ class yacheSTS {
         // STS motor can be initialized as name.begin(dklfj); 
         // delay(500);
         // setWHeelMode();
-        void begin(HardwareSerial &serialPort, int enablePin, unsigned long baud = 1000000);
+        void begin(HardwareSerial &serialPort, unsigned long baud = 1000000);
         void setWheelMode();
         void setWheelMode(bool enable);
-        void power(int8_t lf, int8_t rf, int8_t lb, int8_t rb);
+        // Optimization: FASTRUN ensures this executes from RAM
+        void power(float32_t lf, float32_t rf, float32_t lb, float32_t rb) FASTRUN;
         void stop();
 
     private:
         SMS_STS _sts;
-        int _enPin;
         uint8_t _ids[4] = {4, 1, 2, 3};
         int16_t _speeds[4] = {0, 0, 0, 0};   // Must be int16_t (s16)
         uint8_t _accs[4] = {150, 150, 150, 150};
