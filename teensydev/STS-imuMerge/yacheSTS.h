@@ -12,12 +12,12 @@ class yacheSTS {
         // STS motor can be initialized as name.begin(dklfj); 
         // delay(500);
         // setWHeelMode();
-        void begin(HardwareSerial &serialPort, unsigned long baud = 1000000);
+        void begin(HardwareSerial &serialPort, unsigned long baud = 1000000) FLASHMEM;
         void setWheelMode();
         void setWheelMode(bool enable);
         // Optimization: FASTRUN ensures this executes from RAM
         void power(float32_t lf, float32_t rf, float32_t lb, float32_t rb) FASTRUN;
-        void stop();
+        void stop() FASTRUN;
 
     private:
         SMS_STS _sts;

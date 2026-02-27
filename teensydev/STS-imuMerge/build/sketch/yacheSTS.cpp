@@ -3,7 +3,7 @@
 
 yacheSTS::yacheSTS() {}
 
-void yacheSTS::begin(HardwareSerial &serialPort, unsigned long baud) {
+FLASHMEM void yacheSTS::begin(HardwareSerial &serialPort, unsigned long baud) {
     serialPort.begin(baud);
     _sts.pSerial = &serialPort;
 //     // delay(500); // Wait for servos to boot
@@ -44,7 +44,7 @@ FASTRUN void yacheSTS::power(float32_t lf, float32_t rf, float32_t lb, float32_t
     _sts.SyncWriteSpe(_ids, 4, _speeds, _accs);
 }
 
-void yacheSTS::stop() {
+FASTRUN void yacheSTS::stop() {
     power(0, 0, 0, 0);
 }
 
