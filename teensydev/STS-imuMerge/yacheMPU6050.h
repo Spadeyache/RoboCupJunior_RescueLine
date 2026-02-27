@@ -29,7 +29,7 @@ public:
     void update() FASTRUN; // to update the quaternion.
     void calibrate();
     void loadOffsetsFromEEPROM();
-    void printQuat();
+    void printQuat() FLASHMEM;
     
 
     float32_t getPitch() { return pitch; }
