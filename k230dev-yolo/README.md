@@ -180,6 +180,23 @@ python export_to_onnx.py \
 
 **Output:** `/models/best_320.onnx`
 
+#### Test ONNX in Docker (no local env conflict)
+
+Run the ONNX test script inside the same train container so all dependencies (numpy, onnxruntime, opencv) are isolated—no scipy/numpy version conflicts on your host:
+
+```bash
+# Inside the train container (after export or in a fresh run)
+docker compose run --rm train
+
+# Inside container
+cd /workspace
+python testing_onnx.py
+# Uses /models/best_320.onnx and first image in /datasets/my_dataset/train/images
+# Writes resized_320x320.jpg and result_320.jpg to /workspace (visible in ./workspace on host)
+```
+
+Or with custom paths: `python testing_onnx.py /models/best_320.onnx /datasets/my_dataset/train/images/your.jpg`
+
 ### Step 3: Convert to .kmodel
 
 ```bash
