@@ -1,64 +1,32 @@
 #line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
-#include "Arduino.h"
+#include <Arduino.h>
+#include <Servo.h>
 
-#define _startSW 34
+static const uint8_t SERVO_PIN = 3;   // choose a PWM-capable pin
+Servo servo;
 
-#define _touchPin0 33
-#define _touchPin1 35
-#define _conductPin0 5
-#define _conductPin1 6
-
-volatile bool touch0 = false;
-volatile bool touch1 = false;
-volatile bool conduct0 = false;
-volatile bool conduct1 = false;
-
-#line 15 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 7 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void setup();
-#line 34 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 16 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void loop();
-#line 51 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
-void updateBinInputs();
-#line 15 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 7 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void setup() {
-  Serial.begin(115200);
+  // min/max are pulse widths in microseconds
+  // Start conservative: 1000–2000 us
+  servo.attach(SERVO_PIN, 1000, 2000);
 
-  pinMode(_startSW, INPUT_PULLUP);
-
-  pinMode(_touchPin0, INPUT_PULLUP);
-  pinMode(_touchPin1, INPUT_PULLUP);
-  pinMode(_conductPin0, INPUT_PULLUP);
-  pinMode(_conductPin1, INPUT_PULLUP);
-
-  Serial.println("waiting for startSW");
-  while(digitalRead(_startSW) == HIGH){
-    delay(20);
-    Serial.println("waiting for startSW");
-  }
-  delay(10);
-  Serial.println("System Ready.");
+  servo.writeMicroseconds(1500); // center
+  delay(500);
 }
 
 void loop() {
-// HIGH(1) is OFF and LOW(0) is Touching 
-  updateBinInputs();
-
-
-  Serial.print("T0: ");
-  Serial.print(touch0);
-  Serial.print("|T1: ");
-  Serial.print(touch1);
-  Serial.print("|C0: ");
-  Serial.print(conduct0);
-  Serial.print("|C1: ");
-  Serial.println(conduct1);
-
-  delay(50);
-}
-
-FASTRUN void updateBinInputs(){
-  touch0 = digitalRead(_touchPin0);
-  touch1 = digitalRead(_touchPin1);
-  conduct0 = digitalRead(_conductPin0);
-  conduct1 = digitalRead(_conductPin1);
+  // Sweep using microseconds (more explicit than degrees)
+  for (int us = 1000; us <= 2000; us += 10) {
+    servo.writeMicroseconds(us);
+    delay(10);
+  }
+  for (int us = 2000; us >= 1000; us -= 10) {
+    servo.writeMicroseconds(us);
+    delay(10);
+  }
 }
