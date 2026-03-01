@@ -1,97 +1,64 @@
-#include <Arduino.h>
 #line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
-/*
-26 Feb 2026
-This code tested 
-*/
-#include "yacheMPU6050.h"
-#include "yacheSTS.h"
+#include "Arduino.h"
 
-#define _74HTC126EN 2
+#define _startSW 34
 
-yacheMPU6050 _imu;
-yacheSTS _sts;
+#define _touchPin0 33
+#define _touchPin1 35
+#define _conductPin0 5
+#define _conductPin1 6
 
-elapsedMillis motorTimer;
+volatile bool touch0 = false;
+volatile bool touch1 = false;
+volatile bool conduct0 = false;
+volatile bool conduct1 = false;
 
-IntervalTimer controlTimer;
-
-// GLOBAL VARS in (DTCM / RAM1)
-volatile float32_t frontLeftGain = 0.0f;
-volatile float32_t frontRightGain = 0.0f;
-volatile float32_t backLeftGain = 0.0f;
-volatile float32_t backRightGain = 0.0f;
-volatile float32_t pitch = 0;
-volatile float32_t roll = 0;
-
-
-// A funciton that has priority in precicly updating the imu & motorGains
-#line 27 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
-void motorOutput();
-#line 37 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 15 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void setup();
-#line 59 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+#line 34 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
 void loop();
-#line 81 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
-void motor(float32_t left, float32_t right);
-#line 27 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
-FASTRUN void motorOutput(){
-    // _imu.update();
-    // pitch = _imu.getPitch();
-    // roll = _imu.getRoll();
+#line 51 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+void updateBinInputs();
+#line 15 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\STS-imuMerge.ino"
+void setup() {
+  Serial.begin(115200);
 
-    // ADD LOGIC to encoporate the pitch and roll.
-    _sts.power(frontLeftGain, frontRightGain, backLeftGain, backRightGain);
-    // a note here if .power takes more than 5ms we are in a infinite loop. Since we run 4 STS3032 at 1Mbps should take arround 100 microsec so we are chill.
-}
+  pinMode(_startSW, INPUT_PULLUP);
 
-FLASHMEM void setup() {
-    Serial.begin(115200);
-    _sts.begin(Serial1);
-    // _imu.begin(Wire, 200.0f);
+  pinMode(_touchPin0, INPUT_PULLUP);
+  pinMode(_touchPin1, INPUT_PULLUP);
+  pinMode(_conductPin0, INPUT_PULLUP);
+  pinMode(_conductPin1, INPUT_PULLUP);
 
-    pinMode(_74HTC126EN, OUTPUT);
-    digitalWrite(_74HTC126EN, HIGH);
-
-    delay(500);
-
-    _sts.setWheelMode(true);
-
-    // _imu.loadOffsetsFromEEPROM();
-    // imu.calibrate(); 
-    
-    Serial.println("System Ready.");
-    // imuTimer = 0;
-
-    
-    controlTimer.begin(motorOutput, 5000); // 5ms = 5000 microseconds
+  Serial.println("waiting for startSW");
+  while(digitalRead(_startSW) == HIGH){
+    delay(20);
+    Serial.println("waiting for startSW");
+  }
+  delay(10);
+  Serial.println("System Ready.");
 }
 
 void loop() {
-    // do not call _sts.power in loop
-
-    
-    if (motorTimer >= 200) {
-        motor(20,20);
-        motorTimer -= 200; 
-    }
-
-// besto for upward front COM
-    // _sts.power(30.0f, -15.0f, 55.0f, -25.0f);
-    // delay(3000);
-    // _sts.power(-15.0f, 30.0f, -25.0f, 55.0f);
-    // delay(3000);
+// HIGH(1) is OFF and LOW(0) is Touching 
+  updateBinInputs();
 
 
-    // _imu.printQuat(); //prints every 250ms
-    
+  Serial.print("T0: ");
+  Serial.print(touch0);
+  Serial.print("|T1: ");
+  Serial.print(touch1);
+  Serial.print("|C0: ");
+  Serial.print(conduct0);
+  Serial.print("|C1: ");
+  Serial.println(conduct1);
+
+  delay(50);
 }
 
-
-
-FASTRUN void motor(float32_t left, float32_t right){
-    noInterrupts(); // Safety: update all 4 at once
-    frontLeftGain = left; frontRightGain = right;
-    backLeftGain = left;  backRightGain = right;
-    interrupts();
+FASTRUN void updateBinInputs(){
+  touch0 = digitalRead(_touchPin0);
+  touch1 = digitalRead(_touchPin1);
+  conduct0 = digitalRead(_conductPin0);
+  conduct1 = digitalRead(_conductPin1);
 }
