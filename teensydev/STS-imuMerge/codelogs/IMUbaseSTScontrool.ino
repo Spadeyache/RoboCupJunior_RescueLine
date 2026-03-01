@@ -6,6 +6,8 @@ This code tested the two optimized "yacheSTS.h" "yacheMPU6050.h" library in a si
 #include "yacheMPU6050.h"
 #include "yacheSTS.h"
 
+#define _enPin 2
+
 yacheMPU6050 _imu;
 yacheSTS _sts;
 
@@ -17,7 +19,6 @@ void setup() {
     _imu.begin(Wire, 200.0f);
 
     // Enable 74HCT126
-    int _enPin = 2;
     pinMode(_enPin, OUTPUT);
     digitalWrite(_enPin, HIGH);
 
