@@ -39,15 +39,16 @@
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\build/pch",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.59.0\\libraries\\EEPROM",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
         "-o",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp.o"
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.o"
       ],
       "defines": [
         "__IMXRT1062__",

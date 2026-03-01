@@ -9,3 +9,7 @@
 [0228/201822.224:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
 [0228/201823.519:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
 [0228/201828.238:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0301/082808.558:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0301/111639.023:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:401] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
+[0301/111639.025:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:401] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
+[0301/111639.025:ERROR:gpu\command_buffer\service\shared_image\shared_image_manager.cc:401] SharedImageManager::ProduceSkia: Trying to Produce a Skia representation from a non-existent mailbox.
