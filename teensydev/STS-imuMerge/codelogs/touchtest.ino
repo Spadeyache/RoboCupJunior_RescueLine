@@ -1,3 +1,10 @@
+/*
+27 Feb 2026
+This code tested the touch and conduct pins.with start switch.
+*/
+
+#include "Arduino.h"
+
 #define _startSW 34
 
 #define _touchPin0 33
@@ -23,6 +30,7 @@ void setup() {
   Serial.println("waiting for startSW");
   while(digitalRead(_startSW) == HIGH){delay(20);}
   delay(10);
+  Serial.println("System Ready.");  
 }
 
 void loop() {
