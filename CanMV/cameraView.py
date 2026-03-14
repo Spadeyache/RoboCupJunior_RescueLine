@@ -1,26 +1,28 @@
-from media.sensor import Sensor
-from media.display import Display
-from media.media import MediaManager
 import time
+from media.sensor import *
+from media.display import *
+from media.media import *
 
-# Initialize sensor
 sensor = Sensor()
 sensor.reset()
-sensor.set_framesize(Sensor.QVGA)
+sensor.set_framesize(Sensor.VGA)
 sensor.set_pixformat(Sensor.RGB565)
 
-# Initialize display
-Display.init(Display.VIRT, width=320, height=240, to_ide=True)
-
-# Initialize media manager
+# Streams live video directly into CanMV IDE window
+Display.init(Display.VIRT, sensor.width(), sensor.height(), to_ide=True)
 MediaManager.init()
-
 sensor.run()
 
-clock = time.clock()
+try:
+    while True:
+        img = sensor.snapshot()
+        Display.show_image(img)
+        time.sleep_ms(20)
 
-while True:
-    clock.tick()
-    img = sensor.snapshot()
-    Display.show_image(img)
-    print("FPS:", clock.fps())
+except KeyboardInterrupt:
+    pass
+
+finally:
+    sensor.stop()
+    Display.deinit()
+    MediaManager.deinit()
