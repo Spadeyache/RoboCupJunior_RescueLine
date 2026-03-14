@@ -12,13 +12,14 @@ from pathlib import Path
 import onnx
 
 
-def generate_calibration_data(dataset_path: str, img_size: int = 320, num_samples: int = 100):
+def generate_calibration_data(dataset_path: str, img_height: int = 480, img_width: int = 640, num_samples: int = 100):
     """
     Generate calibration dataset for INT8 quantization
     
     Args:
         dataset_path: Path to validation images
-        img_size: Input image size
+        img_height: Input image height
+        img_width: Input image width
         num_samples: Number of calibration samples
     
     Returns:
@@ -50,8 +51,8 @@ def generate_calibration_data(dataset_path: str, img_size: int = 320, num_sample
             if img is None:
                 continue
             
-            # Resize to model input size
-            img = cv2.resize(img, (img_size, img_size))
+            # Resize to model input size (width, height)
+            img = cv2.resize(img, (img_width, img_height))
             
             # Convert BGR to RGB
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -80,7 +81,8 @@ def convert_to_kmodel(
     onnx_path: str,
     output_dir: str = "/output",
     calibration_data_path: str = None,
-    img_size: int = 320,
+    img_height: int = 480,
+    img_width: int = 640,
     target: str = "k230",
     num_calibration_samples: int = 100
 ):
@@ -91,7 +93,8 @@ def convert_to_kmodel(
         onnx_path: Path to ONNX model
         output_dir: Output directory for .kmodel
         calibration_data_path: Path to calibration images
-        img_size: Input image size
+        img_height: Input image height
+        img_width: Input image width
         target: Target device (k230)
         num_calibration_samples: Number of samples for calibration
     
@@ -119,7 +122,7 @@ def convert_to_kmodel(
     print(f"  - Input ONNX: {onnx_path}")
     print(f"  - Output kmodel: {kmodel_path}")
     print(f"  - Target: {target}")
-    print(f"  - Input Size: {img_size}x{img_size}")
+    print(f"  - Input Size: {img_width}x{img_height}")
     print(f"  - Quantization: INT8")
     
     # Import nncase
@@ -133,13 +136,14 @@ def convert_to_kmodel(
     if calibration_data_path:
         print(f"\nGenerating calibration data...")
         calibration_data = generate_calibration_data(
-            calibration_data_path, 
-            img_size, 
+            calibration_data_path,
+            img_height,
+            img_width,
             num_calibration_samples
         )
     else:
         print("\n⚠ No calibration data provided. Using random data (NOT RECOMMENDED for production)")
-        calibration_data = [np.random.rand(1, 3, img_size, img_size).astype(np.float32) for _ in range(10)]
+        calibration_data = [np.random.rand(1, 3, img_height, img_width).astype(np.float32) for _ in range(10)]
     
     print("\n" + "=" * 80)
     print("Starting Compilation...")
@@ -228,7 +232,8 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=str, default="/output", help="Output directory")
     parser.add_argument("--calib-data", type=str, default=None, 
                         help="Path to calibration images (required for good accuracy)")
-    parser.add_argument("--img", type=int, default=320, help="Image size")
+    parser.add_argument("--img-height", type=int, default=480, help="Image height")
+    parser.add_argument("--img-width", type=int, default=640, help="Image width")
     parser.add_argument("--target", type=str, default="k230", help="Target device")
     parser.add_argument("--num-samples", type=int, default=100, 
                         help="Number of calibration samples")
@@ -247,7 +252,8 @@ if __name__ == "__main__":
         onnx_path=args.onnx,
         output_dir=args.output,
         calibration_data_path=args.calib_data,
-        img_size=args.img,
+        img_height=args.img_height,
+        img_width=args.img_width,
         target=args.target,
         num_calibration_samples=args.num_samples
     )

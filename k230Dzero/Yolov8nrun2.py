@@ -5,11 +5,16 @@ import os,sys,gc
 import ulab.numpy as np
 import image
 
+
 if __name__=="__main__":
+
     # 这里仅为示例，自定义场景请修改为您自己的模型路径、标签名称、模型输入大小
-    kmodel_path="/data/kmodels/best_320_k230d.kmodel"
+    kmodel_path="/data/kmodels/best_640x480_k230d.kmodel"
+#    kmodel_path="/data/kmodels/best_320_k230d.kmodel"
+
+#    kmodel_path="/sdcard/examples/kmodel/face_alignment_post.kmodel"
     labels = ["black","silver"]
-    model_input_size=[320,320]
+    model_input_size = [640, 480]
 
     # 添加显示模式，默认hdmi，可选hdmi/lcd/lt9611/st7701/hx8399/nt35516,其中hdmi默认置为lt9611，分辨率1920*1080；lcd默认置为st7701，分辨率800*480
     display_mode="lcd"

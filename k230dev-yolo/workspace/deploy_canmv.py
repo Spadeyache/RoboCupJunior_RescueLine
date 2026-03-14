@@ -274,7 +274,8 @@ if __name__ == "__main__":
 def generate_canmv_script(
     kmodel_path: str,
     output_dir: str = "/output",
-    img_size: int = 320,
+    img_height: int = 480,
+    img_width: int = 640,
     class_names: list = None,
     conf_threshold: float = 0.25,
     iou_threshold: float = 0.45
@@ -285,7 +286,8 @@ def generate_canmv_script(
     Args:
         kmodel_path: Path to .kmodel file
         output_dir: Output directory for script
-        img_size: Input image size
+        img_height: Input image height
+        img_width: Input image width
         class_names: List of class names
         conf_threshold: Confidence threshold for detections
         iou_threshold: IoU threshold for NMS
@@ -313,7 +315,7 @@ def generate_canmv_script(
     
     print(f"\nConfiguration:")
     print(f"  - Model: {model_filename}")
-    print(f"  - Input Size: {img_size}x{img_size}")
+    print(f"  - Input Size: {img_width}x{img_height}")
     print(f"  - Classes: {class_names}")
     print(f"  - Confidence Threshold: {conf_threshold}")
     print(f"  - IoU Threshold: {iou_threshold}")
@@ -322,8 +324,8 @@ def generate_canmv_script(
     # Fill template
     script_content = CANMV_TEMPLATE.format(
         model_path=f"/root/{model_filename}",  # Standard path on K230D
-        img_width=img_size,
-        img_height=img_size,
+        img_width=img_width,
+        img_height=img_height,
         conf_threshold=conf_threshold,
         iou_threshold=iou_threshold,
         class_names=class_names
@@ -352,7 +354,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate CanMV deployment script")
     parser.add_argument("kmodel", type=str, help="Path to .kmodel file")
     parser.add_argument("--output", type=str, default="/output", help="Output directory")
-    parser.add_argument("--img", type=int, default=320, help="Image size")
+    parser.add_argument("--img-height", type=int, default=480, help="Image height")
+    parser.add_argument("--img-width", type=int, default=640, help="Image width")
     parser.add_argument("--classes", type=str, nargs='+', default=["object"],
                         help="Class names (space-separated)")
     parser.add_argument("--conf", type=float, default=0.25, help="Confidence threshold")
@@ -363,7 +366,8 @@ if __name__ == "__main__":
     script_path = generate_canmv_script(
         kmodel_path=args.kmodel,
         output_dir=args.output,
-        img_size=args.img,
+        img_height=args.img_height,
+        img_width=args.img_width,
         class_names=args.classes,
         conf_threshold=args.conf,
         iou_threshold=args.iou

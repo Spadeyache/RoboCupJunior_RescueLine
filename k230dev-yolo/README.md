@@ -5,7 +5,7 @@ End-to-end Docker-based development environment for training and deploying YOLOv
 ## 🎯 Project Overview
 
 This pipeline enables:
-- **Training**: YOLOv8n Nano model at 320×320 resolution
+- **Training**: YOLOv8n Nano model at configurable resolution (default **640×480**)
 - **Export**: PyTorch → ONNX (Opset 11/12, simplified)
 - **Quantization**: ONNX → INT8 .kmodel using nncase v2.10.0
 - **Deployment**: CanMV (MicroPython) inference on K230D with KPU (SDK 2.0.0)
@@ -15,7 +15,7 @@ This pipeline enables:
 ```
 ┌─────────────────┐
 │  Training       │  PyTorch + Ultralytics
-│  (train service)│  → Trains YOLOv8n @ 320x320
+│  (train service)│  → Trains YOLOv8n (e.g. 640x480)
 └────────┬────────┘
          │ .pt model
          ↓
@@ -142,7 +142,7 @@ names:
 
 ## 📚 Complete Workflow
 
-### Step 1: Train YOLOv8n Model
+### Step 1: Train YOLOv8n Model (supports non-square, e.g. 640×480)
 
 ```bash
 # Start training container
@@ -154,7 +154,8 @@ python train_yolov8n.py \
     --data data.yaml \
     --epochs 100 \
     --batch 16 \
-    --img 320 \
+    --img-height 480 \
+    --img-width 640 \
     --name my_model
 ```
 
@@ -162,27 +163,30 @@ python train_yolov8n.py \
 - `--data`: Path to data.yaml
 - `--epochs`: Training epochs (default: 100)
 - `--batch`: Batch size (adjust based on GPU memory)
-- `--img`: Image size (320 for K230D)
+- `--img-height`: Input image height (default: 480)
+- `--img-width`: Input image width (default: 640)
 - `--name`: Run name for organization
 
 **Output:** `/runs/my_model/weights/best.pt`
 
-### Step 2: Export to ONNX
+### Step 2: Export to ONNX (must match training resolution)
 
 ```bash
 # Still in training container
 python export_to_onnx.py \
     /runs/my_model/weights/best.pt \
     --output /models \
-    --img 320 \
+    --img-height 480 \
+    --img-width 640 \
     --opset 11
 ```
 
-**Output:** `/models/best_320.onnx`
+**Output:** `/models/best_640x480.onnx` (or similar, based on your resolution)
 
 #### Test ONNX in Docker (no local env conflict)
 
-Run the ONNX test script inside the same train container so all dependencies (numpy, onnxruntime, opencv) are isolated—no scipy/numpy version conflicts on your host:
+Run the ONNX test script inside the same train container so all dependencies (numpy, onnxruntime, opencv) are isolated—no scipy/numpy version conflicts on your host.  
+You can (and should) pass the same input height/width that you used for training/export.
 
 ```bash
 # Inside the train container (after export or in a fresh run)
@@ -190,12 +194,23 @@ docker compose run --rm train
 
 # Inside container
 cd /workspace
-python testing_onnx.py
-# Uses /models/best_320.onnx and first image in /datasets/my_dataset/train/images
-# Writes resized_320x320.jpg and result_320.jpg to /workspace (visible in ./workspace on host)
+python testing_onnx.py \
+    /models/best_640x480.onnx \
+    /datasets/my_dataset/train/images/your.jpg \
+    --img-height 480 \
+    --img-width 640 \
+    --conf 0.25
+# Writes resized_640x480.jpg and result_640x480.jpg to /workspace (visible in ./workspace on host)
 ```
 
-Or with custom paths: `python testing_onnx.py /models/best_320.onnx /datasets/my_dataset/train/images/your.jpg`
+**Parameters for `testing_onnx.py`:**
+- `model.onnx` (positional, optional): ONNX model path (defaults to `models/best_640x480.onnx`)
+- `image.jpg` (positional, optional): test image (first dataset image is used if omitted)
+- `out.jpg` (positional, optional): output path (overridden by `--output` if provided)
+- `--img-height`: model input height (default: 480)
+- `--img-width`: model input width (default: 640)
+- `--conf`: confidence threshold (default: 0.25)
+- `--output`: explicit output image path
 
 ### Step 3: Convert to .kmodel
 
@@ -207,10 +222,11 @@ docker compose run --rm convert
 # Inside conversion container
 cd /workspace
 python convert_to_kmodel.py \
-    /models/best_320.onnx \
+    /models/best_640x480.onnx \
     --output /output \
     --calib-data /datasets/my_dataset/images/val \
-    --img 320 \
+    --img-height 480 \
+    --img-width 640 \
     --num-samples 100
 ```
 
@@ -223,9 +239,10 @@ python convert_to_kmodel.py \
 ```bash
 # Still in conversion container
 python deploy_canmv.py \
-    /output/best_320_k230d.kmodel \
+    /output/best_640x480_k230d.kmodel \
     --output /output \
-    --img 320 \
+    --img-height 480 \
+    --img-width 640 \
     --classes class1 class2 \
     --conf 0.25 \
     --iou 0.45
@@ -270,7 +287,8 @@ The script will:
 python train_yolov8n.py \
     --epochs 200 \
     --batch 32 \
-    --img 320 \
+    --img-height 480 \
+    --img-width 640 \
     --cache  # Cache images in RAM (if enough memory)
 ```
 
@@ -415,4 +433,4 @@ For issues specific to:
 
 **Built with ❤️ for the K230D RISC-V community**
 
-*Optimized for 320×320 inference on 128MB RAM*
+*Optimized for 128MB RAM with support for non-square inputs such as 640×480*

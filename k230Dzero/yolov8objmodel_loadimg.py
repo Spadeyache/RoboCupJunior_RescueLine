@@ -7,8 +7,8 @@ import image
 
 if __name__=="__main__":
     # 这里仅为示例，自定义场景请修改为您自己的测试图片、模型路径、标签名称、模型输入大小
-    img_path="/data/dataset/1651946904-8817422_png.rf.50172c2c9c96f3150c0ce9f5aaf1a682.jpg"
-    kmodel_path="/data/kmodels/best_320_k230d.kmodel"
+    img_path="/sdcard/dataset/victim/victim_0013.jpg"
+    kmodel_path="/data/kmodels/best_640x480_k230d.kmodel"
     labels = ["black","silver"]
     model_input_size=[320,320]
 

@@ -17,7 +17,8 @@ import torch
 def export_to_onnx(
     model_path: str,
     output_dir: str = "/models",
-    img_size: int = 320,
+    img_height: int = 480,
+    img_width: int = 640,
     opset: int = 11,
     simplify: bool = True,
     dynamic: bool = False
@@ -28,7 +29,8 @@ def export_to_onnx(
     Args:
         model_path: Path to trained .pt model
         output_dir: Output directory for ONNX model
-        img_size: Input image size (must match training)
+        img_height: Input image height (must match training)
+        img_width: Input image width (must match training)
         opset: ONNX opset version (11 or 12 recommended for nncase)
         simplify: Simplify ONNX model
         dynamic: Use dynamic input shapes (False for K230D)
@@ -54,11 +56,11 @@ def export_to_onnx(
     
     # Generate output filename
     model_name = Path(model_path).stem
-    onnx_filename = f"{model_name}_{img_size}.onnx"
+    onnx_filename = f"{model_name}_{img_width}x{img_height}.onnx"
     onnx_path = os.path.join(output_dir, onnx_filename)
     
     print(f"\nExport Configuration:")
-    print(f"  - Input Size: {img_size}x{img_size}")
+    print(f"  - Input Size: {img_width}x{img_height}")
     print(f"  - ONNX Opset: {opset}")
     print(f"  - Dynamic Shapes: {dynamic}")
     print(f"  - Simplify: {simplify}")
@@ -72,7 +74,7 @@ def export_to_onnx(
     # Export with specific settings for K230D
     model.export(
         format="onnx",
-        imgsz=img_size,
+        imgsz=(img_height, img_width),
         opset=opset,
         dynamic=dynamic,
         simplify=False,  # We'll do this manually for better control
@@ -94,7 +96,7 @@ def export_to_onnx(
                 onnx_model, check = onnxsim.simplify(
                     onnx_model,
                     dynamic_input_shape=dynamic,
-                    input_shapes={f"images": [1, 3, img_size, img_size]} if not dynamic else None
+                    input_shapes={f"images": [1, 3, img_height, img_width]} if not dynamic else None
                 )
                 print(f"  ✓ Simplification successful: {check}")
             except Exception as e:
@@ -147,7 +149,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Export YOLOv8n to ONNX for K230D")
     parser.add_argument("model", type=str, help="Path to trained .pt model")
     parser.add_argument("--output", type=str, default="/models", help="Output directory")
-    parser.add_argument("--img", type=int, default=320, help="Image size")
+    parser.add_argument("--img-height", type=int, default=480, help="Image height")
+    parser.add_argument("--img-width", type=int, default=640, help="Image width")
     parser.add_argument("--opset", type=int, default=11, help="ONNX opset version")
     parser.add_argument("--no-simplify", action="store_true", help="Skip ONNX simplification")
     parser.add_argument("--dynamic", action="store_true", help="Use dynamic input shapes")
@@ -157,7 +160,8 @@ if __name__ == "__main__":
     onnx_path = export_to_onnx(
         model_path=args.model,
         output_dir=args.output,
-        img_size=args.img,
+        img_height=args.img_height,
+        img_width=args.img_width,
         opset=args.opset,
         simplify=not args.no_simplify,
         dynamic=args.dynamic

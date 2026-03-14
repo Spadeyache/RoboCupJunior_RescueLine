@@ -44,8 +44,8 @@ RUN pip3 install --no-cache-dir \
 # Install nncase v2.x for K230D
 # Note: Adjust version based on official K230D SDK recommendations
 RUN pip3 install --no-cache-dir \
-    nncase==2.10.0 \
-    nncase-kpu==2.10.0
+    nncase==2.9.0 \
+    nncase-kpu==2.9.0
 
 # Create necessary directories
 RUN mkdir -p /models /output /test_images /workspace

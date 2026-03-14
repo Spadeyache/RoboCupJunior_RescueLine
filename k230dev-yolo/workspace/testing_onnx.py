@@ -1,7 +1,7 @@
 """
-Test ONNX model (e.g. best_320.onnx) with a single image.
+Test ONNX model (e.g. best_640x480.onnx) with a single image.
 Designed to run in Docker (no GUI); writes result image to file with boxes overlayed.
-Keeps 320x320 resize to match YOLO training.
+Resizes explicitly to the model's trained input size (height/width are configurable).
 """
 import os
 import sys
@@ -10,7 +10,7 @@ import numpy as np
 import onnxruntime as ort
 
 # Default paths (work from workspace/ in repo or in Docker with mounted volumes)
-DEFAULT_MODEL = os.path.join(os.path.dirname(__file__), "..", "models", "best_320.onnx")
+DEFAULT_MODEL = os.path.join(os.path.dirname(__file__), "..", "models", "best_640x480.onnx")
 DATA_YAML = os.path.join(os.path.dirname(__file__), "data.yaml")
 # Training images: try Docker path first, then repo-relative
 DEFAULT_IMAGE_DIRS = [
@@ -22,7 +22,8 @@ DEFAULT_IMAGE_DIRS = [
     os.path.join(os.path.dirname(__file__), "..", "datasets", "my_dataset", "test", "images"),
 ]
 
-IMG_SIZE = 320
+DEFAULT_IMG_HEIGHT = 480
+DEFAULT_IMG_WIDTH = 640
 CONF_THRESH = 0.25
 IOU_THRESH = 0.45
 
@@ -61,40 +62,37 @@ def _load_class_names(yaml_path=None):
     return names
 
 
-def _postprocess_yolo(output, conf_thresh, iou_thresh, img_size):
-    """
-    YOLOv8 ONNX output: (1, 4+nc, num_boxes). Match Ultralytics: transpose(squeeze(...)).
-    Returns list of (x1, y1, x2, y2, conf, cls_id) in pixel coords.
-    """
-    raw = np.squeeze(output[0])
-    # (4+nc, num_boxes) -> (num_boxes, 4+nc); if (num_boxes, 4+nc) already, transpose gives (4+nc, num_boxes) -> fix
-    pred = np.transpose(raw)
-    if pred.ndim == 1:
-        pred = np.expand_dims(pred, 0)
-    # Rows must be predictions (many rows, few cols = 4+nc)
-    if pred.shape[0] < pred.shape[1]:
-        pred = pred.T
-    num_classes = pred.shape[1] - 4
+# def _postprocess_yolo(output, conf_thresh, iou_thresh, img_height, img_width):
+    # """
+    # YOLOv8 ONNX output: (1, 4+nc, num_boxes). Match Ultralytics: transpose(squeeze(...)).
+    # Returns list of (x1, y1, x2, y2, conf, cls_id) in pixel coords.
+    # """
+def _postprocess_yolo(output, conf_thresh, iou_thresh, img_height, img_width):
+    raw = np.squeeze(output[0])  # (6, 6300)
+    pred = raw.T                  # (6300, 6)  -> (xc, yc, w, h, score0, score1)
+
     detections = []
     for i in range(pred.shape[0]):
         xc, yc, w, h = pred[i, :4]
         scores = pred[i, 4:]
+
         conf = float(np.max(scores))
         if conf < conf_thresh:
             continue
         cls_id = int(np.argmax(scores))
-        # Convert normalized center/wh to pixel xyxy (model is 0-1 normalized for 320x320)
-        x1 = int((xc - w / 2) * img_size)
-        y1 = int((yc - h / 2) * img_size)
-        x2 = int((xc + w / 2) * img_size)
-        y2 = int((yc + h / 2) * img_size)
-        x1 = max(0, min(x1, img_size - 1))
-        y1 = max(0, min(y1, img_size - 1))
-        x2 = max(0, min(x2, img_size))
-        y2 = max(0, min(y2, img_size))
-        detections.append((x1, y1, x2, y2, conf, cls_id))
-    return _nms(detections, iou_thresh)
 
+        # Coordinates are already in pixel space (not normalized)
+        x1 = int(xc - w / 2)
+        y1 = int(yc - h / 2)
+        x2 = int(xc + w / 2)
+        y2 = int(yc + h / 2)
+        x1 = max(0, min(x1, img_width - 1))
+        y1 = max(0, min(y1, img_height - 1))
+        x2 = max(0, min(x2, img_width))
+        y2 = max(0, min(y2, img_height))
+        detections.append((x1, y1, x2, y2, conf, cls_id))
+
+    return _nms(detections, iou_thresh)
 
 def _nms(detections, iou_threshold):
     """Non-maximum suppression. detections: list of (x1, y1, x2, y2, conf, cls_id)."""
@@ -143,9 +141,18 @@ def _find_default_image():
     return None
 
 
-def test_onnx_image(model_path, image_path, output_path="result_320.jpg", conf_thresh=None):
+def test_onnx_image(
+    model_path,
+    image_path,
+    output_path=None,
+    conf_thresh=None,
+    img_height=DEFAULT_IMG_HEIGHT,
+    img_width=DEFAULT_IMG_WIDTH,
+):
     if conf_thresh is None:
         conf_thresh = CONF_THRESH
+    if output_path is None:
+        output_path = f"result_{img_width}x{img_height}.jpg"
     # 1. Load the ONNX model (CPU for Docker compatibility)
     session = ort.InferenceSession(model_path, providers=["CPUExecutionProvider"])
     input_name = session.get_inputs()[0].name
@@ -156,11 +163,11 @@ def test_onnx_image(model_path, image_path, output_path="result_320.jpg", conf_t
         print("Error: Could not load image:", image_path)
         return
 
-    # Resize to 320x320 (matches YOLO training)
-    resized_img = cv2.resize(original_img, (IMG_SIZE, IMG_SIZE))
+    # Resize to the explicit trained input size (width, height)
+    resized_img = cv2.resize(original_img, (img_width, img_height))
 
     # Save resized input for inspection
-    resized_path = "resized_320x320.jpg"
+    resized_path = f"resized_{img_width}x{img_height}.jpg"
     cv2.imwrite(resized_path, resized_img)
     print("Resized image saved as", resized_path)
 
@@ -178,13 +185,29 @@ def test_onnx_image(model_path, image_path, output_path="result_320.jpg", conf_t
     raw_max = float(np.max(out))
     print("Raw output max score: {:.4f} (conf threshold: {})".format(raw_max, conf_thresh))
 
+
+    # # ===== DEBUG =====
+    # raw = np.squeeze(out)
+    # print(f"Squeezed shape: {raw.shape}")
+    # if raw.shape[0] < raw.shape[1]:
+    #     pred = raw.T
+    # else:
+    #     pred = raw
+    # print(f"Pred shape: {pred.shape}")
+    # print(f"Sample coords: xc={pred[0,0]:.3f} yc={pred[0,1]:.3f} w={pred[0,2]:.3f} h={pred[0,3]:.3f}")
+    # print(f"Score range: min={pred[:,4:].min():.4f} max={pred[:,4:].max():.4f} mean={pred[:,4:].mean():.4f}")
+    # max_scores = pred[:, 4:].max(axis=1)
+    # for thresh in [0.9, 0.7, 0.5, 0.25, 0.1, 0.05, 0.01]:
+    #     print(f"  Boxes > {thresh}: {(max_scores > thresh).sum()}")
+    # # ===== END DEBUG =====
+
     # 4. Post-process and overlay detections
     class_names = _load_class_names()
     nc = out.shape[1] - 4 if out.shape[0] <= out.shape[1] else out.shape[2] - 4
     while len(class_names) < nc:
         class_names.append(f"class_{len(class_names)}")
 
-    detections = _postprocess_yolo(outputs, conf_thresh, IOU_THRESH, IMG_SIZE)
+    detections = _postprocess_yolo(outputs, conf_thresh, IOU_THRESH, img_height, img_width)
     print("Detections: {}".format(len(detections)))
     for (x1, y1, x2, y2, conf, cls_id) in detections:
         name = class_names[cls_id] if cls_id < len(class_names) else f"class_{cls_id}"
@@ -204,9 +227,11 @@ def test_onnx_image(model_path, image_path, output_path="result_320.jpg", conf_t
 
 def main():
     argv = sys.argv[1:]
-    # Parse --conf 0.1 and --output path
+    # Parse --conf, --output, --img-height, --img-width
     conf_thresh = None
-    output_path = "result_320.jpg"
+    output_path = None
+    img_height = DEFAULT_IMG_HEIGHT
+    img_width = DEFAULT_IMG_WIDTH
     args = []
     i = 0
     while i < len(argv):
@@ -221,13 +246,27 @@ def main():
             output_path = argv[i + 1]
             i += 2
             continue
+        if argv[i] == "--img-height" and i + 1 < len(argv):
+            try:
+                img_height = int(argv[i + 1])
+            except ValueError:
+                pass
+            i += 2
+            continue
+        if argv[i] == "--img-width" and i + 1 < len(argv):
+            try:
+                img_width = int(argv[i + 1])
+            except ValueError:
+                pass
+            i += 2
+            continue
         if not argv[i].startswith("-"):
             args.append(argv[i])
         i += 1
 
     model_path = args[0] if len(args) >= 1 else DEFAULT_MODEL
     image_path = args[1] if len(args) >= 2 else None
-    if len(args) >= 3:
+    if len(args) >= 3 and output_path is None:
         output_path = args[2]
 
     if image_path is None:
@@ -235,7 +274,10 @@ def main():
     if not image_path or not os.path.isfile(image_path):
         print("No image specified and no training image found.")
         print("Searched:", DEFAULT_IMAGE_DIRS)
-        print("Usage: python testing_onnx.py [model.onnx] [image.jpg] [out.jpg] [--conf 0.1] [--output path]")
+        print(
+            "Usage: python testing_onnx.py [model.onnx] [image.jpg] [out.jpg] "
+            "[--conf 0.1] [--output path] [--img-height H] [--img-width W]"
+        )
         sys.exit(1)
     if not os.path.isfile(model_path):
         print("Model not found:", model_path)
@@ -243,7 +285,15 @@ def main():
 
     print("Model:", model_path)
     print("Image:", image_path)
-    test_onnx_image(model_path, image_path, output_path, conf_thresh=conf_thresh)
+    print(f"Input size: {img_width}x{img_height}")
+    test_onnx_image(
+        model_path,
+        image_path,
+        output_path=output_path,
+        conf_thresh=conf_thresh,
+        img_height=img_height,
+        img_width=img_width,
+    )
 
 
 if __name__ == "__main__":

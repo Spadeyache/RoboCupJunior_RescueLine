@@ -15,7 +15,8 @@ def train_yolov8n(
     data_yaml: str = "data.yaml",
     epochs: int = 100,
     batch_size: int = 16,
-    img_size: int = 320,  # Critical: 320x320 for K230D memory constraints
+    img_height: int = 480,  # Default raw input height
+    img_width: int = 640,   # Default raw input width
     project: str = "/runs",
     name: str = "yolov8n_k230d",
     device: str = "0",
@@ -30,7 +31,8 @@ def train_yolov8n(
         data_yaml: Path to dataset configuration
         epochs: Number of training epochs
         batch_size: Training batch size
-        img_size: Input image size (320x320 for K230D)
+        img_height: Input image height (e.g., 480 for 640x480)
+        img_width: Input image width (e.g., 640 for 640x480)
         project: Project directory for saving runs
         name: Run name
         device: CUDA device (e.g., '0' or 'cpu')
@@ -40,7 +42,7 @@ def train_yolov8n(
     """
     
     print("=" * 80)
-    print("YOLOv8n Training for K230D (320x320 Resolution)")
+    print(f"YOLOv8n Training for K230D ({img_width}x{img_height} Resolution)")
     print("=" * 80)
     
     # Verify data.yaml exists
@@ -64,7 +66,7 @@ def train_yolov8n(
     
     # Training configuration
     print(f"\nTraining Configuration:")
-    print(f"  - Image Size: {img_size}x{img_size}")
+    print(f"  - Image Size: {img_width}x{img_height}")
     print(f"  - Batch Size: {batch_size}")
     print(f"  - Epochs: {epochs}")
     print(f"  - Device: {device}")
@@ -78,7 +80,7 @@ def train_yolov8n(
     results = model.train(
         data=data_yaml,
         epochs=epochs,
-        imgsz=img_size,
+        imgsz=(img_height, img_width),
         batch=batch_size,
         device=device,
         workers=workers,
@@ -124,7 +126,7 @@ def train_yolov8n(
     print("=" * 80 + "\n")
     
     best_model = YOLO(str(best_model_path))
-    metrics = best_model.val(data=data_yaml, imgsz=img_size, device=device)
+    metrics = best_model.val(data=data_yaml, imgsz=(img_height, img_width), device=device)
     
     print(f"\nValidation Results:")
     print(f"  - mAP50: {metrics.box.map50:.4f}")
@@ -147,7 +149,8 @@ if __name__ == "__main__":
     parser.add_argument("--data", type=str, default="data.yaml", help="Path to data.yaml")
     parser.add_argument("--epochs", type=int, default=100, help="Number of epochs")
     parser.add_argument("--batch", type=int, default=16, help="Batch size")
-    parser.add_argument("--img", type=int, default=320, help="Image size (default: 320)")
+    parser.add_argument("--img-height", type=int, default=480, help="Image height (default: 480)")
+    parser.add_argument("--img-width", type=int, default=640, help="Image width (default: 640)")
     parser.add_argument("--project", type=str, default="/runs", help="Project directory")
     parser.add_argument("--name", type=str, default="yolov8n_k230d", help="Run name")
     parser.add_argument("--device", type=str, default="0", help="CUDA device")
@@ -161,7 +164,8 @@ if __name__ == "__main__":
         data_yaml=args.data,
         epochs=args.epochs,
         batch_size=args.batch,
-        img_size=args.img,
+        img_height=args.img_height,
+        img_width=args.img_width,
         project=args.project,
         name=args.name,
         device=args.device,
