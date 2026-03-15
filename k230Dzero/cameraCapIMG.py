@@ -9,7 +9,7 @@ from machine import Pin
 
 # --- config --- change these ---
 CLASS_NAME = "victim"        # <-- change per object class
-SAVE_DIR = f"/sdcard/dataset/{CLASS_NAME}"
+SAVE_DIR = f"/data/dataset/{CLASS_NAME}"
 
 # --- folder setup ---
 def mkdir_p(path):
