@@ -174,4 +174,54 @@ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\xiaoesp32\XIAOdev\buil
  C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_driver_ledc/include/driver/ledc.h \
  C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/espressif__esp32-camera/driver/include/sensor.h \
  C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/espressif__esp32-camera/conversions/include/img_converters.h \
- C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/espressif__esp_jpeg/include/jpeg_decoder.h
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/espressif__esp_jpeg/include/jpeg_decoder.h \
+ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\xiaoesp32\XIAOdev\build\sketch\vision.h \
+ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\xiaoesp32\XIAOdev\build\sketch\wifi_config.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFi.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/Print.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiType.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_wifi/include/esp_wifi_types.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_wifi/include/esp_wifi_types_generic.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_hw_support/include/esp_interface.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_wifi/include/local/esp_wifi_types_native.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_wifi/include/esp_wifi_types_generic.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiSTA.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiGeneric.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_wifi/include/esp_smartconfig.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_netif/include/esp_netif_types.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_netif/include/esp_netif_ip_addr.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_eth/include/esp_eth_driver.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_eth/include/esp_eth_com.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/hal/include/hal/eth_types.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_eth/include/esp_eth_spec.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_eth/include/esp_eth_mac_spi.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_eth/include/esp_eth_mac.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_driver_spi/include/driver/spi_master.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/hal/include/hal/spi_types.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_driver_spi/include/driver/spi_common.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_system/include/esp_ipc.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_eth/include/esp_eth_phy.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/espressif__network_provisioning/include/network_provisioning/manager.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/protocomm/include/common/protocomm.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/protocomm/include/security/protocomm_security.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/espressif__network_provisioning/include/network_provisioning/network_config.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/Network.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkInterface.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/Printable.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkEvents.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkManager.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/WString.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkClient.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/Client.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkServer.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/Server.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkUdp.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/Udp.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\cores\esp32/cbuf.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\tools\esp32s3-libs\3.3.7/include/esp_ringbuf/include/freertos/ringbuf.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiAP.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiScan.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiClient.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiServer.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\WiFi\src/WiFiUdp.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\esp32\hardware\esp32\3.3.7\libraries\Network\src/NetworkUdp.h

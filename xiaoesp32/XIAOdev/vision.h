@@ -13,31 +13,50 @@
 #define BLUE_DOMINANCE      25      // Minimum % blue dominance for blue detection
 
 // Result structures
-typedef struct {
-    bool detected;
-    float offset;           // -1.0 (full left) to +1.0 (full right)
-    int darkPixels;
-    float darkPercent;
-} LineResult;
+
+// typedef struct {
+//     bool detected;
+//     float offset;           // -1.0 (full left) to +1.0 (full right)
+//     int darkPixels;
+//     float darkPercent;
+// } LineResult;
 
 typedef struct {
-    uint8_t r, g, b;
-    bool isGreen;
+    float error;
+    bool isSilver;
     bool isRed;
-    bool isBlue;
     bool isWhite;
+    bool intersection;
+}  LineResult;
+
+typedef struct {
+    bool isLeftGreen;
+    bool isRightGreen;
+} IntersectResult;
+
+typedef struct {
+    bool isSilver;
     bool isBlack;
-} ColorResult;
+} EvacResult;
+
+// typedef struct {
+//     uint8_t r, g, b;
+//     bool isGreen;
+//     bool isRed;
+//     bool isBlue;
+//     bool isWhite;
+//     bool isBlack;
+// } ColorResult;
 
 typedef struct {
     LineResult line;
-    ColorResult color;
+    IntersectResult intersect;
     int frameWidth;
     int frameHeight;
 } FrameResult;
 
 // Function declarations
-FrameResult Vision_Process(camera_fb_t* fb);
+FrameResult Line_Vision_Process(camera_fb_t* fb);
 void Vision_Print(const FrameResult& result);
 uint16_t Vision_UnpackRGB565(const uint8_t* data, size_t index);
 uint8_t Vision_Grayscale(uint8_t r, uint8_t g, uint8_t b);

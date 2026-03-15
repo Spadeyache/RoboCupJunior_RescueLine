@@ -4,11 +4,6 @@
 #include <Arduino.h>
 
 bool Camera_Init() {
-    if (!psramFound()) {
-        Serial.println("PSRAM not found! Check board settings.");
-        return false;
-    }
-    
     camera_config_t config;
 
     config.pin_pwdn     = PWDN_GPIO_NUM;
@@ -35,10 +30,10 @@ bool Camera_Init() {
     config.ledc_timer   = LEDC_TIMER_0;
 
     config.pixel_format = PIXFORMAT_RGB565;
-    config.frame_size   = FRAMESIZE_QVGA;  // 320x240
-    config.jpeg_quality = 12;              // unused for RGB565, but required
-    config.fb_count     = 2;
-    config.fb_location  = CAMERA_FB_IN_PSRAM;
+    config.frame_size   = FRAMESIZE_QQVGA;  // 160x120
+    config.jpeg_quality = 12;
+    config.fb_count     = 1;
+    config.fb_location  = CAMERA_FB_IN_DRAM;
     config.grab_mode    = CAMERA_GRAB_WHEN_EMPTY;
 
     esp_err_t err = esp_camera_init(&config);
@@ -47,19 +42,18 @@ bool Camera_Init() {
         return false;
     }
 
-    // Optional: tweak sensor settings after init
     sensor_t* s = esp_camera_sensor_get();
     if (s) {
-        s->set_framesize(s, FRAMESIZE_QVGA);
-        s->set_quality(s, 12);
+        // Keep framesize at QQVGA — do NOT upgrade to QVGA without PSRAM
+        s->set_framesize(s, FRAMESIZE_QQVGA);
         s->set_brightness(s, 0);
         s->set_contrast(s, 0);
         s->set_saturation(s, 0);
-        s->set_whitebal(s, 1);      // auto white balance
+        s->set_whitebal(s, 1);
         s->set_awb_gain(s, 1);
-        s->set_exposure_ctrl(s, 1); // auto exposure
+        s->set_exposure_ctrl(s, 1);
         s->set_aec2(s, 1);
-        s->set_gain_ctrl(s, 1);     // auto gain
+        s->set_gain_ctrl(s, 1);
     }
 
     return true;
@@ -70,5 +64,5 @@ camera_fb_t* Camera_Grab() {
 }
 
 void Camera_Return(camera_fb_t* fb) {
-    esp_camera_fb_return(fb);
+    if (fb) esp_camera_fb_return(fb);
 }

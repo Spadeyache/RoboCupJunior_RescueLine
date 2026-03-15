@@ -1,12 +1,12 @@
 #line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 #include <Arduino.h>
 #include "camera_config.h"
-// #include "vision.h"
-// #include "wifi_config.h"
+#include "vision.h"
+#include "wifi_config.h"
 
 #line 6 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup();
-#line 31 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 29 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void loop();
 #line 6 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup() {
@@ -21,16 +21,14 @@ void setup() {
     if (!Camera_Init()) {
         Serial.println("Camera initialization failed!");
         delay(100);
-    }
-    Serial.println("Camera initialized successfully");
-
-    // // Initialize WiFi
-    // Serial.printf("Connecting to %s ", WIFI_SSID);
-    // if (WiFi_Init()) {
-    //     Serial.printf("Connected! IP address: %s\n", WiFi.localIP().toString().c_str());
-    //     delay(100);
-    // }
-    // Serial.println("Connection failed or timed out");
+    } else{Serial.println("Camera initialized successfully");}
+    
+    // Initialize WiFi
+    Serial.printf("Connecting to %s ", WIFI_SSID);
+    if (WiFi_Init()) {
+        Serial.printf("Connected! IP address: %s\n", WiFi.localIP().toString().c_str());
+        delay(100);
+    } else {Serial.println("Connection failed or timed out");}
     
 }
 
@@ -48,11 +46,12 @@ void loop() {
         return;
     }
 
-    // // Process frame for vision data
-    // FrameResult result = Vision_Process(fb);
+    // Process frame for vision data
+    FrameResult result = Line_Vision_Process(fb);
 
-    // // Print results
+    // Print results
     // Vision_Print(result);
+    Serial.println(result.line.error);
 
     // Return frame buffer
     Camera_Return(fb);

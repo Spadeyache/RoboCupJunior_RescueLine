@@ -1,7 +1,7 @@
 #include <WiFi.h>
 
-const char *ssid = "nyu-media2.4GHz";
-const char *password = "Media@NYU";
+const char *ssid = "Spadeyache32";
+const char *password = "pkxc9kvozip2";
 
 void scanNetworks() {
   Serial.println("\n--- Scanning for WiFi Networks ---");

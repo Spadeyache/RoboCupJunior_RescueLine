@@ -21,7 +21,7 @@
 #define HREF_GPIO_NUM  47
 #define PCLK_GPIO_NUM  13
 
-// Camera configuration
+// Camera configuration for vision processing
 #define FRAME_SIZE  FRAMESIZE_QVGA  // 320x240
 #define PIX_FORMAT  PIXFORMAT_RGB565
 
