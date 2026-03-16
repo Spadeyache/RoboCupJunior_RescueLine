@@ -16,40 +16,78 @@ void setup() {
         Serial.println("Camera initialization failed!");
         delay(100);
     } else{Serial.println("Camera initialized successfully");}
-    
-    // Initialize WiFi
-    Serial.printf("Connecting to %s ", WIFI_SSID);
-    if (WiFi_Init()) {
-        Serial.printf("Connected! IP address: %s\n", WiFi.localIP().toString().c_str());
-        delay(100);
-    } else {Serial.println("Connection failed or timed out");}
+
+    // // --- White balance calibration ---
+    // // Point camera at white surface before this runs
+    // Serial.println("Calibrating white balance... point at white surface");
+    // delay(2000);  // give time to position camera
+
+    // camera_fb_t* cal_fb = Camera_Grab();
+    // if (cal_fb) {
+    //     Vision_CalibrateWB(cal_fb);
+    //     Camera_Return(cal_fb);
+    //     Serial.println("WB calibration done.");
+    // } else {
+    //     Serial.println("WB calibration failed — using default gains");
+    // }
+
+
+    // // Initialize WiFi
+    // Serial.printf("Connecting to %s ", WIFI_SSID);
+    // if (WiFi_Init()) {
+    //     Serial.printf("Connected! IP address: %s\n", WiFi.localIP().toString().c_str());
+    //     delay(100);
+    // } else {Serial.println("Connection failed or timed out");}
     
 }
 
+// void loop() {
+//     static unsigned long lastTime = 0;
+//     if (millis() - lastTime < 1000) {
+//         return; // Run every 100ms
+//     }
+//     lastTime = millis();
+
+//     // Capture frame
+//     camera_fb_t* fb = Camera_Grab();
+//     if (!fb) {
+//         Serial.println("Camera capture failed");
+//         return;
+//     }
+
+//     // Process frame for vision data
+//     FrameResult result = Line_Vision_Process(fb);
+
+//     // Print results
+//     // Vision_Print(result);
+//     Serial.println((int32_t)(result.line.error));
+
+//     // Return frame buffer
+//     Camera_Return(fb);
+
+//     // TODO: Add line steering logic here based on result.line.offset
+//     // TODO: Add color reaction logic here based on result.color flags
+// }
+
+
+
 void loop() {
-    static unsigned long lastTime = 0;
-    if (millis() - lastTime < 100) {
-        return; // Run every 100ms
+    // code snippet to stream the camera image via serial
+    while(true){
+        static const uint8_t FRAME_MAGIC[4] = {0xAA, 0x55, 0xBB, 0x44};
+        camera_fb_t* fb = Camera_Grab();
+        if (!fb) { delay(10); return; }
+
+        uint16_t w = fb->width;
+        uint16_t h = fb->height;
+        int32_t errVal = 0;  // dummy, viewer needs this to find pixel data
+
+        Serial.write(FRAME_MAGIC, 4);
+        Serial.write((uint8_t*)&w, 2);
+        Serial.write((uint8_t*)&h, 2);
+        Serial.write((uint8_t*)&errVal, 4);
+        Serial.write(fb->buf, fb->len);
+
+        Camera_Return(fb);
     }
-    lastTime = millis();
-
-    // Capture frame
-    camera_fb_t* fb = Camera_Grab();
-    if (!fb) {
-        Serial.println("Camera capture failed");
-        return;
-    }
-
-    // Process frame for vision data
-    FrameResult result = Line_Vision_Process(fb);
-
-    // Print results
-    // Vision_Print(result);
-    Serial.println(result.line.error);
-
-    // Return frame buffer
-    Camera_Return(fb);
-
-    // TODO: Add line steering logic here based on result.line.offset
-    // TODO: Add color reaction logic here based on result.color flags
 }

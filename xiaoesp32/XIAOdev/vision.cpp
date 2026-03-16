@@ -1,6 +1,10 @@
 #include "vision.h"
 #include <Arduino.h>
 
+// Calibration gains — defined in vision.cpp
+static float wb_r_gain = 1.0f;
+static float wb_b_gain = 1.0f;
+
 uint16_t Vision_UnpackRGB565(const uint8_t* data, size_t index) {
     // ESP32 is little-endian, so bytes need to be swapped
     uint8_t lowByte = data[index * 2];
@@ -9,9 +13,32 @@ uint16_t Vision_UnpackRGB565(const uint8_t* data, size_t index) {
 }
 
 uint8_t Vision_Grayscale(uint8_t r, uint8_t g, uint8_t b) {
-    // Standard luminance formula: 0.299*R + 0.587*G + 0.114*B
-    return (uint8_t)(0.299 * r + 0.587 * g + 0.114 * b);
+    return (uint8_t)(
+        (0.299f * r * wb_r_gain) +
+        (0.587f * g) +
+        (0.114f * b * wb_b_gain)
+    );
 }
+void Vision_CalibrateWB(camera_fb_t* fb) {
+    long r_sum = 0, g_sum = 0, b_sum = 0;
+    int count = fb->width * fb->height;
+
+    for (int i = 0; i < count; i++) {
+        uint16_t px = Vision_UnpackRGB565(fb->buf, i);
+
+        uint8_t r = (px >> 11) & 0x1F;
+        uint8_t g = (px >> 5)  & 0x3F;
+        uint8_t b =  px        & 0x1F;
+
+        r_sum += (r << 3) | (r >> 2);
+        g_sum += (g << 2) | (g >> 4);
+        b_sum += (b << 3) | (b >> 2);
+    }
+
+    wb_r_gain = (g_sum / (float)count) / (r_sum / (float)count);
+    wb_b_gain = (g_sum / (float)count) / (b_sum / (float)count);
+}
+
 
 FrameResult Line_Vision_Process(camera_fb_t* fb) {
     FrameResult result;
@@ -47,6 +74,7 @@ FrameResult Line_Vision_Process(camera_fb_t* fb) {
 
         //access the rgb for every element in the lineY row
         int32_t err = 0;
+        
         for (int x = 0; x < width; x++) {
             uint16_t pixel = Vision_UnpackRGB565(buffer, lineY * width + x);
 
