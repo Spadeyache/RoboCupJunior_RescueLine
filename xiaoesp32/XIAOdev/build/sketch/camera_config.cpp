@@ -30,6 +30,7 @@ bool Camera_Init() {
     config.ledc_timer   = LEDC_TIMER_0;
 
     config.pixel_format = PIXFORMAT_RGB565;
+    // config.pixel_format = PIXFORMAT_GRAYSCALE;
     config.frame_size   = FRAMESIZE_QQVGA;  // 160x120
     config.jpeg_quality = 12;
     config.fb_count     = 1;
@@ -44,25 +45,41 @@ bool Camera_Init() {
 
     sensor_t* s = esp_camera_sensor_get();
     if (s) {
-        s->set_framesize(s, FRAMESIZE_QQVGA);
+        // s->set_framesize(s, FRAMESIZE_QQVGA);
+                
+        // // --- Auto exposure ---
+        // s->set_exposure_ctrl(s, 1);   // Enable AEC 1 | Sisable AEC 0
+        // s->set_aec2(s, 1);            // Enable night-mode AEC 1 | Diable 0
+        // s->set_ae_level(s, 0);        // Keep bias neutral to start (no AE bias)
 
-        // --- Lock exposure and gain to prevent drift ---
-        s->set_exposure_ctrl(s, 0);   // Disable AEC
-        s->set_aec2(s, 0);            // Disable night-mode AEC
-        s->set_aec_value(s, 100);     // Fixed exposure (tune 0-1200 for your lighting)  // Increase if image is too dark, decrease if too bright
-        s->set_ae_level(s, 0);        // No AE bias
-        s->set_gain_ctrl(s, 0);       // Disable AGC
-        s->set_agc_gain(s, 5);        // Fixed gain (tune 0-30 for your lighting) / Increase if still too dark after maxing aec_value
+        // --- Auto gain ---
+        s->set_gain_ctrl(s, 1);       // Enable AGC 1 | Disable 0
+        s->set_gainceiling(s, GAINCEILING_8X);     // GAINCEILING_8X
 
-        // --- Lock white balance (irrelevant in grayscale but prevents internal flicker) ---
-        s->set_whitebal(s, 0);        // Disable AWB
-        s->set_awb_gain(s, 0);        // Disable AWB gain
-        s->set_wb_mode(s, 2);
+        // // --- Auto white balance ---
+        // s->set_whitebal(s, 1);        // Enable AWB 1 | disable 0
+        // s->set_awb_gain(s, 1);        // Enable AWB gain 1 | disable 0
+
+
+        // --- Manual exposure ---
+        s->set_exposure_ctrl(s, 0);    // Disable AEC (0 = Manual)
+        s->set_aec_value(s, 200);      // 168  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
+        s->set_aec2(s, 0);             // Disable night-mode AEC when in manual
+
+        // --- Manual gain ---
+        s->set_gain_ctrl(s, 0);        // Disable AGC (0 = Manual)
+        s->set_agc_gain(s, 10); //1       // Manual gain: 0 to 30 (Higher = brighter but more noise)
+
+        // --- Manual white balance ---
+        s->set_whitebal(s, 0);         // Disable AWB (0 = Manual)
+        s->set_awb_gain(s, 0);         // Disable AWB gain (0 = Manual)
+        s->set_wb_mode(s, 3);          // Use 0 for "Custom/Manual" or pick a preset (1: Sunny, 2: Cloudy, etc.)
+    
 
         // --- Image quality ---
         s->set_brightness(s, 0);
-        s->set_contrast(s, 0);
-        s->set_saturation(s, 0);
+        s->set_contrast(s, 0);    // 1 Slight contrast boost to help define line edges
+        s->set_saturation(s, 0);  //0 testing 2 for clear color deteciton
 
         s->set_sharpness(s, 0);
         s->set_denoise(s, 2);         // Light denoise to reduce pixel noise
@@ -76,6 +93,8 @@ bool Camera_Init() {
         // --- No effects ---
         s->set_special_effect(s, 0);
         s->set_colorbar(s, 0);
+
+
     }
     
     // Warmup: discard first 15 frames so sensor stabilizes
@@ -113,4 +132,7 @@ void Camera_Return(camera_fb_t* fb) {
 //   Set low (5/30) because white LED provides sufficient light.
 //   Low gain = less noise = more stable gray averages.
 //   Increase only if aec_value maxed out and image still too dark.
+
+
+
 

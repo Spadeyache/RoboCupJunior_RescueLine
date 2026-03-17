@@ -1,42 +1,160 @@
 #include "vision.h"
 #include <Arduino.h>
+// duplicated rgb565 to 888 convertion which I would like to only see once
 
-// Calibration gains — defined in vision.cpp
-static float wb_r_gain = 1.0f;
-static float wb_b_gain = 1.0f;
 
-uint16_t Vision_UnpackRGB565(const uint8_t* data, size_t index) {
-    // ESP32 is little-endian, so bytes need to be swapped
-    uint8_t lowByte = data[index * 2];
-    uint8_t highByte = data[index * 2 + 1];
-    return (highByte << 8) | lowByte;
+static float r_scale = 1.0, g_scale = 1.0, b_scale = 1.0;
+
+// Function to set software gains based on WB Mode  // WILL CHANGE TO AUTO CALIBRATION
+void set_manual_wb_compensation(int mode) {
+    // These are starting guesses; you'll tweak these during calibration
+    switch(mode) {
+        case 3: // Office (Fluorescent) - Usually needs a boost in Red
+            r_scale = 1.2; g_scale = 0.9; b_scale = 1.1;
+            break;
+        case 2: // Cloudy - Needs more Blue
+            r_scale = 1.0; g_scale = 1.0; b_scale = 1.3;
+            break;
+        case 1: // Sunny
+            r_scale = 1.0; g_scale = 1.0; b_scale = 1.0;
+            break;
+        default: // Manual/None
+            r_scale = 1.0; g_scale = 1.0; b_scale = 1.0;
+            break;
+    }
 }
 
-uint8_t Vision_Grayscale(uint8_t r, uint8_t g, uint8_t b) {
-    return (uint8_t)(
-        (0.299f * r * wb_r_gain) +
-        (0.587f * g) +
-        (0.114f * b * wb_b_gain)
-    );
-}
-void Vision_CalibrateWB(camera_fb_t* fb) {
-    long r_sum = 0, g_sum = 0, b_sum = 0;
-    int count = fb->width * fb->height;
+HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
+    // Apply Virtual White Balance Compensation
+    float r = r8 * r_scale;
+    float g = g8 * g_scale;
+    float b = b8 * b_scale;
 
-    for (int i = 0; i < count; i++) {
-        uint16_t px = Vision_UnpackRGB565(fb->buf, i);
+    // Constrain to 8-bit bounds
+    if (r > 255) r = 255; 
+    if (g > 255) g = 255; 
+    if (b > 255) b = 255;
 
-        uint8_t r = (px >> 11) & 0x1F;
-        uint8_t g = (px >> 5)  & 0x3F;
-        uint8_t b =  px        & 0x1F;
+    float min = fmin(fmin(r, g), b);
+    float max = fmax(fmax(r, g), b);
+    float delta = max - min;
 
-        r_sum += (r << 3) | (r >> 2);
-        g_sum += (g << 2) | (g >> 4);
-        b_sum += (b << 3) | (b >> 2);
+    HSV res;
+    res.v = (uint8_t)max; // Value
+
+    if (max == 0 || delta == 0) {
+        res.h = 0;
+        res.s = 0;
+        return res;
     }
 
-    wb_r_gain = (g_sum / (float)count) / (r_sum / (float)count);
-    wb_b_gain = (g_sum / (float)count) / (b_sum / (float)count);
+    res.s = (uint8_t)((delta / max) * 255); // Saturation
+
+    // Hue Calculation
+    float h;
+    if (r == max) h = (g - b) / delta;
+    else if (g == max) h = 2 + (b - r) / delta;
+    else h = 4 + (r - g) / delta;
+
+    h *= 60; // Scale to 0-360 range
+    if (h < 0) h += 360;
+
+    res.h = (uint16_t)h;
+    return res;
+}
+
+
+HSV getHSV(camera_fb_t* fb, int x, int y) {
+    // 1. Get raw 16-bit pixel
+    uint16_t px = unpackRGB565(fb->buf, y * fb->width + x);
+    
+    // 2. Convert to standard 8-bit RGB
+    uint8_t r8, g8, b8;
+    rgb565To888(px, r8, g8, b8);
+    
+    // 3. Convert to HSV (Applying software WB)
+    return rgb888_to_hsv(r8, g8, b8);
+}
+
+void debugHSV(camera_fb_t* fb) {
+    if (!fb || !fb->buf) return;
+
+    int w = fb->width;
+    int h = fb->height;
+    int cx = w / 2;
+    int cy = h / 2;
+
+    // 1. Get the HSV value for the center pixel
+    // This uses your getHSV -> rgb888_to_hsv pipeline
+    HSV res = getHSV(fb, cx, cy);
+
+    // 2. For deeper debugging, let's also see the raw numbers 
+    // that went into that calculation
+    uint16_t px = unpackRGB565(fb->buf, cy * w + cx);
+    uint8_t r, g, b;
+    rgb565To888(px, r, g, b);
+    uint8_t gray = rgbToGray(r, g, b);
+
+    // 3. Print everything in one readable line
+    // H is 0-180, S/V/R/G/B/Gray are 0-255
+    Serial.printf(
+        "RAW:[R:%3d G:%3d B:%3d Gray:%3d] | HSV:[H:%3d S:%3d V:%3d]\n",
+        r, g, b, gray,
+        res.h, res.s, res.v
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void debugPatch(camera_fb_t* fb) {
+    int w = fb->width;
+    int h = fb->height;
+    int cx = w / 2;
+    int cy = h / 2;
+
+    long rSum = 0, gSum = 0, bSum = 0, graySum = 0;
+    int count = 0;
+
+    for (int dy = -2; dy <= 2; dy++) {
+        for (int dx = -2; dx <= 2; dx++) {
+            int x = cx + dx;
+            int y = cy + dy;
+            if (x < 0 || x >= w || y < 0 || y >= h) continue;
+
+            size_t idx = y * w + x;
+            uint16_t px = unpackRGB565(fb->buf, idx);
+
+            uint8_t r8, g8, b8;
+            rgb565To888(px, r8, g8, b8);
+
+            uint8_t gray = rgbToGray(r8, g8, b8);
+
+            rSum += r8;
+            gSum += g8;
+            bSum += b8;
+            graySum += gray;
+            count++;
+        }
+    }
+
+    Serial.printf(
+        "r=%d g=%d b=%d gray=%d\n",
+        (int)(rSum / count),
+        (int)(gSum / count),
+        (int)(bSum / count),
+        (int)(graySum / count)
+    );
 }
 
 
@@ -66,56 +184,11 @@ FrameResult Line_Vision_Process(camera_fb_t* fb) {
     // LINE DETECTION - scan row at LINE_SCAN_ROW depth
     int32_t lineY = (int)(height * LINE_SCAN_ROW);
     if (lineY >= 0 && lineY < height) {
-        // int darkCount = 0;
-        // int totalPixels = width;
-        // int leftEdge = width;
-        // int rightEdge = 0;
-        // bool foundEdge = false;
+
 
         //access the rgb for every element in the lineY row
         int32_t err = 0;
-        
         for (int x = 0; x < width; x++) {
-            uint16_t pixel = Vision_UnpackRGB565(buffer, lineY * width + x);
-
-            // Extract RGB565 components
-            uint8_t r = (pixel >> 11) & 0x1F;
-            uint8_t g = (pixel >> 5) & 0x3F;
-            uint8_t b = pixel & 0x1F;
-
-            // Convert to 8-bit for grayscale calculation
-            uint8_t r8 = (r << 3) | (r >> 2);
-            uint8_t g8 = (g << 2) | (g >> 4);
-            uint8_t b8 = (b << 3) | (b >> 2);
-
-            uint8_t gray = Vision_Grayscale(r8, g8, b8);
-
-            // left half of the pixels as "-" and right as "+"
-            if(x < (int)(width / 2)){
-                err -= gray;
-            }
-            else {
-                err += gray;
-            }
-
-
-
-        //     if (gray < LINE_DARK_THRESH) {
-        //         darkCount++;
-        //         if (x < leftEdge) leftEdge = x;
-        //         if (x > rightEdge) rightEdge = x;
-        //         foundEdge = true;
-        //     }
-        // }
-
-        // result.line.darkPixels = darkCount;
-        // result.line.darkPercent = (float)darkCount / totalPixels * 100.0;
-
-        // if (foundEdge && result.line.darkPercent >= (LINE_TRIGGER_PCT * 100.0)) {
-        //     result.line.detected = true;
-        //     // Calculate centroid offset normalized to -1.0 to +1.0
-        //     int centroid = (leftEdge + rightEdge) / 2;
-        //     result.line.offset = (2.0 * centroid / (width - 1)) - 1.0;
         }
         result.line.error = err;
     }
@@ -128,7 +201,7 @@ FrameResult Line_Vision_Process(camera_fb_t* fb) {
     //     int sampleCount = 0;
 
     //     for (int x = 0; x < width; x += COLOR_SAMPLE_STEP) {
-    //         uint16_t pixel = Vision_UnpackRGB565(buffer, colorY * width + x);
+    //         uint16_t pixel = unpackRGB565(buffer, colorY * width + x);
 
     //         // Extract RGB565 components
     //         uint8_t r = (pixel >> 11) & 0x1F;
@@ -186,3 +259,45 @@ void Vision_Print(const FrameResult& result) {
     //               result.color.isWhite ? "YES" : "NO",
     //               result.color.isBlack ? "YES" : "NO");
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ov2640 sends hibyte first
+uint16_t unpackRGB565(const uint8_t* data, size_t index) {
+    uint8_t highByte = data[index * 2];
+    uint8_t lowByte  = data[index * 2 + 1];
+    return (highByte << 8) | lowByte;
+}
+void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8) {
+    uint8_t r = (px >> 11) & 0x1F;
+    uint8_t g = (px >> 5)  & 0x3F;
+    uint8_t b =  px        & 0x1F;
+
+    r8 = (r << 3) | (r >> 2);
+    g8 = (g << 2) | (g >> 4);
+    b8 = (b << 3) | (b >> 2);
+}
+uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b) {
+    float gray = 0.299f * r + 0.587f * g + 0.114f * b;
+    if (gray < 0.0f) gray = 0.0f;
+    if (gray > 255.0f) gray = 255.0f;
+    return (uint8_t)(gray + 0.5f);
+}
+
+
+
+
+// Since the camra produces a green biased image, we have the gray scale leaning more to green

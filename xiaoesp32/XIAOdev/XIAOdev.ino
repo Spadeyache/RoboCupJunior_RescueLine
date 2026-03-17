@@ -41,53 +41,60 @@ void setup() {
     
 }
 
-// void loop() {
-//     static unsigned long lastTime = 0;
-//     if (millis() - lastTime < 1000) {
-//         return; // Run every 100ms
-//     }
-//     lastTime = millis();
-
-//     // Capture frame
-//     camera_fb_t* fb = Camera_Grab();
-//     if (!fb) {
-//         Serial.println("Camera capture failed");
-//         return;
-//     }
-
-//     // Process frame for vision data
-//     FrameResult result = Line_Vision_Process(fb);
-
-//     // Print results
-//     // Vision_Print(result);
-//     Serial.println((int32_t)(result.line.error));
-
-//     // Return frame buffer
-//     Camera_Return(fb);
-
-//     // TODO: Add line steering logic here based on result.line.offset
-//     // TODO: Add color reaction logic here based on result.color flags
-// }
-
-
-
 void loop() {
-    // code snippet to stream the camera image via serial
-    while(true){
-        static const uint8_t FRAME_MAGIC[4] = {0xAA, 0x55, 0xBB, 0x44};
-        camera_fb_t* fb = Camera_Grab();
-        if (!fb) { delay(10); return; }
-
-        uint16_t w = fb->width;
-        uint16_t h = fb->height;
-        int32_t errVal = 0;  // dummy, viewer needs this to find pixel data
-
-        Serial.write(FRAME_MAGIC, 4);
-        Serial.write((uint8_t*)&w, 2);
-        Serial.write((uint8_t*)&h, 2);
-        Serial.write((uint8_t*)&errVal, 4);
-        Serial.write(fb->buf, fb->len);
-
-        Camera_Return(fb);
+    static unsigned long lastTime = 0;
+    if (millis() - lastTime < 240) {
+        return; // Run every 100ms
     }
+    lastTime = millis();
+
+    // Capture frame
+    camera_fb_t* fb = Camera_Grab();
+    if (!fb) {
+        Serial.println("Camera capture failed");
+        return;
+    }
+
+    // Process frame for vision data
+    // FrameResult result = Line_Vision_Process(fb);
+    // Debug_PrintGrayPatch(fb, fb->width / 2, fb->height / 2);
+
+    debugHSV(fb);
+
+
+    // Print results
+    // Vision_Print(result);
+    // Serial.println((int32_t)(result.line.error));
+
+    stream(fb);
+
+    // Return frame buffer
+    Camera_Return(fb);
+
+    // TODO: Add line steering logic here based on result.line.offset
+    // TODO: Add color reaction logic here based on result.color flags
+
+    
+}
+
+
+
+
+void stream(camera_fb_t* fb){
+    // code snippet to stream the camera image via serial
+    static const uint8_t FRAME_MAGIC[4] = {0xAA, 0x55, 0xBB, 0x44};
+    // camera_fb_t* fb = Camera_Grab();
+    if (!fb) { delay(10); return; }
+    
+    uint16_t w = fb->width;
+    uint16_t h = fb->height;
+    int32_t errVal = 0;  // dummy, viewer needs this to find pixel data
+    
+    Serial.write(FRAME_MAGIC, 4);
+    Serial.write((uint8_t*)&w, 2);
+    Serial.write((uint8_t*)&h, 2);
+    Serial.write((uint8_t*)&errVal, 4);
+    Serial.write(fb->buf, fb->len);
+    
+    // Camera_Return(fb);
 }
