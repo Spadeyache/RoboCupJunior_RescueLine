@@ -59,7 +59,7 @@ void loop() {
     // FrameResult result = Line_Vision_Process(fb);
     // Debug_PrintGrayPatch(fb, fb->width / 2, fb->height / 2);
 
-    debugHSV(fb);
+    printRawGrayHSV(fb);
 
 
     // Print results

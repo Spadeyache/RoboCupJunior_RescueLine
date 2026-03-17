@@ -67,19 +67,12 @@ HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
 }
 
 
-HSV getHSV(camera_fb_t* fb, int x, int y) {
-    // 1. Get raw 16-bit pixel
-    uint16_t px = unpackRGB565(fb->buf, y * fb->width + x);
-    
-    // 2. Convert to standard 8-bit RGB
-    uint8_t r8, g8, b8;
-    rgb565To888(px, r8, g8, b8);
-    
-    // 3. Convert to HSV (Applying software WB)
-    return rgb888_to_hsv(r8, g8, b8);
-}
 
-void debugHSV(camera_fb_t* fb) {
+
+
+
+
+void printRawGrayHSV(camera_fb_t* fb) {
     if (!fb || !fb->buf) return;
 
     int w = fb->width;
@@ -87,22 +80,42 @@ void debugHSV(camera_fb_t* fb) {
     int cx = w / 2;
     int cy = h / 2;
 
-    // 1. Get the HSV value for the center pixel
-    // This uses your getHSV -> rgb888_to_hsv pipeline
-    HSV res = getHSV(fb, cx, cy);
+    long rSum = 0, gSum = 0, bSum = 0;
+    int count = 0;
 
-    // 2. For deeper debugging, let's also see the raw numbers 
-    // that went into that calculation
-    uint16_t px = unpackRGB565(fb->buf, cy * w + cx);
-    uint8_t r, g, b;
-    rgb565To888(px, r, g, b);
-    uint8_t gray = rgbToGray(r, g, b);
+    // 1. Average a 5x5 box around center (identical logic to debugGray)
+    for (int dy = -2; dy <= 2; dy++) {
+        for (int dx = -2; dx <= 2; dx++) {
+            int x = cx + dx;
+            int y = cy + dy;
+            if (x < 0 || x >= w || y < 0 || y >= h) continue;
 
-    // 3. Print everything in one readable line
-    // H is 0-180, S/V/R/G/B/Gray are 0-255
+            uint16_t px = unpackRGB565(fb->buf, y * w + x);
+            uint8_t r, g, b;
+            rgb565To888(px, r, g, b);
+
+            rSum += r;
+            gSum += g;
+            bSum += b;
+            count++;
+        }
+    }
+
+    if (count == 0) return;
+
+    // 2. Calculate averages
+    uint8_t avgR = (uint8_t)(rSum / count);
+    uint8_t avgG = (uint8_t)(gSum / count);
+    uint8_t avgB = (uint8_t)(bSum / count);
+    uint8_t gray = rgbToGray(avgR, avgG, avgB);
+
+    // 3. Convert averaged RGB to HSV (Applying software WB inside)
+    HSV res = rgb888_to_hsv(avgR, avgG, avgB);
+
+    // 4. Print unified line
     Serial.printf(
-        "RAW:[R:%3d G:%3d B:%3d Gray:%3d] | HSV:[H:%3d S:%3d V:%3d]\n",
-        r, g, b, gray,
+        "AVG_BOX:[R:%3d G:%3d B:%3d Gray:%3d] | HSV:[H:%3d S:%3d V:%3d]\n",
+        avgR, avgG, avgB, gray,
         res.h, res.s, res.v
     );
 }
@@ -113,52 +126,45 @@ void debugHSV(camera_fb_t* fb) {
 
 
 
+// void debugGray(camera_fb_t* fb) {
+//     int w = fb->width;
+//     int h = fb->height;
+//     int cx = w / 2;
+//     int cy = h / 2;
 
+//     long rSum = 0, gSum = 0, bSum = 0, graySum = 0;
+//     int count = 0;
 
+//     for (int dy = -2; dy <= 2; dy++) {
+//         for (int dx = -2; dx <= 2; dx++) {
+//             int x = cx + dx;
+//             int y = cy + dy;
+//             if (x < 0 || x >= w || y < 0 || y >= h) continue;
 
+//             size_t idx = y * w + x;
+//             uint16_t px = unpackRGB565(fb->buf, idx);
 
+//             uint8_t r8, g8, b8;
+//             rgb565To888(px, r8, g8, b8);
 
+//             uint8_t gray = rgbToGray(r8, g8, b8);
 
+//             rSum += r8;
+//             gSum += g8;
+//             bSum += b8;
+//             graySum += gray;
+//             count++;
+//         }
+//     }
 
-void debugPatch(camera_fb_t* fb) {
-    int w = fb->width;
-    int h = fb->height;
-    int cx = w / 2;
-    int cy = h / 2;
-
-    long rSum = 0, gSum = 0, bSum = 0, graySum = 0;
-    int count = 0;
-
-    for (int dy = -2; dy <= 2; dy++) {
-        for (int dx = -2; dx <= 2; dx++) {
-            int x = cx + dx;
-            int y = cy + dy;
-            if (x < 0 || x >= w || y < 0 || y >= h) continue;
-
-            size_t idx = y * w + x;
-            uint16_t px = unpackRGB565(fb->buf, idx);
-
-            uint8_t r8, g8, b8;
-            rgb565To888(px, r8, g8, b8);
-
-            uint8_t gray = rgbToGray(r8, g8, b8);
-
-            rSum += r8;
-            gSum += g8;
-            bSum += b8;
-            graySum += gray;
-            count++;
-        }
-    }
-
-    Serial.printf(
-        "r=%d g=%d b=%d gray=%d\n",
-        (int)(rSum / count),
-        (int)(gSum / count),
-        (int)(bSum / count),
-        (int)(graySum / count)
-    );
-}
+//     Serial.printf(
+//         "r=%d g=%d b=%d gray=%d\n",
+//         (int)(rSum / count),
+//         (int)(gSum / count),
+//         (int)(bSum / count),
+//         (int)(graySum / count)
+//     );
+// }
 
 
 FrameResult Line_Vision_Process(camera_fb_t* fb) {
@@ -293,6 +299,7 @@ void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8) {
     g8 = (g << 2) | (g >> 4);
     b8 = (b << 3) | (b >> 2);
 }
+
 uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b) {
     float gray = 0.299f * r + 0.587f * g + 0.114f * b;
     if (gray < 0.0f) gray = 0.0f;

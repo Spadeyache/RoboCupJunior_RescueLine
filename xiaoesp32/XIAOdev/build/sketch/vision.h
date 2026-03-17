@@ -2,6 +2,8 @@
 #ifndef VISION_H
 #define VISION_H
 
+// All color proccesing happes here.
+
 #include <Arduino.h>
 #include "esp_camera.h"
 #define LINE_SCAN_ROW       0.5    // Scan 75% down from top for line detection
@@ -46,19 +48,20 @@ typedef struct {
 } FrameResult;
 
 // Function declarations
+uint16_t unpackRGB565(const uint8_t* data, size_t index);
+void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8);
+
+uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b);
+HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8);
+void printRawGrayHSV(camera_fb_t* fb);
+
+
 FrameResult Line_Vision_Process(camera_fb_t* fb);
 void Vision_Print(const FrameResult& result);
 
-uint16_t unpackRGB565(const uint8_t* data, size_t index);
-uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b);
-void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8);
-
-void debugPatch(camera_fb_t* fb);
-
-HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8);
+// void debugGray(camera_fb_t* fb);
 void set_manual_wb_compensation(int mode);
-HSV getHSV(camera_fb_t* fb, int x, int y);
 
-void debugHSV(camera_fb_t* fb);
+
 
 #endif // VISION_H
