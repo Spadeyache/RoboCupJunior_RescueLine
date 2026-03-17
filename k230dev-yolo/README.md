@@ -229,6 +229,7 @@ python convert_to_kmodel.py \
     --img-width 640 \
     --num-samples 100
 ```
+python3 convert_to_kmodel.py   /models/best_640x480.onnx   --output /output   --calib-data /datasets/my_dataset/val/images   --img-height 480   --img-width 640   --num-samples 100
 
 **Important:** Use `--calib-data` with validation images for accurate INT8 quantization.
 
