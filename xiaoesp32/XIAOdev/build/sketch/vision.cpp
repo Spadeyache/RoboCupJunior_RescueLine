@@ -57,10 +57,10 @@ HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
     else if (g == max) h = 2 + (b - r) / delta;
     else h = 4 + (r - g) / delta;
 
-    h *= 30; // Scale to 0-180 range
-    if (h < 0) h += 180;
+    h *= 60; // Scale to 0-360 range
+    if (h < 0) h += 360;
 
-    res.h = (uint8_t)h;
+    res.h = (uint16_t)h;
     return res;
 }
 

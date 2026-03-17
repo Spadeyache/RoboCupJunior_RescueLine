@@ -14,9 +14,9 @@
 #define BLUE_DOMINANCE      25      // Minimum % blue dominance for blue detection
 
 typedef struct {
-    uint8_t h;
-    uint8_t s;
-    uint8_t v;
+    uint16_t h; // 0-359
+    uint8_t s;  // 0-255
+    uint8_t v;  // 0-255
 } HSV;
 
 // Result structures

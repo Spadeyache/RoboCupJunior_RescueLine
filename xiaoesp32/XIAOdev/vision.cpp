@@ -2,6 +2,9 @@
 #include <Arduino.h>
 // duplicated rgb565 to 888 convertion which I would like to only see once
 
+// PLAN integration calibration for the scalar. 
+//  clean up the code structure and allow efficient implementation without duplicate calclutions
+
 
 static float r_scale = 1.0, g_scale = 1.0, b_scale = 1.0;
 
