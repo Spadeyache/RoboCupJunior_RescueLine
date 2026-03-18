@@ -15,7 +15,9 @@ float error = 0, lastError = 0, integral = 0; // Global vars for pid
 void setup();
 #line 37 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void loop();
-#line 93 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 86 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+float pid(float left, float right);
+#line 101 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void stream(camera_fb_t* fb);
 #line 13 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup() {
@@ -62,28 +64,23 @@ void loop() {
     cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
     
 
-    // calculate error
-    error = (float)dataLeft.gray - (float)dataRight.gray;
+    // // calculate error
+    // error = (float)dataLeft.gray - (float)dataRight.gray;
 
-    float P = kP * error;                 // Proportional 
-    integral += error;                    // Integral (with Windup Guard)
-    integral = constrain(integral, -1000, 1000); // Prevent "Integral Windup"
-    float I = kI * integral;
-    float D = kD * (error - lastError);   // Derivative
+    // float P = kP * error;                 // Proportional 
+    // integral += error;                    // Integral (with Windup Guard)
+    // integral = constrain(integral, -1000, 1000); // Prevent "Integral Windup"
+    // float I = kI * integral;
+    // float D = kD * (error - lastError);   // Derivative
     
-    // Output
-    float pidGain = P + I + D;
-    lastError = error;
-
+    // // Output
+    // float pidGain = P + I + D;
+    float pidGain= pid((float)dataLeft.gray, (float)dataRight.gray);
+    // lastError = error;
     Serial1.print("Hello from XIAO: ");
     Serial1.println(pidGain);
 
 
-    // Serial.println(dataLeft.gray - dataRight.gray);
-
-    // Print results
-    // Vision_Print(result);
-    // Serial.println((int32_t)(result.line.error));
 
     stream(fb);
 
@@ -96,6 +93,19 @@ void loop() {
 }
 
 
+float pid(float left, float right){
+    // calculate error
+    error = (float)left - (float)right;
+
+    float P = kP * error;                 // Proportional 
+    integral += error;                    // Integral (with Windup Guard)
+    integral = constrain(integral, -1000, 1000); // Prevent "Integral Windup"
+    float I = kI * integral;
+    float D = kD * (error - lastError);   // Derivative
+
+    lastError = error;
+    return (P + I + D);
+}
 
 
 void stream(camera_fb_t* fb){
