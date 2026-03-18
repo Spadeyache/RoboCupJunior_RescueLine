@@ -15,11 +15,35 @@
 #define RED_DOMINANCE       25      // Minimum % red dominance for red detection
 #define BLUE_DOMINANCE      25      // Minimum % blue dominance for blue detection
 
+// Result structures
 typedef struct {
     uint16_t h; // 0-359
     uint8_t s;  // 0-255
     uint8_t v;  // 0-255
 } HSV;
+typedef struct {
+    uint8_t avgR;
+    uint8_t avgG;
+    uint8_t avgB;
+
+    uint8_t gray;
+    HSV hsv;
+} cameraData;
+
+// Function declarations
+uint16_t unpackRGB565(const uint8_t* data, size_t index);
+void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8);
+
+uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b);
+HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8);
+cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t x, uint8_t y, bool = false);
+
+// void debugGray(camera_fb_t* fb);
+// void set_manual_wb_compensation(int mode); 
+void perform_white_balance_calibration(camera_fb_t* fb);  // it seems like the hsv at home without any gain adjustments had good hsv results.
+
+
+
 
 // Result structures
 typedef struct {
@@ -29,17 +53,14 @@ typedef struct {
     bool isWhite;
     bool intersection;
 }  LineResult;
-
 typedef struct {
     bool isLeftGreen;
     bool isRightGreen;
 } IntersectResult;
-
 typedef struct {
     bool isSilver;
     bool isBlack;
 } EvacResult;
-
 typedef struct {
     LineResult line;
     IntersectResult intersect;
@@ -47,20 +68,11 @@ typedef struct {
     int frameHeight;
 } FrameResult;
 
-// Function declarations
-uint16_t unpackRGB565(const uint8_t* data, size_t index);
-void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8);
-
-uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b);
-HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8);
-void printRawGrayHSV(camera_fb_t* fb);
-
-
 FrameResult Line_Vision_Process(camera_fb_t* fb);
 void Vision_Print(const FrameResult& result);
 
-// void debugGray(camera_fb_t* fb);
-void set_manual_wb_compensation(int mode);
+
+
 
 
 

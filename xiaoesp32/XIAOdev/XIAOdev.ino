@@ -59,8 +59,10 @@ void loop() {
     // FrameResult result = Line_Vision_Process(fb);
     // Debug_PrintGrayPatch(fb, fb->width / 2, fb->height / 2);
 
-    printRawGrayHSV(fb);
-
+    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60, true);    
+    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60, true);    
+    print("gray");
+    println(dataLeft.gray - dataRight.gray);
 
     // Print results
     // Vision_Print(result);
