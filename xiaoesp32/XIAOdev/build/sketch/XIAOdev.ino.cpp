@@ -2,17 +2,25 @@
 #include <Arduino.h>
 #include "camera_config.h"
 #include "vision.h"
-#include "wifi_config.h"
+// #include "wifi_config.h"
 
-#line 6 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+// --- PID Parameters ---
+const float kP = 2.5;
+const float kI = 0.0; // we generally run with PD
+const float kD = 0.5;
+
+float error = 0, lastError = 0, integral = 0; // Global vars for pid
+
+#line 13 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup();
-#line 56 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 37 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void loop();
-#line 99 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 93 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void stream(camera_fb_t* fb);
-#line 6 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 13 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup() {
     Serial.begin(115200);
+    Serial1.begin(115200, SERIAL_8N1, D7, D6); //UART
     while (!Serial) {
         delay(10); // Wait for serial port to connect
     }
@@ -20,25 +28,9 @@ void setup() {
     Serial.println("\n=== XIAO ESP32-S3 Sense Vision System ===");
 
     // Initialize camera
-    if (!Camera_Init()) {
-        Serial.println("Camera initialization failed!");
-        delay(100);
-    } else{Serial.println("Camera initialized successfully");}
-
-    // // --- White balance calibration ---
-    // // Point camera at white surface before this runs
-    // Serial.println("Calibrating white balance... point at white surface");
-    // delay(2000);  // give time to position camera
-
-    // camera_fb_t* cal_fb = Camera_Grab();
-    // if (cal_fb) {
-    //     Vision_CalibrateWB(cal_fb);
-    //     Camera_Return(cal_fb);
-    //     Serial.println("WB calibration done.");
-    // } else {
-    //     Serial.println("WB calibration failed — using default gains");
-    // }
-
+    if (!Camera_Init()) Serial.println("Camera initialization failed!");
+    else Serial.println("Camera initialized successfully");
+    // remember to calibration in vision.cpp : follow the steps in reamme.md
 
     // // Initialize WiFi
     // Serial.printf("Connecting to %s ", WIFI_SSID);
@@ -47,18 +39,7 @@ void setup() {
     //     delay(100);
     // } else {Serial.println("Connection failed or timed out");}
     
-    delay(500); //wait for camera to settle
-    
-    // // Camera Calibration
-    // camera_fb_t* fb = Camera_Grab();
-    // if (fb) {
-    //     perform_white_balance_calibration(fb);
-    //     Camera_Return(fb);
-    //     Camera_Grab(); // Optional: capture another to clear buffer
-    //     Camera_Return(fb);
-    // } else {
-    //     Serial.println("Calibration Error: Could not capture frame.");
-    // }
+    delay(500); //wait for camera to settle take about 2 seconds so 500ms not enough
 }
 
 void loop() {
@@ -75,15 +56,29 @@ void loop() {
         return;
     }
 
-    // Process frame for vision data
-    // FrameResult result = Line_Vision_Process(fb);
-    // Debug_PrintGrayPatch(fb, fb->width / 2, fb->height / 2);
+    // get the pixel data
+    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)80, (uint8_t)60, true);
+    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60);
+    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
+    
 
-    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)80, (uint8_t)60, true);
+    // calculate error
+    error = (float)dataLeft.gray - (float)dataRight.gray;
 
-    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60, true);
-    // cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60, true);
-    // Serial.print("gray");
+    float P = kP * error;                 // Proportional 
+    integral += error;                    // Integral (with Windup Guard)
+    integral = constrain(integral, -1000, 1000); // Prevent "Integral Windup"
+    float I = kI * integral;
+    float D = kD * (error - lastError);   // Derivative
+    
+    // Output
+    float pidGain = P + I + D;
+    lastError = error;
+
+    Serial1.print("Hello from XIAO: ");
+    Serial1.println(pidGain);
+
+
     // Serial.println(dataLeft.gray - dataRight.gray);
 
     // Print results
@@ -95,7 +90,6 @@ void loop() {
     // Return frame buffer
     Camera_Return(fb);
 
-    // TODO: Add line steering logic here based on result.line.offset
     // TODO: Add color reaction logic here based on result.color flags
 
     

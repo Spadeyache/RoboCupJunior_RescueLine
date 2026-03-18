@@ -51,18 +51,7 @@ void rgb888Calibration(uint8_t& r8, uint8_t& g8, uint8_t& b8) {
     b8 = (uint8_t)constrain(calB, 0, 255);
 }
 
-
 HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
-    // // Apply Virtual White Balance Compensation
-    // float r = r8 * r_scale;
-    // float g = g8 * g_scale;
-    // float b = b8 * b_scale;
-
-    // // Constrain to 8-bit bounds
-    // if (r > 255) r = 255; 
-    // if (g > 255) g = 255; 
-    // if (b > 255) b = 255;
-
     float r = r8;
     float g = g8;
     float b = b8;
@@ -94,59 +83,6 @@ HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
     res.h = (uint16_t)h;
     return res;
 }
-
-
-
-
-static float r_scale = 1.0, g_scale = 1.0, b_scale = 1.0;
-
-// Function to set software gains based on WB Mode  // WILL CHANGE TO AUTO CALIBRATION
-// void set_manual_wb_compensation(int mode) {
-//     // These are starting guesses; you'll tweak these during calibration
-//     switch(mode) {
-//         case 3: // Office (Fluorescent) - Usually needs a boost in Red
-//             r_scale = 1.2; g_scale = 0.9; b_scale = 1.1;
-//             break;
-//         case 2: // Cloudy - Needs more Blue
-//             r_scale = 1.0; g_scale = 1.0; b_scale = 1.3;
-//             break;
-//         case 1: // Sunny
-//             r_scale = 1.0; g_scale = 1.0; b_scale = 1.0;
-//             break;
-//         default: // Manual/None
-//             r_scale = 1.0; g_scale = 1.0; b_scale = 1.0;
-//             break;
-//     }
-// }
-
-void perform_white_balance_calibration(camera_fb_t* fb) {
-    if (!fb) return;
-
-    // 1. Sample the center of the image (5x5 box)
-    // We pass 'false' to print because we will print our own results here
-    cameraData data = updateRawGrayHSV(fb, fb->width / 2, fb->height / 2, false);
-
-    if (data.avgR == 0 || data.avgG == 0 || data.avgB == 0) {
-        Serial.println("Calibration Failed: Image too dark.");
-        return;
-    }
-
-    // 2. Calculate new scales. 
-    // We target the Green channel as the baseline (1.0)
-    r_scale = (float)data.avgG / (float)data.avgR;
-    g_scale = 1.0; // Green is our reference
-    b_scale = (float)data.avgG / (float)data.avgB;
-
-    Serial.println("--- Calibration Complete ---");
-    Serial.printf("Target (Green): %d\n", data.avgG);
-    Serial.printf("New Scales -> R: %.2f, G: %.2f, B: %.2f\n", r_scale, g_scale, b_scale);
-}
-
-
-
-
-
-
 
 // remember it returns the 5x5box(maybe I need to add edge case)
 cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, bool print) {
@@ -186,17 +122,12 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
 
     if (count == 0) return res;
 
-
     // 2. Calculate averages
     uint8_t avgR = (uint8_t)(rSum / count);
     uint8_t avgG = (uint8_t)(gSum / count);
     uint8_t avgB = (uint8_t)(bSum / count);
 
-    if(print){
-        // uint8_t preR = avgR;
-        // uint8_t preG = avgG;
-        // uint8_t preG = avgB;
-    }
+    // save the values to print later
     uint8_t preR = avgR;
     uint8_t preG = avgG;
     uint8_t preB = avgB;
@@ -226,12 +157,6 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
     res.hsv = hsv;
     return res;
 }
-
-
-
-
-
-
 
 // void debugGray(camera_fb_t* fb) {
 //     int w = fb->width;
@@ -294,21 +219,6 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
 //     //               result.color.isBlack ? "YES" : "NO");
 // }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ov2640 sends hibyte first
 uint16_t unpackRGB565(const uint8_t* data, size_t index) {
     uint8_t highByte = data[index * 2];
@@ -332,162 +242,4 @@ uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b) {
     return (uint8_t)(gray + 0.5f);
 }
 
-
-
-
 // Since the camra produces a green biased image, we have the gray scale leaning more to green
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const float R_Gain = 1.0;     // 諢溷ｺｦ隱ｿ謨ｴ 1.0
-// const float G_Gain = 1.0;     // 諢溷ｺｦ隱ｿ謨ｴ 1.073
-// const float B_Gain = 1.0;     // 諢溷ｺｦ隱ｿ謨ｴ 1.201
-// const int Clear_D = 392.96;        // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣138
-// const int R_D = 228.96;          // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣152
-// const int G_D = 453.44;          // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣138
-// const int B_D = 497.6;          // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣124
-
-// volatile byte BYTE_H = 0;     // 16bitData(RGB蜈ｱ逕ｨ)逕ｨ荳贋ｽ�
-// volatile byte BYTE_L = 0;     // 16bitData(RGB蜈ｱ逕ｨ)逕ｨ荳倶ｽ�
-
-// volatile int Clear_0 = 0;
-// volatile int Red_0 = 0;
-// volatile int Green_0 = 0;
-// volatile int Blue_0 = 0;
-
-
-// volatile float RGB_Max = 0;       // HSB 險育ｮ礼畑
-// volatile float RGB_Min = 0;       // HSB 險育ｮ礼畑
-
-
-// volatile int H_0 = 0;               // 濶ｲ逶ｸ0
-// volatile int S_0 = 0;               // 蠖ｩ蠎ｦ0
-// volatile int V_0 = 0;               // 譏主ｺｦ0
-
-
-
-// void printRGB(){
-//   Serial.print(Clear_0);
-//   Serial.print("\t");
-//   Serial.print(Red_0);
-//   Serial.print("\t");
-//   Serial.print(Green_0);
-//   Serial.print("\t");
-//   Serial.print(Blue_0);
-//   Serial.print("\t");
-//   Serial.print(H_0);
-//   Serial.print("\t");
-//   Serial.print(S_0);
-//   Serial.print("\t");
-//   Serial.println(V_0);
-// }
-
-// // *************** RGB *********************************************
-
-
-// void GainOffset_0()
-// {
-//   Clear_0 = Clear_0 - Clear_D;
-//   if (Clear_0 < 0)
-//   {
-//     Clear_0 = 0;
-//   }
-//   Red_0 = Red_0 - R_D;l;
-//   if (Red_0 < 0)
-//   {
-//     Red_0 = 0;
-//   }
-//   Green_0 = Green_0 - G_D;
-//   if (Green_0 < 0)
-//   {
-//     Green_0 = 0;
-//   }
-//   Blue_0 = Blue_0 - B_D;
-//   if (Blue_0 < 0)
-//   {
-//     Blue_0 = 0;
-//   }
-//   Red_0 = Red_0 * R_Gain;
-//   Green_0 = Green_0 * G_Gain;
-//   Blue_0 = Blue_0 * B_Gain;
-// }
-
-
-// void RGB_HSV_0()
-// {
-//   if (Red_0 >= Green_0 && Red_0 >= Blue_0)        // Red_0 譛�螟ｧ
-//   {
-//     RGB_Max = Red_0;
-//     if (Green_0 > Blue_0)
-//     {
-//       RGB_Min = Blue_0;
-//       H_0 = 60 * (Green_0 - Blue_0) / (RGB_Max - RGB_Min);
-//     }
-//     else
-//     {
-//       RGB_Min = Green_0;
-//       H_0 = 60 * (Green_0 - Blue_0) / (RGB_Max - RGB_Min);
-//     }
-//   }
-//   else if (Green_0 >= Red_0 && Green_0 >= Blue_0)     // Green_0 譛�螟ｧ
-//   {
-//     RGB_Max = Green_0;
-//     if (Red_0 > Blue_0)
-//     {
-//       RGB_Min = Blue_0;
-//       H_0 = 60 * (Blue_0 - Red_0) / (RGB_Max - RGB_Min) + 120;
-//     }
-//     else
-//     {
-//       RGB_Min = Red_0;
-//       H_0 = 60 * (Blue_0 - Red_0) / (RGB_Max - RGB_Min) + 120;
-//     }
-//   }
-//   else if (Blue_0 >= Red_0 && Blue_0 >= Green_0)      // Blue_0 譛�螟ｧ
-//   {
-//     RGB_Max = Blue_0;
-//     if (Red_0 > Green_0)
-//     {
-//       RGB_Min = Green_0;
-//       H_0 = 60 * (Red_0 - Green_0) / (RGB_Max - RGB_Min) + 240;
-//     }
-//     else
-//     {
-//       RGB_Min = Red_0;
-//       H_0 = 60 * (Red_0 - Green_0) / (RGB_Max - RGB_Min) + 240;
-//     }
-//   }
-
-//   S_0 = ((RGB_Max - RGB_Min) / RGB_Max) * 100;
-//   V_0 = RGB_Max;
-// }
-
-// void I2C_DATA_RX()
-// {
-//   Wire.requestFrom(8, 12);            //ID縺�8逡ｪ縺ｮSlave縺九ｉ10byte縺ｮ繝�繝ｼ繧ｿ繧定ｦ∵ｱ�
-
-//   while (Wire.available())            //蜿嶺ｿ｡繝�繝ｼ繧ｿ莉｣蜈･
-//   {
-//     BYTE_H = Wire.read();
-//     BYTE_L = Wire.read();
-//     Red_0 = (BYTE_H << 8) | BYTE_L;
-//     BYTE_H = Wire.read();
-//     BYTE_L = Wire.read();
-//     Green_0 = (BYTE_H << 8) | BYTE_L;
-//     BYTE_H = Wire.read();
-//     BYTE_L = Wire.read();
-//     Blue_0 = (BYTE_H << 8) | BYTE_L;
-//   }
-// }
-
-

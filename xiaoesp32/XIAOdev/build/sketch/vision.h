@@ -41,7 +41,7 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t x, uint8_t y, bool = false)
 
 // void debugGray(camera_fb_t* fb);
 // void set_manual_wb_compensation(int mode); 
-void perform_white_balance_calibration(camera_fb_t* fb);  // it seems like the hsv at home without any gain adjustments had good hsv results.
+// void perform_white_balance_calibration(camera_fb_t* fb);  // it seems like the hsv at home without any gain adjustments had good hsv results.
 
 
 
