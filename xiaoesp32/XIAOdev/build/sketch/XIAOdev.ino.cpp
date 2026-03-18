@@ -64,7 +64,7 @@ void setup() {
 void loop() {
     static unsigned long lastTime = 0;
     if (millis() - lastTime < 240) {
-        return; // Run every 100ms
+        return; // Run every ↑ms
     }
     lastTime = millis();
 
@@ -81,8 +81,8 @@ void loop() {
 
     cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)80, (uint8_t)60, true);
 
-    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60, true);    
-    // cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60, true); 
+    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60, true);
+    // cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60, true);
     // Serial.print("gray");
     // Serial.println(dataLeft.gray - dataRight.gray);
 
@@ -122,3 +122,5 @@ void stream(camera_fb_t* fb){
     
     // Camera_Return(fb);
 }
+
+

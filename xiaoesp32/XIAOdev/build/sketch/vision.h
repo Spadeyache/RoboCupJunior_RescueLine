@@ -33,6 +33,7 @@ typedef struct {
 // Function declarations
 uint16_t unpackRGB565(const uint8_t* data, size_t index);
 void rgb565To888(uint16_t px, uint8_t& r8, uint8_t& g8, uint8_t& b8);
+void rgb888Calibration(uint8_t& r8, uint8_t& g8, uint8_t& b8);
 
 uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b);
 HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8);

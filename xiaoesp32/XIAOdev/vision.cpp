@@ -5,6 +5,99 @@
 
 #define boxlength 5 //must be odd
 
+// 255 / (avgR_White - avgR_Black)
+const float R_Gain = 1.98598130841;     // 1.98598
+const float G_Gain = 2.25265017668;     // 2.25265
+const float B_Gain = 4.0;     // 4.84791
+
+const uint8_t R_D = 12.4 * 0.8;       // avgR_Black : 0.8 is the safety margin
+const uint8_t G_D = 25.2 * 0.8;       // 
+const uint8_t B_D = 17.4 * 0.8;        // 
+
+// Measure Calib constants with gain 1 and D 0
+// White avgR=140.8 avgG=138.4 avgB=70
+// AVG_BOX:[R:140 G:138 B: 69 Gray:131] | HSV:[H: 58 S:129 V:140]
+// AVG_BOX:[R:139 G:140 B: 71 Gray:132] | HSV:[H: 60 S:125 V:140]
+// AVG_BOX:[R:142 G:137 B: 71 Gray:131] | HSV:[H: 55 S:127 V:142]
+// AVG_BOX:[R:144 G:137 B: 67 Gray:131] | HSV:[H: 54 S:136 V:144]
+// AVG_BOX:[R:139 G:140 B: 72 Gray:132] | HSV:[H: 60 S:123 V:140]
+
+// Black avgR=12.4 avgG=25.2 avgB=17.4 // carefull for using gray to get avgB
+// AVG_BOX:[R: 12 G: 28 B: 13 Gray: 22] | HSV:[H:123 S:145 V: 28]
+// AVG_BOX:[R: 13 G: 23 B: 17 Gray: 19] | HSV:[H:144 S:110 V: 23]
+// AVG_BOX:[R: 14 G: 26 B: 17 Gray: 21] | HSV:[H:135 S:117 V: 26]
+// AVG_BOX:[R: 12 G: 25 B: 20 Gray: 21] | HSV:[H:156 S:132 V: 25]
+// AVG_BOX:[R: 11 G: 24 B: 20 Gray: 20] | HSV:[H:161 S:138 V: 24]
+
+// result
+// PRE_CALIB:[R:185 G:201 B:118] | AVG_BOX:[R:255 G:255 B:255 Gray:255] | HSV:[H:  0 S:  0 V:255] : White
+// PRE_CALIB:[R: 10 G: 26 B: 27] | AVG_BOX:[R:  1 G: 13 B: 67 Gray: 16] | HSV:[H:229 S:251 V: 67] : Black
+// PRE_CALIB:[R: 93 G: 48 B: 44] | AVG_BOX:[R:166 G: 63 B:150 Gray:104] | HSV:[H:309 S:158 V:166] : Red
+// PRE_CALIB:[R: 21 G: 62 B: 45] | AVG_BOX:[R: 23 G: 94 B:155 Gray: 80] | HSV:[H:207 S:217 V:155] : Green
+// PRE_CALIB:[R: 86 G:105 B: 74] | AVG_BOX:[R:152 G:191 B:244 Gray:185] | HSV:[H:214 S: 96 V:244] : Silver
+// PRE_CALIB:[R:150 G:180 B:104] | AVG_BOX:[R:255 G:255 B:255 Gray:255] | HSV:[H:  0 S:  0 V:255] : Silver2
+
+// Findings: the blue channel is very inconsistent and easily effected by the change in light. meaning colors tend to be have a strong or weak blue. So we 
+
+
+void rgb888Calibration(uint8_t& r8, uint8_t& g8, uint8_t& b8) {
+    float calR = ((float)r8 - R_D) * R_Gain;
+    float calG = ((float)g8 - G_D) * G_Gain;
+    float calB = ((float)b8 - B_D) * B_Gain;
+
+    // costrain to keep in 0-255 bound
+    r8 = (uint8_t)constrain(calR, 0, 255);
+    g8 = (uint8_t)constrain(calG, 0, 255);
+    b8 = (uint8_t)constrain(calB, 0, 255);
+}
+
+
+HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
+    // // Apply Virtual White Balance Compensation
+    // float r = r8 * r_scale;
+    // float g = g8 * g_scale;
+    // float b = b8 * b_scale;
+
+    // // Constrain to 8-bit bounds
+    // if (r > 255) r = 255; 
+    // if (g > 255) g = 255; 
+    // if (b > 255) b = 255;
+
+    float r = r8;
+    float g = g8;
+    float b = b8;
+
+    float min = fmin(fmin(r, g), b);
+    float max = fmax(fmax(r, g), b);
+    float delta = max - min;
+
+    HSV res;
+    res.v = (uint8_t)max; // Value
+
+    if (max == 0 || delta == 0) {
+        res.h = 0;
+        res.s = 0;
+        return res;
+    }
+
+    res.s = (uint8_t)((delta / max) * 255); // Saturation
+
+    // Hue Calculation
+    float h;
+    if (r == max) h = (g - b) / delta;
+    else if (g == max) h = 2 + (b - r) / delta;
+    else h = 4 + (r - g) / delta;
+
+    h *= 60; // Scale to 0-360 range
+    if (h < 0) h += 360;
+
+    res.h = (uint16_t)h;
+    return res;
+}
+
+
+
+
 static float r_scale = 1.0, g_scale = 1.0, b_scale = 1.0;
 
 // Function to set software gains based on WB Mode  // WILL CHANGE TO AUTO CALIBRATION
@@ -49,44 +142,6 @@ void perform_white_balance_calibration(camera_fb_t* fb) {
     Serial.printf("New Scales -> R: %.2f, G: %.2f, B: %.2f\n", r_scale, g_scale, b_scale);
 }
 
-HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8) {
-    // Apply Virtual White Balance Compensation
-    float r = r8 * r_scale;
-    float g = g8 * g_scale;
-    float b = b8 * b_scale;
-
-    // Constrain to 8-bit bounds
-    if (r > 255) r = 255; 
-    if (g > 255) g = 255; 
-    if (b > 255) b = 255;
-
-    float min = fmin(fmin(r, g), b);
-    float max = fmax(fmax(r, g), b);
-    float delta = max - min;
-
-    HSV res;
-    res.v = (uint8_t)max; // Value
-
-    if (max == 0 || delta == 0) {
-        res.h = 0;
-        res.s = 0;
-        return res;
-    }
-
-    res.s = (uint8_t)((delta / max) * 255); // Saturation
-
-    // Hue Calculation
-    float h;
-    if (r == max) h = (g - b) / delta;
-    else if (g == max) h = 2 + (b - r) / delta;
-    else h = 4 + (r - g) / delta;
-
-    h *= 60; // Scale to 0-360 range
-    if (h < 0) h += 360;
-
-    res.h = (uint16_t)h;
-    return res;
-}
 
 
 
@@ -131,10 +186,24 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
 
     if (count == 0) return res;
 
+
     // 2. Calculate averages
     uint8_t avgR = (uint8_t)(rSum / count);
     uint8_t avgG = (uint8_t)(gSum / count);
     uint8_t avgB = (uint8_t)(bSum / count);
+
+    if(print){
+        // uint8_t preR = avgR;
+        // uint8_t preG = avgG;
+        // uint8_t preG = avgB;
+    }
+    uint8_t preR = avgR;
+    uint8_t preG = avgG;
+    uint8_t preB = avgB;
+    
+    // apply the calibration
+    rgb888Calibration(avgR, avgG, avgB);
+
     uint8_t gray = rgbToGray(avgR, avgG, avgB);
 
     // 3. Convert averaged RGB to HSV (Applying software WB inside)
@@ -143,7 +212,8 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
     if (print){
         // 4. Print unified line
         Serial.printf(
-            "AVG_BOX:[R:%3d G:%3d B:%3d Gray:%3d] | HSV:[H:%3d S:%3d V:%3d]\n",
+            "PRE_CALIB:[R:%3d G:%3d B:%3d] | AVG_BOX:[R:%3d G:%3d B:%3d Gray:%3d] | HSV:[H:%3d S:%3d V:%3d]\n",
+            preR, preG, preB,
             avgR, avgG, avgB, gray,
             hsv.h, hsv.s, hsv.v
         );
@@ -266,3 +336,158 @@ uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b) {
 
 
 // Since the camra produces a green biased image, we have the gray scale leaning more to green
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const float R_Gain = 1.0;     // 諢溷ｺｦ隱ｿ謨ｴ 1.0
+// const float G_Gain = 1.0;     // 諢溷ｺｦ隱ｿ謨ｴ 1.073
+// const float B_Gain = 1.0;     // 諢溷ｺｦ隱ｿ謨ｴ 1.201
+// const int Clear_D = 392.96;        // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣138
+// const int R_D = 228.96;          // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣152
+// const int G_D = 453.44;          // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣138
+// const int B_D = 497.6;          // 鮟偵が繝輔そ繝�繝郁｣懈ｭ｣124
+
+// volatile byte BYTE_H = 0;     // 16bitData(RGB蜈ｱ逕ｨ)逕ｨ荳贋ｽ�
+// volatile byte BYTE_L = 0;     // 16bitData(RGB蜈ｱ逕ｨ)逕ｨ荳倶ｽ�
+
+// volatile int Clear_0 = 0;
+// volatile int Red_0 = 0;
+// volatile int Green_0 = 0;
+// volatile int Blue_0 = 0;
+
+
+// volatile float RGB_Max = 0;       // HSB 險育ｮ礼畑
+// volatile float RGB_Min = 0;       // HSB 險育ｮ礼畑
+
+
+// volatile int H_0 = 0;               // 濶ｲ逶ｸ0
+// volatile int S_0 = 0;               // 蠖ｩ蠎ｦ0
+// volatile int V_0 = 0;               // 譏主ｺｦ0
+
+
+
+// void printRGB(){
+//   Serial.print(Clear_0);
+//   Serial.print("\t");
+//   Serial.print(Red_0);
+//   Serial.print("\t");
+//   Serial.print(Green_0);
+//   Serial.print("\t");
+//   Serial.print(Blue_0);
+//   Serial.print("\t");
+//   Serial.print(H_0);
+//   Serial.print("\t");
+//   Serial.print(S_0);
+//   Serial.print("\t");
+//   Serial.println(V_0);
+// }
+
+// // *************** RGB *********************************************
+
+
+// void GainOffset_0()
+// {
+//   Clear_0 = Clear_0 - Clear_D;
+//   if (Clear_0 < 0)
+//   {
+//     Clear_0 = 0;
+//   }
+//   Red_0 = Red_0 - R_D;l;
+//   if (Red_0 < 0)
+//   {
+//     Red_0 = 0;
+//   }
+//   Green_0 = Green_0 - G_D;
+//   if (Green_0 < 0)
+//   {
+//     Green_0 = 0;
+//   }
+//   Blue_0 = Blue_0 - B_D;
+//   if (Blue_0 < 0)
+//   {
+//     Blue_0 = 0;
+//   }
+//   Red_0 = Red_0 * R_Gain;
+//   Green_0 = Green_0 * G_Gain;
+//   Blue_0 = Blue_0 * B_Gain;
+// }
+
+
+// void RGB_HSV_0()
+// {
+//   if (Red_0 >= Green_0 && Red_0 >= Blue_0)        // Red_0 譛�螟ｧ
+//   {
+//     RGB_Max = Red_0;
+//     if (Green_0 > Blue_0)
+//     {
+//       RGB_Min = Blue_0;
+//       H_0 = 60 * (Green_0 - Blue_0) / (RGB_Max - RGB_Min);
+//     }
+//     else
+//     {
+//       RGB_Min = Green_0;
+//       H_0 = 60 * (Green_0 - Blue_0) / (RGB_Max - RGB_Min);
+//     }
+//   }
+//   else if (Green_0 >= Red_0 && Green_0 >= Blue_0)     // Green_0 譛�螟ｧ
+//   {
+//     RGB_Max = Green_0;
+//     if (Red_0 > Blue_0)
+//     {
+//       RGB_Min = Blue_0;
+//       H_0 = 60 * (Blue_0 - Red_0) / (RGB_Max - RGB_Min) + 120;
+//     }
+//     else
+//     {
+//       RGB_Min = Red_0;
+//       H_0 = 60 * (Blue_0 - Red_0) / (RGB_Max - RGB_Min) + 120;
+//     }
+//   }
+//   else if (Blue_0 >= Red_0 && Blue_0 >= Green_0)      // Blue_0 譛�螟ｧ
+//   {
+//     RGB_Max = Blue_0;
+//     if (Red_0 > Green_0)
+//     {
+//       RGB_Min = Green_0;
+//       H_0 = 60 * (Red_0 - Green_0) / (RGB_Max - RGB_Min) + 240;
+//     }
+//     else
+//     {
+//       RGB_Min = Red_0;
+//       H_0 = 60 * (Red_0 - Green_0) / (RGB_Max - RGB_Min) + 240;
+//     }
+//   }
+
+//   S_0 = ((RGB_Max - RGB_Min) / RGB_Max) * 100;
+//   V_0 = RGB_Max;
+// }
+
+// void I2C_DATA_RX()
+// {
+//   Wire.requestFrom(8, 12);            //ID縺�8逡ｪ縺ｮSlave縺九ｉ10byte縺ｮ繝�繝ｼ繧ｿ繧定ｦ∵ｱ�
+
+//   while (Wire.available())            //蜿嶺ｿ｡繝�繝ｼ繧ｿ莉｣蜈･
+//   {
+//     BYTE_H = Wire.read();
+//     BYTE_L = Wire.read();
+//     Red_0 = (BYTE_H << 8) | BYTE_L;
+//     BYTE_H = Wire.read();
+//     BYTE_L = Wire.read();
+//     Green_0 = (BYTE_H << 8) | BYTE_L;
+//     BYTE_H = Wire.read();
+//     BYTE_L = Wire.read();
+//     Blue_0 = (BYTE_H << 8) | BYTE_L;
+//   }
+// }
+
+

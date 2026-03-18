@@ -6,9 +6,9 @@
 <title>ESP32 Camera Viewer</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: #111; color: #eee; font-family: monospace; padding: 16px; }
-  h2 { font-size: 15px; font-weight: 500; color: #aaa; margin-bottom: 12px; letter-spacing: 0.05em; }
-  .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+  body { background: #111; color: #eee; font-family: monospace; padding: 16px; display: flex; flex-direction: column; height: 100vh; gap: 0; }
+  h2 { font-size: 15px; font-weight: 500; color: #aaa; margin-bottom: 12px; letter-spacing: 0.05em; flex-shrink: 0; }
+  .toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; flex-shrink: 0; }
   label { font-size: 13px; color: #888; }
   select, button {
     font-size: 13px; padding: 5px 12px;
@@ -18,12 +18,17 @@
   button:hover { background: #2a2a2a; }
   button:active { transform: scale(0.98); }
   button.active { background: #0a3a1a; color: #4eff8a; border-color: #2a7a4a; }
-  .status {
-    font-size: 12px; padding: 3px 10px; border-radius: 99px;
-  }
+  button.active-dim { background: #1a2a1a; color: #4eff8a; border-color: #2a5a3a; }
+  .status { font-size: 12px; padding: 3px 10px; border-radius: 99px; }
   .status.connected { background: #0a3a1a; color: #4eff8a; }
   .status.disconnected { background: #222; color: #666; }
   .status.error { background: #3a0a0a; color: #ff6666; }
+
+  /* ---- Split layout ---- */
+  .split { display: flex; gap: 16px; flex: 1; min-height: 0; }
+
+  /* Left: camera */
+  .cam-col { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
   .canvas-wrap {
     position: relative; display: inline-block;
     border: 1px solid #333; border-radius: 8px; overflow: hidden; background: #000;
@@ -39,10 +44,50 @@
     font-size: 11px; color: #ff0;
     background: rgba(0,0,0,0.65); padding: 3px 8px; border-radius: 4px;
   }
-  .stats { display: flex; gap: 20px; margin-top: 10px; }
+  .stats { display: flex; gap: 16px; flex-wrap: wrap; }
   .stat { font-size: 12px; color: #666; }
   .stat span { color: #ccc; font-weight: 600; }
-  .error-msg { font-size: 12px; color: #ff6666; margin-top: 8px; }
+  .error-msg { font-size: 12px; color: #ff6666; }
+
+  /* Right: serial monitor */
+  .mon-col { display: flex; flex-direction: column; flex: 1; min-width: 0; min-height: 0; }
+  .mon-header {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .mon-title { font-size: 13px; color: #aaa; letter-spacing: 0.05em; flex: 1; }
+  .mon-badge {
+    font-size: 11px; padding: 2px 8px; border-radius: 99px;
+    background: #1a1a1a; color: #555; border: 1px solid #333;
+  }
+  .mon-log {
+    flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
+    background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 8px;
+    padding: 8px 10px; font-size: 12px; line-height: 1.6;
+    word-break: break-all;
+  }
+  .mon-log::-webkit-scrollbar { width: 6px; }
+  .mon-log::-webkit-scrollbar-track { background: #111; }
+  .mon-log::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  .log-line { color: #bbb; white-space: pre-wrap; }
+  .log-line .ts { color: #3a5a3a; margin-right: 6px; user-select: none; }
+  .log-line.warn { color: #ffcc44; }
+  .log-line.err  { color: #ff6666; }
+  .log-line.info { color: #66aaff; }
+  .log-empty { color: #333; font-size: 12px; text-align: center; padding-top: 40px; }
+
+  /* Send bar */
+  .mon-send {
+    display: flex; gap: 6px; margin-top: 6px; flex-shrink: 0;
+  }
+  .mon-send input {
+    flex: 1; font-size: 13px; font-family: monospace;
+    padding: 5px 10px; border-radius: 6px;
+    border: 1px solid #333; background: #1a1a1a; color: #eee; outline: none;
+  }
+  .mon-send input:focus { border-color: #555; }
+  .mon-send input::placeholder { color: #444; }
+
   .no-serial {
     padding: 1rem; background: #1e1e1e; border-radius: 8px;
     font-size: 13px; color: #888; border: 1px solid #333;
@@ -67,55 +112,161 @@
   <button id="scaleBtn">2x</button>
 </div>
 
-<div id="mainArea">
-  <div class="canvas-wrap" id="canvasWrap">
-    <canvas id="cam" width="160" height="120"></canvas>
-    <div class="fps-overlay" id="fpsLabel">-- fps</div>
-    <div class="err-overlay" id="errOverlay">err: —</div>
+<div class="split" id="mainArea">
+
+  <!-- Camera column -->
+  <div class="cam-col">
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="cam" width="160" height="120"></canvas>
+      <div class="fps-overlay" id="fpsLabel">-- fps</div>
+      <div class="err-overlay" id="errOverlay">err: —</div>
+    </div>
+    <div class="stats">
+      <div class="stat">Frames: <span id="frameCount">0</span></div>
+      <div class="stat">Size: <span id="sizeLabel">160×120</span></div>
+      <div class="stat">Bytes/frame: <span id="bytesLabel">38400</span></div>
+    </div>
+    <div class="error-msg" id="errorHint" style="display:none;"></div>
   </div>
-  <div class="stats">
-    <div class="stat">Frames: <span id="frameCount">0</span></div>
-    <div class="stat">Size: <span id="sizeLabel">160×120</span></div>
-    <div class="stat">Bytes/frame: <span id="bytesLabel">38400</span></div>
+
+  <!-- Serial monitor column -->
+  <div class="mon-col">
+    <div class="mon-header">
+      <span class="mon-title">SERIAL MONITOR</span>
+      <span class="mon-badge" id="lineCountBadge">0 lines</span>
+      <button id="autoScrollBtn" class="active-dim" title="Auto-scroll">↓ Auto</button>
+      <button id="clearBtn">Clear</button>
+    </div>
+    <div class="mon-log" id="monLog">
+      <div class="log-empty" id="logEmpty">Waiting for data…</div>
+    </div>
+    <div class="mon-send">
+      <input id="sendInput" type="text" placeholder="Send text → Enter (requires writable stream)" autocomplete="off" />
+      <button id="sendBtn">Send</button>
+      <button id="sendNlBtn" title="Send with newline">↵</button>
+    </div>
   </div>
-  <div class="error-msg" id="errorHint" style="display:none;"></div>
+
 </div>
 
 <script>
 const FRAME_W = 160, FRAME_H = 120;
 
-const canvas = document.getElementById('cam');
-const ctx = canvas.getContext('2d');
-const connectBtn = document.getElementById('connectBtn');
-const saveBtn = document.getElementById('saveBtn');
-const scaleBtn = document.getElementById('scaleBtn');
-const statusBadge = document.getElementById('statusBadge');
-const fpsLabel = document.getElementById('fpsLabel');
-const errOverlay = document.getElementById('errOverlay');
+const canvas   = document.getElementById('cam');
+const ctx      = canvas.getContext('2d');
+const connectBtn    = document.getElementById('connectBtn');
+const saveBtn      = document.getElementById('saveBtn');
+const scaleBtn     = document.getElementById('scaleBtn');
+const statusBadge  = document.getElementById('statusBadge');
+const fpsLabel     = document.getElementById('fpsLabel');
+const errOverlay   = document.getElementById('errOverlay');
 const frameCountEl = document.getElementById('frameCount');
-const sizeLabel = document.getElementById('sizeLabel');
-const bytesLabel = document.getElementById('bytesLabel');
-const errorHint = document.getElementById('errorHint');
+const sizeLabel    = document.getElementById('sizeLabel');
+const bytesLabel   = document.getElementById('bytesLabel');
+const errorHint    = document.getElementById('errorHint');
 
-let port = null, reader = null, running = false;
+const monLog        = document.getElementById('monLog');
+const logEmpty      = document.getElementById('logEmpty');
+const lineCountBadge= document.getElementById('lineCountBadge');
+const clearBtn      = document.getElementById('clearBtn');
+const autoScrollBtn = document.getElementById('autoScrollBtn');
+const sendInput     = document.getElementById('sendInput');
+const sendBtn       = document.getElementById('sendBtn');
+const sendNlBtn     = document.getElementById('sendNlBtn');
+
+let port = null, reader = null, writer = null, running = false;
 let totalFrames = 0, fpsFrames = 0, lastFpsTime = performance.now();
 let scale = 2;
-canvas.style.width = (FRAME_W * scale) + 'px';
+canvas.style.width  = (FRAME_W * scale) + 'px';
 canvas.style.height = (FRAME_H * scale) + 'px';
 
+let autoScroll  = true;
+let logLineCount= 0;
+const MAX_LINES = 1000;
+
+// ---- Serial monitor helpers ----
+function tsNow() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())+'.'+String(d.getMilliseconds()).padStart(3,'0');
+}
+
+function classifyLine(txt) {
+  const l = txt.toLowerCase();
+  if (/\b(error|err|fail|assert|abort|panic)\b/.test(l)) return 'err';
+  if (/\b(warn|warning|caution)\b/.test(l)) return 'warn';
+  if (/\b(info|init|boot|ready|ok)\b/.test(l)) return 'info';
+  return '';
+}
+
+function appendLine(text) {
+  if (logEmpty) logEmpty.remove();
+  // Trim oldest lines
+  while (logLineCount >= MAX_LINES) {
+    const first = monLog.querySelector('.log-line');
+    if (first) { first.remove(); logLineCount--; }
+    else break;
+  }
+  const div = document.createElement('div');
+  div.className = 'log-line ' + classifyLine(text);
+  const tsSpan = document.createElement('span');
+  tsSpan.className = 'ts';
+  tsSpan.textContent = tsNow();
+  div.appendChild(tsSpan);
+  div.appendChild(document.createTextNode(text));
+  monLog.appendChild(div);
+  logLineCount++;
+  lineCountBadge.textContent = logLineCount + ' line' + (logLineCount !== 1 ? 's' : '');
+  if (autoScroll) monLog.scrollTop = monLog.scrollHeight;
+}
+
+autoScrollBtn.onclick = () => {
+  autoScroll = !autoScroll;
+  autoScrollBtn.className = autoScroll ? 'active-dim' : '';
+  autoScrollBtn.textContent = autoScroll ? '↓ Auto' : '↓ Off';
+  if (autoScroll) monLog.scrollTop = monLog.scrollHeight;
+};
+
+clearBtn.onclick = () => {
+  monLog.innerHTML = '<div class="log-empty" id="logEmpty">Waiting for data…</div>';
+  logLineCount = 0;
+  lineCountBadge.textContent = '0 lines';
+};
+
+// ---- Send ----
+async function sendText(nl) {
+  if (!writer) { appendLine('[send error: not connected]'); return; }
+  const txt = sendInput.value;
+  if (!txt && !nl) return;
+  const enc = new TextEncoder();
+  try {
+    await writer.write(enc.encode(txt + (nl ? '\n' : '')));
+    appendLine('→ ' + txt + (nl ? '\\n' : ''));
+    sendInput.value = '';
+  } catch(e) {
+    appendLine('[send error: ' + e.message + ']');
+  }
+}
+sendBtn.onclick   = () => sendText(false);
+sendNlBtn.onclick = () => sendText(true);
+sendInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendText(true); });
+
+// ---- No Web Serial fallback ----
 if (!navigator.serial) {
   document.getElementById('mainArea').innerHTML =
     '<div class="no-serial">Web Serial API not available.<br>Use <strong>Chrome</strong> or <strong>Edge</strong> on desktop.<br><br>Make sure the page is served over HTTPS or localhost.</div>';
   connectBtn.disabled = true;
 }
 
+// ---- Scale button ----
 scaleBtn.onclick = () => {
   scale = scale === 1 ? 2 : scale === 2 ? 4 : 1;
-  canvas.style.width = (canvas.width * scale) + 'px';
+  canvas.style.width  = (canvas.width  * scale) + 'px';
   canvas.style.height = (canvas.height * scale) + 'px';
   scaleBtn.textContent = scale + 'x';
 };
 
+// ---- Connect / disconnect ----
 connectBtn.onclick = async () => {
   if (running) { await disconnect(); return; }
   try {
@@ -123,10 +274,13 @@ connectBtn.onclick = async () => {
     const baud = parseInt(document.getElementById('baud').value);
     await port.open({ baudRate: baud });
     running = true;
+    // Get writer for send support
+    try { writer = port.writable.getWriter(); } catch(e) { writer = null; }
     connectBtn.textContent = 'Disconnect';
     connectBtn.classList.add('active');
     setStatus('connected', 'Connected');
     errorHint.style.display = 'none';
+    appendLine('[connected at ' + baud + ' baud]');
     readLoop();
   } catch(e) {
     setStatus('error', 'Error');
@@ -137,10 +291,12 @@ connectBtn.onclick = async () => {
 async function disconnect() {
   running = false;
   if (reader) { try { await reader.cancel(); } catch(e){} reader = null; }
-  if (port) { try { await port.close(); } catch(e){} port = null; }
+  if (writer) { try { writer.releaseLock(); } catch(e){} writer = null; }
+  if (port)   { try { await port.close();   } catch(e){} port = null; }
   connectBtn.textContent = 'Connect';
   connectBtn.classList.remove('active');
   setStatus('disconnected', 'Disconnected');
+  appendLine('[disconnected]');
 }
 
 function setStatus(cls, text) {
@@ -152,28 +308,56 @@ function showError(msg) {
   errorHint.textContent = msg;
 }
 
-// ---- Ring buffer ----
-const RING = 2 * 1024 * 1024;
-const ring = new Uint8Array(RING);
-let rHead = 0, rTail = 0;
-function ringAvail() { return (rTail - rHead + RING) % RING; }
-function ringPush(chunk) {
-  for (let i = 0; i < chunk.length; i++) {
-    ring[rTail % RING] = chunk[i];
-    rTail = (rTail + 1) % RING;
-  }
-}
-function ringRead(buf, n) {
-  for (let i = 0; i < n; i++) {
-    buf[i] = ring[(rHead + i) % RING];
-  }
-  rHead = (rHead + n) % RING;
-}
-function ringPeek(offset) { return ring[(rHead + offset) % RING]; }
-function ringSkip(n) { rHead = (rHead + n) % RING; }
+// ---- Text line accumulator ----
+// STRICT: only lines terminated by \n are ever shown.
+// Bytes that arrive outside a frame go here. Real Serial.println() always
+// ends with \n. Stray pixel bytes never produce a \n, so they never display.
+let textLineBuf = [];
+let textLineTimer = null;
 
-const META_LEN = 12; // 4 magic + 2 w + 2 h + 4 errVal
+function emitTextByte(b) {
+  if (b === 0x0D) return; // ignore \r
+  if (b === 0x0A) {       // \n → this is a real line, show it
+    clearTimeout(textLineTimer);
+    textLineTimer = null;
+    const line = String.fromCharCode(...textLineBuf).trim();
+    textLineBuf = [];
+    if (line.length > 0) appendLine(line);
+    return;
+  }
+  // Accept only printable ASCII (0x20–0x7E) and tab
+  if (b === 0x09 || (b >= 0x20 && b <= 0x7E)) {
+    textLineBuf.push(b);
+    // Cap line length — anything this long without a \n is binary noise
+    if (textLineBuf.length > 256) { textLineBuf = []; return; }
+    // If no \n arrives within 200ms, the buffer is stale garbage — discard silently
+    clearTimeout(textLineTimer);
+    textLineTimer = setTimeout(() => { textLineBuf = []; textLineTimer = null; }, 200);
+  } else {
+    // Non-printable byte outside a frame = sync loss, discard buffer
+    textLineBuf = [];
+    clearTimeout(textLineTimer);
+    textLineTimer = null;
+  }
+}
+
+const META_LEN = 8;  // 2 w + 2 h + 4 errVal  (magic consumed separately by state machine)
+const MAGIC = [0xAA, 0x55, 0xBB, 0x44];
 let imageData = ctx.createImageData(FRAME_W, FRAME_H);
+
+// Parser state machine
+const ST_TEXT      = 0;  // scanning for magic, routing bytes to text
+const ST_MAGIC     = 1;  // matched some magic prefix bytes
+const ST_META      = 2;  // consuming remaining header bytes
+const ST_PIXELS    = 3;  // swallowing pixel data silently
+let parserState    = ST_TEXT;
+let magicPos       = 0;          // how many magic bytes matched so far
+let metaBuf        = new Uint8Array(META_LEN);
+let metaPos        = 0;
+let pixelsLeft     = 0;
+let frameW = 0, frameH = 0, frameErrRaw = 0;
+let pixBuf         = null;
+let pixPos         = 0;
 
 async function readLoop() {
   reader = port.readable.getReader();
@@ -181,45 +365,87 @@ async function readLoop() {
     while (running) {
       const { value, done } = await reader.read();
       if (done || !value) break;
-      ringPush(value);
-      processRing();
+      // Process byte-by-byte through the state machine
+      for (let i = 0; i < value.length; i++) parseByte(value[i]);
     }
   } catch(e) {
-    if (running) { setStatus('error', 'Read error'); showError(e.message); }
+    if (running) {
+      // Port was likely grabbed by the IDE — disconnect silently and offer reconnect
+      await disconnect();
+    }
   } finally {
     reader = null;
   }
 }
 
-function processRing() {
-  while (true) {
-    if (ringAvail() < META_LEN) return;
-    // Scan for magic header 0xAA 0x55 0xBB 0x44
-    if (ringPeek(0) !== 0xAA || ringPeek(1) !== 0x55 ||
-        ringPeek(2) !== 0xBB || ringPeek(3) !== 0x44) {
-      ringSkip(1); continue;
-    }
-    const w = ringPeek(4) | (ringPeek(5) << 8);
-    const h = ringPeek(6) | (ringPeek(7) << 8);
-    // Read errVal as signed int32
-    let errRaw = ringPeek(8) | (ringPeek(9) << 8) | (ringPeek(10) << 16) | (ringPeek(11) << 24);
-    if (errRaw & 0x80000000) errRaw = errRaw - 0x100000000; // sign extend
-    const frameSize = w * h * 2;
-    if (ringAvail() < META_LEN + frameSize) return;
-    ringSkip(META_LEN);
-    const pixBuf = new Uint8Array(frameSize);
-    ringRead(pixBuf, frameSize);
-    renderFrame(pixBuf, w, h, errRaw);
+function parseByte(b) {
+  switch (parserState) {
+
+    case ST_TEXT:
+      if (b === MAGIC[0]) {
+        // Possible start of magic — hold it, don't emit to text yet
+        magicPos = 1;
+        parserState = ST_MAGIC;
+      } else {
+        emitTextByte(b);
+      }
+      break;
+
+    case ST_MAGIC:
+      if (b === MAGIC[magicPos]) {
+        magicPos++;
+        if (magicPos === MAGIC.length) {
+          // Full magic matched — start reading metadata
+          metaPos = 0;
+          parserState = ST_META;
+        }
+      } else {
+        // False alarm — emit the magic bytes we held back as text, then reprocess b
+        for (let i = 0; i < magicPos; i++) emitTextByte(MAGIC[i]);
+        magicPos = 0;
+        parserState = ST_TEXT;
+        parseByte(b); // re-process current byte from ST_TEXT
+      }
+      break;
+
+    case ST_META:
+      metaBuf[metaPos++] = b;
+      if (metaPos === META_LEN) {
+        // Parse header (magic already consumed, so metaBuf starts at byte 4 of original packet)
+        frameW = metaBuf[0] | (metaBuf[1] << 8);
+        frameH = metaBuf[2] | (metaBuf[3] << 8);
+        frameErrRaw = metaBuf[4] | (metaBuf[5] << 8) | (metaBuf[6] << 16) | (metaBuf[7] << 24);
+        if (frameErrRaw & 0x80000000) frameErrRaw = frameErrRaw - 0x100000000;
+        pixelsLeft = frameW * frameH * 2;
+        if (pixelsLeft > 0 && frameW < 4096 && frameH < 4096) {
+          pixBuf = new Uint8Array(pixelsLeft);
+          pixPos = 0;
+          parserState = ST_PIXELS;
+        } else {
+          // Bogus dimensions — bail back to text
+          parserState = ST_TEXT;
+        }
+      }
+      break;
+
+    case ST_PIXELS:
+      pixBuf[pixPos++] = b;
+      pixelsLeft--;
+      if (pixelsLeft === 0) {
+        renderFrame(pixBuf, frameW, frameH, frameErrRaw);
+        parserState = ST_TEXT;
+      }
+      break;
   }
 }
 
 function renderFrame(pixBuf, w, h, errVal) {
   if (w !== canvas.width || h !== canvas.height) {
-    canvas.width = w; canvas.height = h;
-    canvas.style.width = (w * scale) + 'px';
+    canvas.width  = w; canvas.height = h;
+    canvas.style.width  = (w * scale) + 'px';
     canvas.style.height = (h * scale) + 'px';
     imageData = ctx.createImageData(w, h);
-    sizeLabel.textContent = w + '×' + h;
+    sizeLabel.textContent  = w + '×' + h;
     bytesLabel.textContent = w * h * 2;
   }
   const data = imageData.data;
@@ -237,14 +463,14 @@ function renderFrame(pixBuf, w, h, errVal) {
   totalFrames++;
   fpsFrames++;
   frameCountEl.textContent = totalFrames;
-  errOverlay.textContent = 'err: ' + errVal;
+  errOverlay.textContent   = 'err: ' + errVal;
 
   const now = performance.now();
   const elapsed = now - lastFpsTime;
   if (elapsed >= 1000) {
     const fps = Math.round(fpsFrames / (elapsed / 1000));
     fpsLabel.textContent = fps + ' fps';
-    fpsFrames = 0;
+    fpsFrames   = 0;
     lastFpsTime = now;
   }
 }

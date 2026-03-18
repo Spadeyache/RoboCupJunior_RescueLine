@@ -46,9 +46,9 @@
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\3.3.7\\libraries\\Network\\src",
         "@C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\build/build_opt.h",
         "@C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\build/file_opts",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\build\\sketch\\vision.cpp",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\build\\sketch\\wifi_config.cpp",
         "-o",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\build\\sketch\\vision.cpp.o"
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\build\\sketch\\wifi_config.cpp.o"
       ],
       "defines": [
         "F_CPU=240000000L",
