@@ -6,9 +6,9 @@
 
 #line 6 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup();
-#line 44 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 56 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void loop();
-#line 85 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 99 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void stream(camera_fb_t* fb);
 #line 6 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup() {
@@ -47,6 +47,18 @@ void setup() {
     //     delay(100);
     // } else {Serial.println("Connection failed or timed out");}
     
+    delay(500); //wait for camera to settle
+    
+    // // Camera Calibration
+    // camera_fb_t* fb = Camera_Grab();
+    // if (fb) {
+    //     perform_white_balance_calibration(fb);
+    //     Camera_Return(fb);
+    //     Camera_Grab(); // Optional: capture another to clear buffer
+    //     Camera_Return(fb);
+    // } else {
+    //     Serial.println("Calibration Error: Could not capture frame.");
+    // }
 }
 
 void loop() {
@@ -67,10 +79,12 @@ void loop() {
     // FrameResult result = Line_Vision_Process(fb);
     // Debug_PrintGrayPatch(fb, fb->width / 2, fb->height / 2);
 
-    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60, true);    
-    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60, true);    
-    print("gray");
-    println(dataLeft.gray - dataRight.gray);
+    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)80, (uint8_t)60, true);
+
+    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60, true);    
+    // cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60, true); 
+    // Serial.print("gray");
+    // Serial.println(dataLeft.gray - dataRight.gray);
 
     // Print results
     // Vision_Print(result);

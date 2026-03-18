@@ -205,107 +205,25 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
 // }
 
 
-FrameResult Line_Vision_Process(camera_fb_t* fb) {
-    FrameResult result;
-    result.frameWidth = fb->width;
-    result.frameHeight = fb->height;
-
-    // Initialize results
-    result.line.error = 0.0;
-    result.line.isSilver = false;
-    result.line.isRed = false;
-    result.line.isWhite = false;
-    result.line.intersection = false;
-
-    result.intersect.isLeftGreen = false;
-    result.intersect.isRightGreen = false;
-
-    if (!fb->buf || fb->width == 0 || fb->height == 0) {
-        return result;
-    }
-
-    const uint8_t* buffer = fb->buf;
-    int32_t width = fb->width;
-    int32_t height = fb->height;
-
-    // LINE DETECTION - scan row at LINE_SCAN_ROW depth
-    int32_t lineY = (int)(height * LINE_SCAN_ROW);
-    if (lineY >= 0 && lineY < height) {
 
 
-        //access the rgb for every element in the lineY row
-        int32_t err = 0;
-        for (int x = 0; x < width; x++) {
-        }
-        result.line.error = err;
-    }
-    
+// void Vision_Print(const FrameResult& result) {
+//     // Serial.printf("LINE: detected=%s, offset=%.2f, darkPixels=%d, darkPercent=%.1f%%\n",
+//     //               result.line.detected ? "YES" : "NO",
+//     //               result.line.offset,
+//     //               result.line.darkPixels,
+//     //               result.line.darkPercent);
 
-    // // COLOR DETECTION - sample row at COLOR_SCAN_ROW every COLOR_SAMPLE_STEP pixels
-    // int colorY = (int)(height * COLOR_SCAN_ROW);
-    // if (colorY >= 0 && colorY < height) {
-    //     int rSum = 0, gSum = 0, bSum = 0;
-    //     int sampleCount = 0;
-
-    //     for (int x = 0; x < width; x += COLOR_SAMPLE_STEP) {
-    //         uint16_t pixel = unpackRGB565(buffer, colorY * width + x);
-
-    //         // Extract RGB565 components
-    //         uint8_t r = (pixel >> 11) & 0x1F;
-    //         uint8_t g = (pixel >> 5) & 0x3F;
-    //         uint8_t b = pixel & 0x1F;
-
-    //         // Convert to 8-bit
-    //         uint8_t r8 = (r << 3) | (r >> 2);
-    //         uint8_t g8 = (g << 2) | (g >> 4);
-    //         uint8_t b8 = (b << 3) | (b >> 2);
-
-    //         rSum += r8;
-    //         gSum += g8;
-    //         bSum += b8;
-    //         sampleCount++;
-    //     }
-
-    //     if (sampleCount > 0) {
-    //         result.color.r = rSum / sampleCount;
-    //         result.color.g = gSum / sampleCount;
-    //         result.color.b = bSum / sampleCount;
-
-    //         // Calculate color dominance percentages
-    //         int maxVal = max(result.color.r, max(result.color.g, result.color.b));
-    //         if (maxVal > 0) {
-    //             result.color.isGreen = (result.color.g * 100 / maxVal) >= (100 + GREEN_DOMINANCE);
-    //             result.color.isRed = (result.color.r * 100 / maxVal) >= (100 + RED_DOMINANCE);
-    //             result.color.isBlue = (result.color.b * 100 / maxVal) >= (100 + BLUE_DOMINANCE);
-    //         }
-
-    //         // Simple white/black detection
-    //         int brightness = (result.color.r + result.color.g + result.color.b) / 3;
-    //         result.color.isWhite = brightness > 200;
-    //         result.color.isBlack = brightness < 30;
-    //     }
-    // }
-
-    return result;
-}
-
-void Vision_Print(const FrameResult& result) {
-    // Serial.printf("LINE: detected=%s, offset=%.2f, darkPixels=%d, darkPercent=%.1f%%\n",
-    //               result.line.detected ? "YES" : "NO",
-    //               result.line.offset,
-    //               result.line.darkPixels,
-    //               result.line.darkPercent);
-
-    // Serial.printf("COLOR: R=%d, G=%d, B=%d, Green=%s, Red=%s, Blue=%s, White=%s, Black=%s\n",
-    //               result.color.r,
-    //               result.color.g,
-    //               result.color.b,
-    //               result.color.isGreen ? "YES" : "NO",
-    //               result.color.isRed ? "YES" : "NO",
-    //               result.color.isBlue ? "YES" : "NO",
-    //               result.color.isWhite ? "YES" : "NO",
-    //               result.color.isBlack ? "YES" : "NO");
-}
+//     // Serial.printf("COLOR: R=%d, G=%d, B=%d, Green=%s, Red=%s, Blue=%s, White=%s, Black=%s\n",
+//     //               result.color.r,
+//     //               result.color.g,
+//     //               result.color.b,
+//     //               result.color.isGreen ? "YES" : "NO",
+//     //               result.color.isRed ? "YES" : "NO",
+//     //               result.color.isBlue ? "YES" : "NO",
+//     //               result.color.isWhite ? "YES" : "NO",
+//     //               result.color.isBlack ? "YES" : "NO");
+// }
 
 
 

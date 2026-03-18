@@ -67,8 +67,8 @@ typedef struct {
     int frameHeight;
 } FrameResult;
 
-FrameResult Line_Vision_Process(camera_fb_t* fb);
-void Vision_Print(const FrameResult& result);
+// FrameResult Line_Vision_Process(camera_fb_t* fb);
+// void Vision_Print(const FrameResult& result);
 
 
 
