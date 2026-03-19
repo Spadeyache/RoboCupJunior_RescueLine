@@ -1,7 +1,5 @@
 #include "vision.h"
 #include <Arduino.h>
-// PLAN 1: separate pixel procccesing and image procces in two libraries 
-// PLAN 2: integration calibration for the scalar. 
 
 #define boxlength 5 //must be odd
 

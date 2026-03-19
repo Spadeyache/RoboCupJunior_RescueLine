@@ -36,7 +36,7 @@ void setup() {
 
 void loop() {
     static unsigned long lastTime = 0;
-    if (millis() - lastTime < 240) {
+    if (millis() - lastTime < 10) {
         return; // Run every ↑ms
     }
     lastTime = millis();
@@ -58,18 +58,20 @@ void loop() {
     Serial1.print("Hello from XIAO: ");
     Serial1.println(pidGain);
 
+    Serial.println(pidGain);
+
 
     // Identify green markers, red goal tape, silver and gaps(white / lost line).
     uint8_t sceneCase = classifyScene(dataLeft, dataRight);
-    switch (sceneCase) {
-        case 0: Serial.println("BOTH GREEN");   break;
-        case 1: Serial.println("LEFT GREEN");   break;
-        case 2: Serial.println("RIGHT GREEN");  break;
-        case 3: Serial.println("RED DETECTED"); break;
-        case 4: Serial.println("ALL WHITE");    break;
-    }
+    // switch (sceneCase) {
+    //     case 0: Serial.println("BOTH GREEN");   break;
+    //     case 1: Serial.println("LEFT GREEN");   break;
+    //     case 2: Serial.println("RIGHT GREEN");  break;
+    //     case 3: Serial.println("RED DETECTED"); break;
+    //     case 4: Serial.println("ALL WHITE");    break;
+    // }
 
-    stream(fb);
+    // stream(fb);
 
     // Return frame buffer
     Camera_Return(fb);

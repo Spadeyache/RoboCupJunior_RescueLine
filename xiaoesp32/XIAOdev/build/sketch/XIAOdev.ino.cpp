@@ -15,17 +15,17 @@ float error = 0, lastError = 0, integral = 0; // Global vars for pid
 void setup();
 #line 37 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void loop();
-#line 79 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 81 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 float pid(float left, float right);
-#line 93 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 95 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void stream(camera_fb_t* fb);
-#line 133 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 135 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 bool isGreen(const cameraData& d);
-#line 139 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 141 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 bool isRed(const cameraData& d);
-#line 145 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 147 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 bool isWhite(const cameraData& d);
-#line 150 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
+#line 152 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 uint8_t classifyScene(const cameraData& left, const cameraData& right);
 #line 13 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\xiaoesp32\\XIAOdev\\XIAOdev.ino"
 void setup() {
@@ -54,7 +54,7 @@ void setup() {
 
 void loop() {
     static unsigned long lastTime = 0;
-    if (millis() - lastTime < 240) {
+    if (millis() - lastTime < 10) {
         return; // Run every ↑ms
     }
     lastTime = millis();
@@ -76,18 +76,20 @@ void loop() {
     Serial1.print("Hello from XIAO: ");
     Serial1.println(pidGain);
 
+    Serial.println(pidGain);
+
 
     // Identify green markers, red goal tape, silver and gaps(white / lost line).
     uint8_t sceneCase = classifyScene(dataLeft, dataRight);
-    switch (sceneCase) {
-        case 0: Serial.println("BOTH GREEN");   break;
-        case 1: Serial.println("LEFT GREEN");   break;
-        case 2: Serial.println("RIGHT GREEN");  break;
-        case 3: Serial.println("RED DETECTED"); break;
-        case 4: Serial.println("ALL WHITE");    break;
-    }
+    // switch (sceneCase) {
+    //     case 0: Serial.println("BOTH GREEN");   break;
+    //     case 1: Serial.println("LEFT GREEN");   break;
+    //     case 2: Serial.println("RIGHT GREEN");  break;
+    //     case 3: Serial.println("RED DETECTED"); break;
+    //     case 4: Serial.println("ALL WHITE");    break;
+    // }
 
-    stream(fb);
+    // stream(fb);
 
     // Return frame buffer
     Camera_Return(fb);
