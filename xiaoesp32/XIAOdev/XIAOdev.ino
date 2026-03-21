@@ -71,7 +71,7 @@ void loop() {
     //     case 4: Serial.println("ALL WHITE");    break;
     // }
 
-    // stream(fb);
+    stream(fb);
 
     // Return frame buffer
     Camera_Return(fb);
