@@ -1,7 +1,7 @@
-/*
-26 Feb 2026
-This code tested 
-*/
+// /*
+// 26 Feb 2026
+// This code tested 
+// */
 #include "yacheMPU6050.h"
 #include "yacheSTS.h"
 
@@ -37,11 +37,13 @@ FASTRUN void motorOutput(){
 FLASHMEM void setup() {
   Serial.begin(115200);
   _sts.begin(Serial1);
-  _imu.begin(Wire, 200.0f);
+//   _imu.begin(Wire, 200.0f);
+  Serial4.begin(115200); //XIAO
+  Serial5.begin(115200); //K230
 
   pinMode(_74HTC126EN, OUTPUT);
   digitalWrite(_74HTC126EN, HIGH);
-  delay(500);
+  delay(200);
 
   _sts.setWheelMode(true);
 
@@ -62,7 +64,7 @@ void loop() {
         motorTimer -= 200; 
     }
 
-// besto for upward front COM
+// best for upward front COM
     // _sts.power(30.0f, -15.0f, 55.0f, -25.0f);
     // delay(3000);
     // _sts.power(-15.0f, 30.0f, -25.0f, 55.0f);

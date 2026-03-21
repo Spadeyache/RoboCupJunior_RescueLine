@@ -1,6 +1,6 @@
-#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\.vscode\\arduino.json"
+#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\.vscode\\arduino.json"
 {
-  "port": "COM13",
+  "port": "COM9",
   "configuration": "usb=serial,speed=600,opt=o2std,keys=en-us",
   "output": "build",
   "board": "teensy:avr:teensy41",

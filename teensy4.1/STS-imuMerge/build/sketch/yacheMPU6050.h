@@ -1,4 +1,4 @@
-#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\yacheMPU6050.h"
+#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\yacheMPU6050.h"
 #ifndef yacheMPU6050_h
 #define yacheMPU6050_h
 

@@ -1,4 +1,4 @@
-#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\yacheSTS.cpp"
+#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\yacheSTS.cpp"
 #include "yacheSTS.h"
 
 yacheSTS::yacheSTS() {}

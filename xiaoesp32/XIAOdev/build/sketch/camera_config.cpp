@@ -52,9 +52,9 @@ bool Camera_Init() {
         // s->set_aec2(s, 1);            // Enable night-mode AEC 1 | Diable 0
         // s->set_ae_level(s, 0);        // Keep bias neutral to start (no AE bias)
 
-        // --- Auto gain ---
-        s->set_gain_ctrl(s, 1);       // Enable AGC 1 | Disable 0
-        s->set_gainceiling(s, GAINCEILING_8X);     // GAINCEILING_8X
+        // // --- Auto gain ---
+        // s->set_gain_ctrl(s, 1);       // Enable AGC 1 | Disable 0
+        // s->set_gainceiling(s, GAINCEILING_8X);     // GAINCEILING_8X
 
         // // --- Auto white balance ---
         // s->set_whitebal(s, 1);        // Enable AWB 1 | disable 0
@@ -63,12 +63,12 @@ bool Camera_Init() {
 
         // --- Manual exposure ---
         s->set_exposure_ctrl(s, 0);    // Disable AEC (0 = Manual)
-        s->set_aec_value(s, 100);      // 200  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
+        s->set_aec_value(s, 200);      // 200  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
         s->set_aec2(s, 0);             // Disable night-mode AEC when in manual
 
         // --- Manual gain ---
         s->set_gain_ctrl(s, 0);        // Disable AGC (0 = Manual)
-        s->set_agc_gain(s, 3); //10       // Manual gain: 0 to 30 (Higher = brighter but more noise)
+        s->set_agc_gain(s, 10); //10       // Manual gain: 0 to 30 (Higher = brighter but more noise)
 
         // --- Manual white balance ---
         s->set_whitebal(s, 0);         // Disable AWB (0 = Manual)

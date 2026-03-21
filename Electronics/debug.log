@@ -58,3 +58,9 @@
 [0308/213739.261:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
 [0314/124437.091:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
 [0316/095541.794:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:327] GPU state invalid after WaitForGetOffsetInRange.
+[0318/210333.901:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0318/210338.914:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0318/210343.208:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0318/222256.601:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0318/222304.503:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.
+[0319/091758.783:WARNING:net\dns\dns_config_service_win.cc:605] Failed to read DnsConfig.

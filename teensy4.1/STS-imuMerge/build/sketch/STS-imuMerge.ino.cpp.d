@@ -1,2 +1,26 @@
-C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensydev\STS-imuMerge\build\sketch\STS-imuMerge.ino.cpp.o: \
- C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensydev\STS-imuMerge\build\sketch\STS-imuMerge.ino.cpp
+C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensy4.1\STS-imuMerge\build\sketch\STS-imuMerge.ino.cpp.o: \
+ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensy4.1\STS-imuMerge\build\sketch\STS-imuMerge.ino.cpp \
+ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensy4.1\STS-imuMerge\build\sketch\yacheMPU6050.h \
+ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensy4.1\STS-imuMerge\build/pch/Arduino.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\libraries\Wire/Wire.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\libraries\Wire/WireIMXRT.h \
+ C:\Users\magic\Documents\Arduino\libraries\I2Cdev/I2Cdev.h \
+ C:\Users\magic\Documents\Arduino\libraries\MPU6050/MPU6050.h \
+ C:\Users\magic\Documents\Arduino\libraries\MPU6050/helper_3dmath.h \
+ C:\Users\magic\Documents\Arduino\libraries\Madgwick\src/MadgwickAHRS.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\libraries\EEPROM/EEPROM.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4/avr/eeprom.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4/avr_functions.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4/avr/io.h \
+ c:\users\magic\appdata\local\arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4\avr_emulation.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4/WString.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4/arm_math.h \
+ C:\Users\magic\AppData\Local\Arduino15\packages\teensy\hardware\avr\1.60.0\cores\teensy4/core_cmInstr.h \
+ C:\Users\magic\Documents\robocup\RoboCupJunior_RescueLine\teensy4.1\STS-imuMerge\build\sketch\yacheSTS.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SCServo.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SCSCL.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SCSerial.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SCS.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/INST.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/SMS_STS.h \
+ C:\Users\magic\Documents\Arduino\libraries\FTServo_Arduino-main\src/HLSCL.h

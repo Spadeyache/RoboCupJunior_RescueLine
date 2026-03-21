@@ -1,4 +1,4 @@
-#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensydev\\STS-imuMerge\\yacheMPU6050.cpp"
+#line 1 "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\yacheMPU6050.cpp"
 #include "yacheMPU6050.h"
 
 // Initialize with the chosen Wire bus for furute development we have it able to spesify the wire bus
