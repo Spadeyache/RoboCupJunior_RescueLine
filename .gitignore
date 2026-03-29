@@ -4,3 +4,14 @@ Electronics/sym-lib-table
 
 Firmware_debugSoftware/*.gz
 Firmware_debugSoftware/*.img
+
+*.vscode/
+
+# Build files
+*build/
+
+# *.pyc
+# *.o
+# *.elf
+# *.bin
+# *.hex
