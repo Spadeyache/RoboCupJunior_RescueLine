@@ -1,3 +1,6 @@
 Electronics/fp-info-cache
 Electronics/sym-lib-table
 *.lck
+
+Firmware_debugSoftware/*.gz
+Firmware_debugSoftware/*.img
