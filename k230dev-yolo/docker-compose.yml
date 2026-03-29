@@ -47,8 +47,8 @@ services:
     working_dir: /workspace
     environment:
       - PYTHONUNBUFFERED=1
-      - DOTNET_ROOT=/usr/share/dotnet
-      - PATH=/usr/share/dotnet:$PATH
+      # Must match dotnet-install path in docker/convert/Dockerfile (not /usr/share/dotnet).
+      - DOTNET_ROOT=/root/.dotnet
     command: /bin/bash
     stdin_open: true
     tty: true

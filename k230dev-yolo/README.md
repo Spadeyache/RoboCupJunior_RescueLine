@@ -221,15 +221,35 @@ docker compose run --rm convert
 
 # Inside conversion container
 cd /workspace
-python convert_to_kmodel.py \
+python3 convert_to_kmodel3.py \
     /models/best_640x480.onnx \
     --output /output \
-    --calib-data /datasets/my_dataset/images/val \
+    --calib-data /datasets/my_dataset/val/images \
     --img-height 480 \
     --img-width 640 \
     --num-samples 100
 ```
-python3 convert_to_kmodel.py   /models/best_640x480.onnx   --output /output   --calib-data /datasets/my_dataset/val/images   --img-height 480   --img-width 640   --num-samples 100
+
+Equivalent one-liner with `docker run` (image name may be `k230d-convert:latest` after `docker compose build`; replace the host path with your project root):
+
+```bash
+docker run --rm \
+    -v "/path/to/k230dev-yolo/workspace:/workspace" \
+    -v "/path/to/k230dev-yolo/datasets:/datasets" \
+    -v "/path/to/k230dev-yolo/models:/models" \
+    -v "/path/to/k230dev-yolo/output:/output" \
+    -w /workspace \
+    k230d-convert:latest \
+    python3 convert_to_kmodel3.py \
+        /models/best_640x480.onnx \
+        --output /output \
+        --calib-data /datasets/my_dataset/val/images \
+        --img-height 480 \
+        --img-width 640 \
+        --num-samples 100
+```
+
+python3 convert_to_kmodel3.py /models/best_640x480.onnx --output /output --calib-data /datasets/my_dataset/val/images --img-height 480 --img-width 640 --num-samples 100
 
 **Important:** Use `--calib-data` with validation images for accurate INT8 quantization.
 

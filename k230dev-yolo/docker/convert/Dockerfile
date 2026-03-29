@@ -1,58 +1,55 @@
-# Conversion Environment for K230D (nncase)
-FROM ubuntu:22.04
+# ベースイメージはソース推奨のUbuntu 20.04を使用
+FROM ubuntu:20.04
 
-# Prevent interactive prompts
+# 環境変数の設定（対話型プロンプトの停止）
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Set working directory
-WORKDIR /workspace
-
-# Install system dependencies
+# 1. 必要最小限のシステムパッケージのインストール
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
-    git \
-    vim \
-    python3.10 \
+    python3 \
     python3-pip \
-    libgomp1 \
-    libgl1-mesa-glx \
     libglib2.0-0 \
+    libstdc++6 \
+    libxcb1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install .NET SDK 7.0 (required for nncase 2.x)
-RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && \
-    chmod +x dotnet-install.sh && \
-    ./dotnet-install.sh --channel 7.0 --install-dir /usr/share/dotnet && \
-    ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet && \
-    rm dotnet-install.sh
+# .NET 7.0 Runtimeのインストール (nncase v2に必須)
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh \
+    && chmod +x dotnet-install.sh \
+    && ./dotnet-install.sh --channel 7.0 --runtime dotnet \
+    && rm dotnet-install.sh
 
-# Set .NET environment variables
-ENV DOTNET_ROOT=/usr/share/dotnet
-ENV PATH="${DOTNET_ROOT}:${PATH}"
+# DOTNET_ROOTを正しいパスに設定（重要）
+ENV DOTNET_ROOT=/root/.dotnet
+ENV PATH=$PATH:/root/.dotnet
 
-# Install Python packages for conversion
+# 2. Pythonライブラリのインストール
+# Pin protobuf<4: onnx 1.9 + generated _pb2 are incompatible with protobuf 4/5
+# (TypeError: Descriptors cannot be created directly)
 RUN pip3 install --no-cache-dir \
-    onnx==1.15.0 \
-    onnxruntime==1.16.3 \
-    opencv-python==4.8.1.78 \
-    numpy==1.24.3 \
-    pillow==10.1.0 \
-    pyyaml==6.0.1 \
-    tqdm==4.66.1
-
-# Install nncase v2.x for K230D
-# Note: Adjust version based on official K230D SDK recommendations
-RUN pip3 install --no-cache-dir \
+    "protobuf>=3.20.1,<4" \
     nncase==2.9.0 \
-    nncase-kpu==2.9.0
+    nncase-kpu==2.9.0 \
+    numpy==1.19.5 \
+    onnx==1.9.0 \
+    onnx-simplifier==0.3.6 \
+    onnxruntime==1.8.0 \
+    opencv-python-headless \
+    pillow
 
-# Create necessary directories
-RUN mkdir -p /models /output /test_images /workspace
+# 3. libstdc++のリンク（GLIBCXX対策）
+RUN find /root/.dotnet/shared/Microsoft.NETCore.App/ -maxdepth 1 -mindepth 1 -type d \
+    -exec ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 {}/libstdc++.so.6 \;
 
-# Verify installations
-RUN python3 --version && \
-    dotnet --version && \
-    python3 -c "import nncase; print('nncase imported successfully')"
+# 作業ディレクトリの設定
+WORKDIR /workspace
+RUN mkdir -p /workspace/models /workspace/output /workspace/calibration_data
+
+# インストール確認
+RUN python3 -c "import nncase; print('nncase OK')" && \
+    python3 -c "import nncase_kpu; print('nncase_kpu OK')" && \
+    python3 -c "import cv2; print('cv2 OK')"
 
 CMD ["/bin/bash"]
