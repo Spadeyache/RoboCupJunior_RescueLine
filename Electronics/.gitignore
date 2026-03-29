@@ -99,3 +99,8 @@ __pycache__/
 # *.csv
 # *.xlsx
 # BOM*.pdf
+
+
+
+
+debug.log

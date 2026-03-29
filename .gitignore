@@ -7,11 +7,4 @@ Firmware_debugSoftware/*.img
 
 *.vscode/
 
-# Build files
 *build/
-
-# *.pyc
-# *.o
-# *.elf
-# *.bin
-# *.hex
