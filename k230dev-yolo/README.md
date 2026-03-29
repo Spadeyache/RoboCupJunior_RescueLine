@@ -103,6 +103,7 @@ docker compose build
 docker compose build train
 docker compose build convert
 ```
+docker compose build convert --no-cache
 
 ### 4. Prepare Your Dataset
 

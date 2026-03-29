@@ -109,8 +109,8 @@ def generate_calibration_data(
             original_h, original_w = img.shape[:2]
             img = cv2.resize(img, (img_width, img_height))
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            # f32 [0,255], no /255 — K230D ai2d + nncase PTQ (see module docstring)
-            img = img.astype(np.float32)
+            # Hardware expects uint8 [0, 255]. Compiler preprocess handles 0-1 scaling internally.
+            img = img.astype(np.uint8)
 
             img = np.transpose(img, (2, 0, 1))
             img = np.expand_dims(img, axis=0)
@@ -143,11 +143,6 @@ def generate_calibration_data(
     print(f"[CALIB]   Global mean   : {all_data.mean():.1f}  (expect ~100-150)")
     print(f"[CALIB] ────────────────────────────────────────────────────")
 
-    if all_data.max() < 2:
-        print(f"\n[CALIB] ✗ FATAL: max value is {all_data.max()} — data looks normalized!")
-        print(f"[CALIB]   Remove any /255.0 normalization from calibration.")
-        sys.exit(1)
-
     del all_data
     return calibration_data
 
@@ -155,9 +150,9 @@ def generate_calibration_data(
 def generate_random_calibration(img_height: int, img_width: int, n: int = 20) -> list:
     print(f"\n[CALIB] ⚠  Using RANDOM calibration data (not recommended for production)")
     print(f"[CALIB]   Samples : {n}")
-    print(f"[CALIB]   Range   : [0, 255] float32")
+    print(f"[CALIB]   Range   : [0, 255] uint8")
     data = [
-        (np.random.rand(1, 3, img_height, img_width) * 255.0).astype(np.float32)
+        (np.random.randint(0, 256, (1, 3, img_height, img_width), dtype=np.uint8))
         for _ in range(n)
     ]
     print(f"[CALIB]   Sample[0] min/max: {data[0].min():.0f} / {data[0].max():.0f}")
@@ -233,6 +228,18 @@ def convert_to_kmodel(
         compile_options.dump_asm = False
         compile_options.dump_dir = os.path.join(output_dir, "dump")
         print(f"[COMPILE] ✓ CompileOptions configured (target={target})")
+
+        compile_options.preprocess = True
+        compile_options.swapRB = False
+        compile_options.input_type = "uint8"
+        compile_options.input_shape = [1, 3, img_height, img_width]
+        compile_options.input_layout = "NCHW"
+        compile_options.output_layout = "NCHW"
+        compile_options.input_range = [0, 255]
+        compile_options.mean = [0, 0, 0]
+        compile_options.std = [255.0, 255.0, 255.0]
+        
+        print(f"[COMPILE] preprocess : {compile_options.preprocess}")
 
         ptq_options = nncase.PTQTensorOptions()
         ptq_options.quant_type = quant_type
