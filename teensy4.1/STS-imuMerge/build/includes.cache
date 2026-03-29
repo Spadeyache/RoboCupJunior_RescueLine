@@ -48,62 +48,10 @@
     }
   },
   {
-    "missing_include_h": "Wire.h"
+    "missing_include_h": "Servo.h"
   },
   {
-    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire"
-  },
-  {
-    "compile": {
-      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.o",
-      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.d"
-    },
-    "compile_task": {
-      "args": [
-        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
-        "-E",
-        "-CC",
-        "-x",
-        "c++",
-        "-w",
-        "-g",
-        "-Wall",
-        "-ffunction-sections",
-        "-fdata-sections",
-        "-nostdlib",
-        "-std=gnu++17",
-        "-fno-exceptions",
-        "-fpermissive",
-        "-fno-rtti",
-        "-fno-threadsafe-statics",
-        "-felide-constructors",
-        "-Wno-error=narrowing",
-        "-Wno-psabi",
-        "-mthumb",
-        "-mcpu=cortex-m7",
-        "-mfloat-abi=hard",
-        "-mfpu=fpv5-d16",
-        "-D__IMXRT1062__",
-        "-DTEENSYDUINO=160",
-        "-DARDUINO=10607",
-        "-DARDUINO_TEENSY41",
-        "-DF_CPU=600000000",
-        "-DUSB_SERIAL",
-        "-DLAYOUT_US_ENGLISH",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-        "-o",
-        "nul"
-      ]
-    }
-  },
-  {
-    "missing_include_h": "I2Cdev.h"
-  },
-  {
-    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev"
+    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo"
   },
   {
     "compile": {
@@ -144,230 +92,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-        "-o",
-        "nul"
-      ]
-    }
-  },
-  {
-    "missing_include_h": "MPU6050.h"
-  },
-  {
-    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050"
-  },
-  {
-    "compile": {
-      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.o",
-      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.d"
-    },
-    "compile_task": {
-      "args": [
-        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
-        "-E",
-        "-CC",
-        "-x",
-        "c++",
-        "-w",
-        "-g",
-        "-Wall",
-        "-ffunction-sections",
-        "-fdata-sections",
-        "-nostdlib",
-        "-std=gnu++17",
-        "-fno-exceptions",
-        "-fpermissive",
-        "-fno-rtti",
-        "-fno-threadsafe-statics",
-        "-felide-constructors",
-        "-Wno-error=narrowing",
-        "-Wno-psabi",
-        "-mthumb",
-        "-mcpu=cortex-m7",
-        "-mfloat-abi=hard",
-        "-mfpu=fpv5-d16",
-        "-D__IMXRT1062__",
-        "-DTEENSYDUINO=160",
-        "-DARDUINO=10607",
-        "-DARDUINO_TEENSY41",
-        "-DF_CPU=600000000",
-        "-DUSB_SERIAL",
-        "-DLAYOUT_US_ENGLISH",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-        "-o",
-        "nul"
-      ]
-    }
-  },
-  {
-    "missing_include_h": "MadgwickAHRS.h"
-  },
-  {
-    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src"
-  },
-  {
-    "compile": {
-      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.o",
-      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.d"
-    },
-    "compile_task": {
-      "args": [
-        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
-        "-E",
-        "-CC",
-        "-x",
-        "c++",
-        "-w",
-        "-g",
-        "-Wall",
-        "-ffunction-sections",
-        "-fdata-sections",
-        "-nostdlib",
-        "-std=gnu++17",
-        "-fno-exceptions",
-        "-fpermissive",
-        "-fno-rtti",
-        "-fno-threadsafe-statics",
-        "-felide-constructors",
-        "-Wno-error=narrowing",
-        "-Wno-psabi",
-        "-mthumb",
-        "-mcpu=cortex-m7",
-        "-mfloat-abi=hard",
-        "-mfpu=fpv5-d16",
-        "-D__IMXRT1062__",
-        "-DTEENSYDUINO=160",
-        "-DARDUINO=10607",
-        "-DARDUINO_TEENSY41",
-        "-DF_CPU=600000000",
-        "-DUSB_SERIAL",
-        "-DLAYOUT_US_ENGLISH",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-        "-o",
-        "nul"
-      ]
-    }
-  },
-  {
-    "missing_include_h": "EEPROM.h"
-  },
-  {
-    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM"
-  },
-  {
-    "compile": {
-      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.o",
-      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.d"
-    },
-    "compile_task": {
-      "args": [
-        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
-        "-E",
-        "-CC",
-        "-x",
-        "c++",
-        "-w",
-        "-g",
-        "-Wall",
-        "-ffunction-sections",
-        "-fdata-sections",
-        "-nostdlib",
-        "-std=gnu++17",
-        "-fno-exceptions",
-        "-fpermissive",
-        "-fno-rtti",
-        "-fno-threadsafe-statics",
-        "-felide-constructors",
-        "-Wno-error=narrowing",
-        "-Wno-psabi",
-        "-mthumb",
-        "-mcpu=cortex-m7",
-        "-mfloat-abi=hard",
-        "-mfpu=fpv5-d16",
-        "-D__IMXRT1062__",
-        "-DTEENSYDUINO=160",
-        "-DARDUINO=10607",
-        "-DARDUINO_TEENSY41",
-        "-DF_CPU=600000000",
-        "-DUSB_SERIAL",
-        "-DLAYOUT_US_ENGLISH",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM",
-        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-        "-o",
-        "nul"
-      ]
-    }
-  },
-  {
-    "missing_include_h": "SCServo.h"
-  },
-  {
-    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src"
-  },
-  {
-    "compile": {
-      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
-      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.o",
-      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp.d"
-    },
-    "compile_task": {
-      "args": [
-        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
-        "-E",
-        "-CC",
-        "-x",
-        "c++",
-        "-w",
-        "-g",
-        "-Wall",
-        "-ffunction-sections",
-        "-fdata-sections",
-        "-nostdlib",
-        "-std=gnu++17",
-        "-fno-exceptions",
-        "-fpermissive",
-        "-fno-rtti",
-        "-fno-threadsafe-statics",
-        "-felide-constructors",
-        "-Wno-error=narrowing",
-        "-Wno-psabi",
-        "-mthumb",
-        "-mcpu=cortex-m7",
-        "-mfloat-abi=hard",
-        "-mfpu=fpv5-d16",
-        "-D__IMXRT1062__",
-        "-DTEENSYDUINO=160",
-        "-DARDUINO=10607",
-        "-DARDUINO_TEENSY41",
-        "-DF_CPU=600000000",
-        "-DUSB_SERIAL",
-        "-DLAYOUT_US_ENGLISH",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
-        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\STS-imuMerge.ino.cpp",
         "-o",
         "nul"
@@ -416,12 +141,282 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "Wire.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "I2Cdev.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "MPU6050.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "MadgwickAHRS.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "EEPROM.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM",
-        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src",
         "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheMPU6050.cpp",
         "-o",
         "nul"
@@ -470,6 +465,64 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM",
+        "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": "SCServo.h"
+  },
+  {
+    "added_include_path": "C:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src"
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -477,6 +530,61 @@
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src",
         "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\sketch\\yacheSTS.cpp",
+        "-o",
+        "nul"
+      ]
+    }
+  },
+  {
+    "missing_include_h": ""
+  },
+  {
+    "compile": {
+      "source_path": "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo\\Servo.cpp",
+      "object_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\libraries\\Servo\\Servo.cpp.o",
+      "depfile_path": "C:\\Users\\magic\\Documents\\robocup\\RoboCupJunior_RescueLine\\teensy4.1\\STS-imuMerge\\build\\libraries\\Servo\\Servo.cpp.d"
+    },
+    "compile_task": {
+      "args": [
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1/arm/bin/arm-none-eabi-g++",
+        "-E",
+        "-CC",
+        "-x",
+        "c++",
+        "-w",
+        "-g",
+        "-Wall",
+        "-ffunction-sections",
+        "-fdata-sections",
+        "-nostdlib",
+        "-std=gnu++17",
+        "-fno-exceptions",
+        "-fpermissive",
+        "-fno-rtti",
+        "-fno-threadsafe-statics",
+        "-felide-constructors",
+        "-Wno-error=narrowing",
+        "-Wno-psabi",
+        "-mthumb",
+        "-mcpu=cortex-m7",
+        "-mfloat-abi=hard",
+        "-mfpu=fpv5-d16",
+        "-D__IMXRT1062__",
+        "-DTEENSYDUINO=160",
+        "-DARDUINO=10607",
+        "-DARDUINO_TEENSY41",
+        "-DF_CPU=600000000",
+        "-DUSB_SERIAL",
+        "-DLAYOUT_US_ENGLISH",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\Madgwick\\src",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\EEPROM",
+        "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\FTServo_Arduino-main\\src",
+        "C:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo\\Servo.cpp",
         "-o",
         "nul"
       ]
@@ -525,6 +633,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -581,6 +690,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -637,6 +747,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -693,6 +804,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -748,6 +860,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -802,6 +915,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -856,6 +970,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -910,6 +1025,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -964,6 +1080,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1018,6 +1135,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1072,6 +1190,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1126,6 +1245,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1180,6 +1300,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1234,6 +1355,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1288,6 +1410,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",
@@ -1342,6 +1465,7 @@
         "-DUSB_SERIAL",
         "-DLAYOUT_US_ENGLISH",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\cores\\teensy4",
+        "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Servo",
         "-IC:\\Users\\magic\\AppData\\Local\\Arduino15\\packages\\teensy\\hardware\\avr\\1.60.0\\libraries\\Wire",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\I2Cdev",
         "-IC:\\Users\\magic\\Documents\\Arduino\\libraries\\MPU6050",

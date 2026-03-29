@@ -8,7 +8,7 @@
   "useProgrammer": false,
   "optimize_for_debug": false,
   "configurationRequired": true,
-  "compile_profile": "",
+  "compile_profile": "xiaoesp32s3",
   "monitorPortSettings": {
     "settings": {
       "port": "",

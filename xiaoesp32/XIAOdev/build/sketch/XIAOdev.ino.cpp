@@ -67,27 +67,27 @@ void loop() {
     }
 
     // get the pixel data
-    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)80, (uint8_t)60, true);
-    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60);
-    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
+    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)20, (uint8_t)60, true);
+    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60);
+    // cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
 
-    float pidGain= pid((float)dataLeft.gray, (float)dataRight.gray);
+    // float pidGain= pid((float)dataLeft.gray, (float)dataRight.gray);
 
-    Serial1.print("Hello from XIAO: ");
-    Serial1.println(pidGain);
+    // Serial1.print("Hello from XIAO: ");
+    // Serial1.println(pidGain);
 
-    Serial.println(pidGain);
+    // Serial.println(pidGain);
 
 
-    // Identify green markers, red goal tape, silver and gaps(white / lost line).
-    uint8_t sceneCase = classifyScene(dataLeft, dataRight);
-    // switch (sceneCase) {
-    //     case 0: Serial.println("BOTH GREEN");   break;
-    //     case 1: Serial.println("LEFT GREEN");   break;
-    //     case 2: Serial.println("RIGHT GREEN");  break;
-    //     case 3: Serial.println("RED DETECTED"); break;
-    //     case 4: Serial.println("ALL WHITE");    break;
-    // }
+    // // Identify green markers, red goal tape, silver and gaps(white / lost line).
+    // uint8_t sceneCase = classifyScene(dataLeft, dataRight);
+    // // switch (sceneCase) {
+    // //     case 0: Serial.println("BOTH GREEN");   break;
+    // //     case 1: Serial.println("LEFT GREEN");   break;
+    // //     case 2: Serial.println("RIGHT GREEN");  break;
+    // //     case 3: Serial.println("RED DETECTED"); break;
+    // //     case 4: Serial.println("ALL WHITE");    break;
+    // // }
 
     stream(fb);
 
