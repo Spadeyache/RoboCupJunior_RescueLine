@@ -56,15 +56,16 @@ void loop() {
 
     // get the pixel data
     // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)20, (uint8_t)60, true);
-    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60);
-    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
+    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)100, (uint8_t)60);
+    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)60, (uint8_t)60);
 
     float pidGain = pid((float)dataLeft.gray, (float)dataRight.gray);
 
     Serial.print(pidGain);
     Serial.print(" ");
+    pidGain = constrain(pidGain, -500, 500);
     pidGain = (uint8_t) map(pidGain, -500, 500, 0, 254); //temporally range
-    
+
     teensy.send(0x01, (uint8_t)0);
     teensy.send(0x02, pidGain);
     Serial.println(pidGain);
