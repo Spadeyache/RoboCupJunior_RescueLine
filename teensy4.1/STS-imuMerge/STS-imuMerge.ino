@@ -1,160 +1,140 @@
-// // /*
-// // 26 Feb 2026
-// // This code tested 
-// // */
-// #include "yacheMPU6050.h"
-// #include "yacheSTS.h"
+// /*
+// 3rd Apr 2026
+// Merged STS3032, KRS3301, and HS45HB servo code.
+// */
 
-// #define _74HTC126EN 2
-
-// // yacheMPU6050 _imu;
-// yacheSTS _sts;
-
-// elapsedMillis motorTimer;
-
-// IntervalTimer controlTimer;
-
-// // GLOBAL VARS in (DTCM / RAM1)
-// volatile float32_t frontLeftGain = 0.0f;
-// volatile float32_t frontRightGain = 0.0f;
-// volatile float32_t backLeftGain = 0.0f;
-// volatile float32_t backRightGain = 0.0f;
-// volatile float32_t pitch = 0;
-// volatile float32_t roll = 0;
-
-
-// // A funciton that has priority in precicly updating the imu & motorGains
-// FASTRUN void motorOutput(){
-//     // _imu.update();
-//     // pitch = _imu.getPitch();
-//     // roll = _imu.getRoll();
-
-//     // ADD LOGIC to encoporate the pitch and roll.
-//     _sts.power(frontLeftGain, frontRightGain, backLeftGain, backRightGain);
-//     // a note here if _sts.power takes more than 5ms we are in a infinite loop. Since we run 4 STS3032 at 1Mbps should take arround 100 microsec so we are chill.
-// }
-
-// FLASHMEM void setup() {
-//   Serial.begin(115200);
-//   _sts.begin(Serial1);
-// //   _imu.begin(Wire, 200.0f);
-// //   Serial4.begin(115200); //XIAO
-// //   Serial5.begin(115200); //K230
-
-//   pinMode(_74HTC126EN, OUTPUT);
-//   digitalWrite(_74HTC126EN, HIGH);
-//   delay(200);
-
-//   _sts.setWheelMode(true);
-
-//   // _imu.loadOffsetsFromEEPROM();
-//   // imu.calibrate(); 
-
-//   controlTimer.begin(motorOutput, 5000); // 5ms = 5000 microsecond
-
-//   motorTimer = 0;
-// }
-
-// void loop() {
-//     // do not call _sts.power in loop
-
-//     motor(60,60);
-//     // if (motorTimer >= 200) {
-//     //     motor(20,20);
-//     //     motorTimer -= 200; 
-//     // }
-
-// // best for upward front COM
-//     // _sts.power(30.0f, -15.0f, 55.0f, -25.0f);
-//     // delay(3000);
-//     // _sts.power(-15.0f, 30.0f, -25.0f, 55.0f);
-//     // delay(3000);
-
-
-//     // _imu.printQuat(); //prints every 250ms
-    
-// }
-
-
-
-// FASTRUN void motor(float32_t left, float32_t right){
-//     noInterrupts(); // Safety: update all 4 at once
-//     frontLeftGain = left; frontRightGain = right;
-//     backLeftGain = left;  backRightGain = right;
-//     interrupts();
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-28 Feb 2026
-This code tested the HS45HB servo.
-*/
-
-#include <Arduino.h>
+#include "yacheMPU6050.h"
+#include "yacheSTS.h"
+#include <IcsHardSerialClass.h>
 #include <Servo.h>
 
-#define _74HTC126EN 2
-#define _servo0Pin 3
-#define _servo1Pin 4
+#define _HS45HB0PIN 3
+#define _HS45HB1PIN 4
+#define _KRSID 1
 
-Servo hs45hb0;
-Servo hs45hb1;
 
-void setup() {
-  // min/max are pulse widths in microseconds
+
+// #define _74HTC126EN 2
+const byte _74HTC126EN = 2;
+const long KRSBAUDRATE = 115200; //サーボの通信速度
+const int KRSTIMEOUT = 400;     //サーボとのシリアル通信に設定する応答待ち時間
+IcsHardSerialClass krs(&Serial1,_74HTC126EN,KRSBAUDRATE,KRSTIMEOUT);
+
+Servo _HS45HB0;
+Servo _HS45HB1;
+
+yacheSTS _sts;
+// yacheMPU6050 _imu;
+
+// --- TIMERS ---
+elapsedMillis motorTimer;
+IntervalTimer controlTimer;
+
+// --- GLOBAL VARS in (DTCM / RAM1) ---
+volatile float32_t frontLeftGain = 0.0f;
+volatile float32_t frontRightGain = 0.0f;
+volatile float32_t backLeftGain = 0.0f;
+volatile float32_t backRightGain = 0.0f;
+volatile float32_t pitch = 0;
+volatile float32_t roll = 0;
+
+
+// A funciton that has priority in precicly updating the imu & motorGains
+FASTRUN void motorOutput(){
+    // _imu.update();
+    // pitch = _imu.getPitch();
+    // roll = _imu.getRoll();
+
+    // ADD LOGIC to encoporate the pitch and roll.
+    _sts.power(frontLeftGain, frontRightGain, backLeftGain, backRightGain);
+    // a note here if _sts.power takes more than 5ms we are in a infinite loop. Since we run 4 STS3032 at 1Mbps should take arround 100 microsec so we are chill.
+}
+
+FLASHMEM void setup() {
+  Serial.begin(115200);
+  _sts.begin(Serial2);
+  //   _imu.begin(Wire, 200.0f);
+  //   Serial4.begin(115200); //XIAO
+  //   Serial5.begin(115200); //K230
+  
+
+  // ---HS45HB servo---
   // Start conservative: 1000–2000 us
-  hs45hb0.attach(_servo0Pin, 1000, 2000);
-  hs45hb1.attach(_servo1Pin, 1000, 2000);
+  _HS45HB0.attach(_HS45HB0PIN, 1000, 2000);
+  _HS45HB1.attach(_HS45HB1PIN, 1000, 2000);
 
-//   servo.writeMicroseconds(1500); // center
-
-  // Enable 74HCT126
   pinMode(_74HTC126EN, OUTPUT);
   digitalWrite(_74HTC126EN, HIGH);
+  delay(200);
+  _sts.setWheelMode(true);
+  krs.begin();  //サーボモータの通信初期設定
+  krs.setSpd(_KRSID, 43); //speed 1-127
+  
 
-  delay(500);
+  // _imu.loadOffsetsFromEEPROM();
+  // imu.calibrate(); 
+
+  controlTimer.begin(motorOutput, 5000); // 5ms = 5000 microsecond
+
+  motorTimer = 0;
 }
 
 void loop() {
-    armGripper(true);
-    delay(2000);
+    // do not call _sts.power in loop
+
+    // motor(20,20);
+    grabARM(true);
+    liftARM(true);
+    delay(3000);
+    liftARM(false);
+    grabARM(false);
+    delay(3000);
+
+
     
-    armGripper(false);
-    delay(2000);
+
+    // if (motorTimer >= 200) {
+    //     motor(20,20);
+    //     motorTimer -= 200; 
+    // }
+
+// best for upward front COM
+    // _sts.power(30.0f, -15.0f, 55.0f, -25.0f);
+    // delay(3000);
+    // _sts.power(-15.0f, 30.0f, -25.0f, 55.0f);
+    // delay(3000);
+
+
+    // _imu.printQuat(); //prints every 250ms
+    
 }
 
-void armGripper(bool closed){
-    if(closed){
-        hs45hb0.writeMicroseconds(1000);
-        hs45hb1.writeMicroseconds(1000);
+
+
+FASTRUN void motor(float32_t left, float32_t right){
+    noInterrupts(); // Safety: update all 4 at once
+    frontLeftGain = left; frontRightGain = right;
+    backLeftGain = left;  backRightGain = right;
+    interrupts();
+}
+
+void grabARM(bool closed){
+    if(!closed){
+        _HS45HB0.writeMicroseconds(1000);
+        _HS45HB1.writeMicroseconds(2000);
     }else{
-        hs45hb0.writeMicroseconds(2000);
-        hs45hb1.writeMicroseconds(2000);
+        _HS45HB0.writeMicroseconds(2000);
+        _HS45HB1.writeMicroseconds(1000);
     }
 }
-void armLift(bool lift){
+void liftARM(bool lift){
     if(lift){
-        // KRS3301 control code
+        krs.setPos(_KRSID,11500);  //setPose range: 3500〜11500
     }
     else{
-        // KRS3301 control code
+      krs.setPos(_KRSID,4400);  //位置指令　ID:0サーボを7500へ 中央
     }
+    delay(800);
+    krs.setFree(_KRSID); 
 }
-void dropper(bool drop){
-    if(drop){
-        // KRS3301 control code
-    }
-    else{
-        // KRS3301 control code
-    }
-}
+
