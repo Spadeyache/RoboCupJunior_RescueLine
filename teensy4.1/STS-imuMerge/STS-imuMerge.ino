@@ -138,3 +138,4 @@ void liftARM(bool lift){
     krs.setFree(_KRSID); 
 }
 
+// make a struct and when arm is droped withingh any command arm will drop and open the hs45hb if its not holding a ball
