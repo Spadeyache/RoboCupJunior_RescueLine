@@ -1,7 +1,11 @@
 #include <Arduino.h>
+#include "YacheEncodedSerial.h"
 #include "camera_config.h"
 #include "vision.h"
 // #include "wifi_config.h"
+
+YacheEncodedSerial teensy(Serial1); // XIAOのSerial1を使用
+
 
 // --- PID Parameters ---
 const float kP = 2.5;
@@ -12,7 +16,6 @@ float error = 0, lastError = 0, integral = 0; // Global vars for pid
 
 void setup() {
     Serial.begin(115200);
-    Serial1.begin(115200, SERIAL_8N1, D7, D6); //UART
     while (!Serial) {
         delay(10); // Wait for serial port to connect
     }
@@ -30,7 +33,10 @@ void setup() {
     //     Serial.printf("Connected! IP address: %s\n", WiFi.localIP().toString().c_str());
     //     delay(100);
     // } else {Serial.println("Connection failed or timed out");}
-    
+
+    // --- UART ---
+    Serial1.begin(115200, SERIAL_8N1, D7, D6); //teensy UART begin
+
     delay(500); //wait for camera to settle take about 2 seconds so 500ms not enough
 }
 
@@ -49,16 +55,19 @@ void loop() {
     }
 
     // get the pixel data
-    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)20, (uint8_t)60, true);
-    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60);
-    // cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
+    // cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)20, (uint8_t)60, true);
+    cameraData dataLeft = updateRawGrayHSV(fb, (uint8_t)90, (uint8_t)60);
+    cameraData dataRight = updateRawGrayHSV(fb, (uint8_t)70, (uint8_t)60);
 
-    // float pidGain= pid((float)dataLeft.gray, (float)dataRight.gray);
+    float pidGain = pid((float)dataLeft.gray, (float)dataRight.gray);
 
-    // Serial1.print("Hello from XIAO: ");
-    // Serial1.println(pidGain);
-
-    // Serial.println(pidGain);
+    Serial.print(pidGain);
+    Serial.print(" ");
+    pidGain = (uint8_t) map(pidGain, -500, 500, 0, 254); //temporally range
+    
+    teensy.send(0x01, (uint8_t)0);
+    teensy.send(0x02, pidGain);
+    Serial.println(pidGain);
 
 
     // // Identify green markers, red goal tape, silver and gaps(white / lost line).
@@ -72,6 +81,11 @@ void loop() {
     // // }
 
     stream(fb);
+
+
+
+
+
 
     // Return frame buffer
     Camera_Return(fb);

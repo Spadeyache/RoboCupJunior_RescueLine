@@ -1,8 +1,9 @@
 // /*
-// 3rd Apr 2026
-// Merged STS3032, KRS3301, and HS45HB servo code.
+// 4th Apr 2026
+// Serial xiao test
 // */
 
+#include "YacheEncodedSerial.h"
 #include "yacheMPU6050.h"
 #include "yacheSTS.h"
 #include <IcsHardSerialClass.h>
@@ -14,6 +15,7 @@
 
 
 
+// --- ArmServo ---
 // #define _74HTC126EN 2
 const byte _74HTC126EN = 2;
 const long KRSBAUDRATE = 115200; //サーボの通信速度
@@ -23,20 +25,22 @@ IcsHardSerialClass krs(&Serial1,_74HTC126EN,KRSBAUDRATE,KRSTIMEOUT);
 Servo _HS45HB0;
 Servo _HS45HB1;
 
+// --- Motor Controol ---
 yacheSTS _sts;
 // yacheMPU6050 _imu;
-
-// --- TIMERS ---
 elapsedMillis motorTimer;
 IntervalTimer controlTimer;
-
-// --- GLOBAL VARS in (DTCM / RAM1) ---
 volatile float32_t frontLeftGain = 0.0f;
 volatile float32_t frontRightGain = 0.0f;
 volatile float32_t backLeftGain = 0.0f;
 volatile float32_t backRightGain = 0.0f;
 volatile float32_t pitch = 0;
 volatile float32_t roll = 0;
+
+// --- Serial ---
+YacheEncodedSerial xiao(Serial3);
+uint8_t xiaoCommand = 0; // 0x01: 0-linefollow 1-silver 2-red 3-intersection
+float32_t pidgain = 127; // 0x02: center of 0-254 
 
 
 // A funciton that has priority in precicly updating the imu & motorGains
@@ -54,7 +58,7 @@ FLASHMEM void setup() {
   Serial.begin(115200);
   _sts.begin(Serial2);
   //   _imu.begin(Wire, 200.0f);
-  //   Serial4.begin(115200); //XIAO
+  xiao.begin(115200); //XIAO
   //   Serial5.begin(115200); //K230
   
 
@@ -82,15 +86,46 @@ FLASHMEM void setup() {
 void loop() {
     // do not call _sts.power in loop
 
-    // motor(20,20);
-    grabARM(true);
-    liftARM(true);
-    delay(3000);
-    liftARM(false);
-    grabARM(false);
-    delay(3000);
+    
+
+    xiao.update();
+
+    xiaoCommand = xiao.get(0x01); 
+    pidgain = (float32_t)xiao.get(0x02);
+
+  // デバッグ表示（500msごと）
+  static unsigned long lastPrint = 0;
+  if (millis() - lastPrint > 500) {
+      Serial.print("Cmd: "); Serial.print(xiaoCommand);
+      Serial.print(" | Gain: "); Serial.println(pidgain);
+      
+      // テスト送信: 相手に現在のgainをそのまま送り返す例
+      xiao.send(0x02, pidgain);
+      
+      lastPrint = millis();
+  }
+
+  pidgain = map(pidgain, 0, 254, -15, 15); //temporally range
+  pidgain = constrain(pidgain, -15, 15);
+
+  motor(10-pidgain,10+pidgain);
+  // --- ここにPID制御などを書く ---
+  // ------------------------------------------------------------------
 
 
+  
+  // Serial3.print("H");
+  // char latestByte = 0;
+
+  // // バッファにある分を全部回して、最後に上書きされたものだけ残す
+  // while (Serial3.available() > 0) {
+  //     latestByte = Serial3.read(); 
+  // }
+
+  // // command of PID gain を見る
+
+  // Serial.println(latestByte);
+  // delay(500);
     
 
     // if (motorTimer >= 200) {
@@ -108,7 +143,6 @@ void loop() {
     // _imu.printQuat(); //prints every 250ms
     
 }
-
 
 
 FASTRUN void motor(float32_t left, float32_t right){
