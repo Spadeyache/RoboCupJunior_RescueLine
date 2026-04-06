@@ -9,21 +9,24 @@
 #include <IcsHardSerialClass.h>
 #include <Servo.h>
 
-#define _HS45HB0PIN 3
-#define _HS45HB1PIN 4
-#define _KRSID 1
+
 
 
 
 // --- ArmServo ---
+#define _HS45HB0PIN 3    // Teensy pinnumber  
+#define _HS45HB1PIN 4      // Teensy pinnumber
+Servo _HS45HB0;
+Servo _HS45HB1;
+
+#define _KRSID 1                // Serial Servo ID
 // #define _74HTC126EN 2
-const byte _74HTC126EN = 2;
-const long KRSBAUDRATE = 115200; //サーボの通信速度
+const byte _74HTC126EN = 2;   // Teensy pinnumber
+const long KRSBAUDRATE = 115200; //serial servo baud rate
 const int KRSTIMEOUT = 400;     //サーボとのシリアル通信に設定する応答待ち時間
 IcsHardSerialClass krs(&Serial1,_74HTC126EN,KRSBAUDRATE,KRSTIMEOUT);
 
-Servo _HS45HB0;
-Servo _HS45HB1;
+
 
 // --- Motor Controol ---
 yacheSTS _sts;
@@ -105,10 +108,10 @@ void loop() {
       lastPrint = millis();
   }
 
-  pidgain = map(pidgain, 0, 254, -15, 15); //temporally range
-  pidgain = constrain(pidgain, -15, 15);
+  pidgain = map(pidgain, 0, 254, -35, 35); //temporally range
+  pidgain = constrain(pidgain, -35, 35);
 
-  motor(10-pidgain,10+pidgain);
+  motor(20-pidgain,20+pidgain);
   // --- ここにPID制御などを書く ---
   // ------------------------------------------------------------------
 
