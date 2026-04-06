@@ -1,7 +1,7 @@
 #include "vision.h"
 #include <Arduino.h>
 
-#define boxlength 5 //must be odd
+#define boxlength 1 //must be odd
 
 // 255 / (avgR_White - avgR_Black)
 const float R_Gain = 1.98598130841;     // 1.98598
@@ -100,7 +100,7 @@ cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t coordX, uint8_t coordY, boo
 
     long rSum = 0, gSum = 0, bSum = 0;
     int count = 0;
-    // 1. Average a 5x5 box around center (identical logic to debugGray)
+    // 1. Average a 1x1 box around center (identical logic to debugGray)
     for (int dy = -(boxlength - 1)/2; dy <= (boxlength - 1)/2; dy++) {
         for (int dx = -(boxlength - 1)/2; dx <= (boxlength - 1)/2; dx++) {
             int x = coordX + dx;
