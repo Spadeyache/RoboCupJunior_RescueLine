@@ -7,6 +7,8 @@ profiles:
     programmer: ""
     port_config:
       baudrate: "115200"
+      lineEnding: "\r\n"
       bits: "8"
       parity: none
       stop_bits: "1"
+    port: COM15

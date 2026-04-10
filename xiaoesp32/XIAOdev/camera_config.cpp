@@ -46,6 +46,21 @@ bool Camera_Init() {
     if (s) {
         // s->set_framesize(s, FRAMESIZE_QQVGA);
                 
+        // --- Manual exposure ---
+        s->set_exposure_ctrl(s, 0);    // Disable AEC (0 = Manual)
+        s->set_aec_value(s, 32);      // 200  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
+        s->set_aec2(s, 0);             // Disable night-mode AEC when in manual
+
+        // --- Manual gain ---
+        s->set_gain_ctrl(s, 0);        // Disable AGC (0 = Manual)
+        s->set_agc_gain(s, 0); //10       // Manual gain: 0 to 30 (Higher = brighter but more noise)
+
+        // --- Manual white balance ---
+        s->set_whitebal(s, 0);         // Disable AWB (0 = Manual)
+        s->set_awb_gain(s, 0);         // Disable AWB gain (0 = Manual)
+        s->set_wb_mode(s, 0);          // Use 0 for "Custom/Manual" or pick a preset (1: Sunny, 2: Cloudy, etc.)
+    
+
         // // --- Auto exposure ---
         // s->set_exposure_ctrl(s, 1);   // Enable AEC 1 | Sisable AEC 0
         // s->set_aec2(s, 1);            // Enable night-mode AEC 1 | Diable 0
@@ -60,20 +75,7 @@ bool Camera_Init() {
         // s->set_awb_gain(s, 1);        // Enable AWB gain 1 | disable 0
 
 
-        // --- Manual exposure ---
-        s->set_exposure_ctrl(s, 0);    // Disable AEC (0 = Manual)
-        s->set_aec_value(s, 80);      // 200  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
-        s->set_aec2(s, 0);             // Disable night-mode AEC when in manual
 
-        // --- Manual gain ---
-        s->set_gain_ctrl(s, 0);        // Disable AGC (0 = Manual)
-        s->set_agc_gain(s, 0); //10       // Manual gain: 0 to 30 (Higher = brighter but more noise)
-
-        // --- Manual white balance ---
-        s->set_whitebal(s, 0);         // Disable AWB (0 = Manual)
-        s->set_awb_gain(s, 0);         // Disable AWB gain (0 = Manual)
-        s->set_wb_mode(s, 0);          // Use 0 for "Custom/Manual" or pick a preset (1: Sunny, 2: Cloudy, etc.)
-    
 
         // --- Image quality ---
         s->set_brightness(s, 0);

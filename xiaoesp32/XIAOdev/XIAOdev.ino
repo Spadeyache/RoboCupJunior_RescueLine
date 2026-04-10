@@ -4,6 +4,7 @@
 #include "vision.h"
 // #include "wifi_config.h"
 
+
 YacheEncodedSerial teensy(Serial1);
 
 // --- PID Parameters ---
@@ -106,11 +107,6 @@ void loop() {
 
 
 
-
-
-
-
-
     // --- PID ---
     float error   = centerOfMass - 79.5f;
     float pidGain = pid(error);
@@ -127,11 +123,11 @@ void loop() {
         greenLeft, leftStart, leftEnd,
         greenRight, rightStart, rightEnd);
 
-    Serial.print(millis() - lastTime);
-    Serial.print(" ");
+    // Serial.print(millis() - lastTime);
+    // Serial.print(" ");
     stream(fb);
     Camera_Return(fb);
-    Serial.println(millis() - lastTime);
+    // Serial.println(millis() - lastTime);
 }
 
 // --- Color classifiers ---
