@@ -81,7 +81,7 @@ FLASHMEM void setup() {
   // _imu.loadOffsetsFromEEPROM();
   // imu.calibrate(); 
 
-  controlTimer.begin(motorOutput, 5000); // 5ms = 5000 microsecond
+  controlTimer.begin(motorOutput, 50000); // 5ms = 5000 microsecond
 
   motorTimer = 0;
 }
@@ -98,24 +98,30 @@ void loop() {
 
   // デバッグ表示（500msごと）
   static unsigned long lastPrint = 0;
-  if (millis() - lastPrint > 500) {
-      Serial.print("Cmd: "); Serial.print(xiaoCommand);
-      Serial.print(" | Gain: "); Serial.println(pidgain);
+  if (millis() - lastPrint > 200) {
+    Serial.print("prePID: "); Serial.print(pidgain);
+  pidgain = map(pidgain, 0, 254, -85, 85); //temporally range
+  Serial.print("mappedPID: "); Serial.print(pidgain);
+  pidgain = constrain(pidgain, -45, 45);
+  
+  Serial.print("LMot: "); Serial.print(20+pidgain);
+  Serial.print(" | RMot: "); Serial.println(20-pidgain);
+  motor(20+pidgain,20-pidgain);
+
+    //   Serial.print("Cmd: "); Serial.print(xiaoCommand);
+    //   Serial.print(" | Gain: "); Serial.println(pidgain);
       
-      // テスト送信: 相手に現在のgainをそのまま送り返す例
-      xiao.send(0x02, pidgain);
+    //   // テスト送信: 相手に現在のgainをそのまま送り返す例
+    //   xiao.send(0x02, pidgain);
       
       lastPrint = millis();
   }
 
-  pidgain = map(pidgain, 0, 254, -35, 35); //temporally range
-  pidgain = constrain(pidgain, -35, 35);
-
-  motor(20-pidgain,20+pidgain);
+  
+  
   // --- ここにPID制御などを書く ---
   // ------------------------------------------------------------------
-
-
+//   delay(20);
   
   // Serial3.print("H");
   // char latestByte = 0;

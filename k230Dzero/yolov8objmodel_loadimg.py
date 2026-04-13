@@ -4,7 +4,7 @@ import gc
 
 if __name__ == "__main__":
     # 1. パラメータの設定
-    img_path = "/sdcard/devKmodels/victim/victim_0110.jpg"
+    img_path = "/sdcard/devKmodels/victim/victim_0150.jpg"
     kmodel_path = "/sdcard/devKmodels/best_640x480_k230_28-2.kmodel"
     labels = ["black", "silver"]
     model_input_size=[640,480]

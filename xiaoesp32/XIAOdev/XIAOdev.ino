@@ -8,9 +8,9 @@
 YacheEncodedSerial teensy(Serial1);
 
 // --- PID Parameters ---
-const float kP = 2.5;
+const float kP = 5.5;
 const float kI = 0.0;
-const float kD = 1.5;
+const float kD = 0;
 
 float lastError = 0, integral = 0;
 
@@ -20,7 +20,7 @@ void stream(camera_fb_t* fb);
 void setup() {
     Serial.begin(115200);
     Serial1.begin(115200, SERIAL_8N1, D7, D6);
-    while (!Serial) delay(10);
+    while (!Serial1) delay(10);
 
     Serial.println("\n=== XIAO ESP32-S3 Sense Vision System ===");
 
@@ -108,25 +108,28 @@ void loop() {
 
 
     // --- PID ---
-    float error   = centerOfMass - 79.5f;
-    float pidGain = pid(error);
+    float error   = centerOfMass - 79.5f;    //-79.5 ~ 79.5
+    float pidGain = pid(error, (float)1);
 
     // Scale PID to 0-254 for UART
     pidGain = constrain(pidGain, -500.0f, 500.0f);
     uint8_t pidByte = (uint8_t)map((long)pidGain, -500, 500, 0, 254);
 
-    // teensy.send(0x01, (uint8_t)0);
-    // teensy.send(0x02, pidByte);
+    // Serial.print(pidGain);
+    Serial.println(pidByte);
+    teensy.send(0x01, (uint8_t)0);
+    teensy.send(0x02, pidByte);
 
-    Serial.printf("COM: %5.1f | pid: %3d | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
-        centerOfMass, pidByte, blackCount, redCount, silverCount,
-        greenLeft, leftStart, leftEnd,
-        greenRight, rightStart, rightEnd);
+    // Serial.printf("COM: %5.1f | pid: %3d | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
+    //     centerOfMass, pidByte, blackCount, redCount, silverCount,
+    //     greenLeft, leftStart, leftEnd,
+    //     greenRight, rightStart, rightEnd);
 
     // Serial.print(millis() - lastTime);
     // Serial.print(" ");
     stream(fb);
     Camera_Return(fb);
+    teensy.update();
     // Serial.println(millis() - lastTime);
 }
 
@@ -163,13 +166,13 @@ bool isRed(const cameraData& d) {
 }
 
 // --- PID ---
-float pid(float error) {
-    float P = kP * error;
-    integral += error;
+float pid(float err, float dt) {
+    float P = kP * err;
+    integral += err * dt;
     integral = constrain(integral, -1000.0f, 1000.0f);
     float I = kI * integral;
-    float D = kD * (error - lastError);
-    lastError = error;
+    float D = kD * (err - lastError) / dt;
+    lastError = err;
     return (P + I + D);
 }
 
