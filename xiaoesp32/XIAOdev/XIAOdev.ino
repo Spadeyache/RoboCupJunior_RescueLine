@@ -8,9 +8,9 @@
 YacheEncodedSerial teensy(Serial1);
 
 // --- PID Parameters ---
-const float kP = 5.5;
+const float kP = 15.5;
 const float kI = 0.0;
-const float kD = 0;
+const float kD = 5;
 
 float lastError = 0, integral = 0;
 

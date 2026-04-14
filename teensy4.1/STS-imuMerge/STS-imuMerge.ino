@@ -99,14 +99,11 @@ void loop() {
   // デバッグ表示（500msごと）
   static unsigned long lastPrint = 0;
   if (millis() - lastPrint > 200) {
-    Serial.print("prePID: "); Serial.print(pidgain);
-  pidgain = map(pidgain, 0, 254, -85, 85); //temporally range
-  Serial.print("mappedPID: "); Serial.print(pidgain);
-  pidgain = constrain(pidgain, -45, 45);
+    pidgain = map(pidgain, 0, 254, -70, 70); // motor output constained (-30 ~ 100)
   
-  Serial.print("LMot: "); Serial.print(20+pidgain);
-  Serial.print(" | RMot: "); Serial.println(20-pidgain);
-  motor(20+pidgain,20-pidgain);
+  Serial.print("L: "); Serial.print(40+pidgain);
+  Serial.print(" | RMot: "); Serial.println(40-pidgain);
+  motor(40+pidgain,40-pidgain);
 
     //   Serial.print("Cmd: "); Serial.print(xiaoCommand);
     //   Serial.print(" | Gain: "); Serial.println(pidgain);
@@ -153,11 +150,11 @@ void loop() {
     
 }
 
-
+#define max 80
 FASTRUN void motor(float32_t left, float32_t right){
     noInterrupts(); // Safety: update all 4 at once
-    frontLeftGain = left; frontRightGain = right;
-    backLeftGain = left;  backRightGain = right;
+    frontLeftGain = constrain(left, -max, max); frontRightGain = constrain(right, -max, max);
+    backLeftGain = constrain(left, -max, max);  backRightGain = constrain(right, -max, max);
     interrupts();
 }
 
