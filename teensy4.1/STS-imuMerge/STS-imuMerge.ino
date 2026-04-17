@@ -11,7 +11,7 @@
 
 
 
-
+#define buzzerPin 37
 
 // --- ArmServo ---
 #define _HS45HB0PIN 3    // Teensy pinnumber  
@@ -63,7 +63,8 @@ FLASHMEM void setup() {
   //   _imu.begin(Wire, 200.0f);
   xiao.begin(115200); //XIAO
   //   Serial5.begin(115200); //K230
-  
+
+  pinMode(buzzerPin, OUTPUT);
 
   // ---HS45HB servo---
   // Start conservative: 1000–2000 us
@@ -79,20 +80,20 @@ FLASHMEM void setup() {
 
   delay(5);
 
-  grabARM(true);
-  liftARM(true);
-  delay(175);
+  // grabARM(true);
+  // liftARM(true);
+  // delay(175);
   _HS45HB0.detach();
   _HS45HB1.detach();
 
   // _imu.loadOffsetsFromEEPROM();
   // imu.calibrate(); 
 
+  analogWrite(buzzerPin, 116);
+  delay(40);
+  analogWrite(buzzerPin,0);
 
-  
-
-
-  controlTimer.begin(motorOutput, 50000); // 5ms = 5000 microsecond
+  controlTimer.begin(motorOutput, 20000); // 5ms = 5000 microsecond
 
   motorTimer = 0;
 }
@@ -109,20 +110,26 @@ void loop() {
 
   // デバッグ表示（500msごと）
   static unsigned long lastPrint = 0;
-  if (millis() - lastPrint > 200) {
-    pidgain = map(pidgain, 0, 254, -70, 70); // motor output constained (-30 ~ 100)
+  if (millis() - lastPrint > 20) {
+    pidgain = map(pidgain, 0, 254, -180, 180); // motor output constained (-30 ~ 100)
   
   // Serial.print("L: "); Serial.print(40+pidgain);
   // Serial.print(" | RMot: "); Serial.println(40-pidgain);
-  motor(40+pidgain,40-pidgain);
+    motor(100+pidgain,100-pidgain);
 
-  Serial.print("Cmd: "); Serial.print(xiaoCommand);
-  Serial.print(" | Gain: "); Serial.println(pidgain);
+    Serial.print("Cmd: "); Serial.print(xiaoCommand);
+    Serial.print(" | Gain: "); Serial.println(pidgain);
       
     //   // テスト送信: 相手に現在のgainをそのまま送り返す例
     //   xiao.send(0x02, pidgain);
       
       lastPrint = millis();
+  }
+  if(xiaoCommand != 0){
+    Serial.println("non");
+    motor(0,0);
+    _sts.power(0,0,0,0);
+    delay(670);
   }
 
   
