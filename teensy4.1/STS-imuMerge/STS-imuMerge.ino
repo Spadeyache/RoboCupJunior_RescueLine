@@ -6,7 +6,7 @@
 #include "YacheEncodedSerial.h"
 #include "yacheMPU6050.h"
 #include "yacheSTS.h"
-#include <IcsHardSerialClass.h>
+#include "IcsHardSerialClass.h"
 #include <Servo.h>
 
 
@@ -72,14 +72,25 @@ FLASHMEM void setup() {
 
   pinMode(_74HTC126EN, OUTPUT);
   digitalWrite(_74HTC126EN, HIGH);
-  delay(200);
+  delay(50);
   _sts.setWheelMode(true);
   krs.begin();  //サーボモータの通信初期設定
   krs.setSpd(_KRSID, 43); //speed 1-127
-  
+
+  delay(5);
+
+  grabARM(true);
+  liftARM(true);
+  delay(175);
+  _HS45HB0.detach();
+  _HS45HB1.detach();
 
   // _imu.loadOffsetsFromEEPROM();
   // imu.calibrate(); 
+
+
+  
+
 
   controlTimer.begin(motorOutput, 50000); // 5ms = 5000 microsecond
 
@@ -101,12 +112,12 @@ void loop() {
   if (millis() - lastPrint > 200) {
     pidgain = map(pidgain, 0, 254, -70, 70); // motor output constained (-30 ~ 100)
   
-  Serial.print("L: "); Serial.print(40+pidgain);
-  Serial.print(" | RMot: "); Serial.println(40-pidgain);
+  // Serial.print("L: "); Serial.print(40+pidgain);
+  // Serial.print(" | RMot: "); Serial.println(40-pidgain);
   motor(40+pidgain,40-pidgain);
 
-    //   Serial.print("Cmd: "); Serial.print(xiaoCommand);
-    //   Serial.print(" | Gain: "); Serial.println(pidgain);
+  Serial.print("Cmd: "); Serial.print(xiaoCommand);
+  Serial.print(" | Gain: "); Serial.println(pidgain);
       
     //   // テスト送信: 相手に現在のgainをそのまま送り返す例
     //   xiao.send(0x02, pidgain);
@@ -150,6 +161,8 @@ void loop() {
     
 }
 
+// line follow speed && intersections
+
 #define max 80
 FASTRUN void motor(float32_t left, float32_t right){
     noInterrupts(); // Safety: update all 4 at once
@@ -169,7 +182,7 @@ void grabARM(bool closed){
 }
 void liftARM(bool lift){
     if(lift){
-        krs.setPos(_KRSID,11500);  //setPose range: 3500〜11500
+        krs.setPos(_KRSID,10800);  //setPose range: 3500〜11500 11500 は今だけ高めにしてる
     }
     else{
       krs.setPos(_KRSID,4400);  //位置指令　ID:0サーボを7500へ 中央

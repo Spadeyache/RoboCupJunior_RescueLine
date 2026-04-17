@@ -7,6 +7,8 @@
 
 YacheEncodedSerial teensy(Serial1);
 
+#define minimumBlackforLine 8 // Ignore anything smaller than 5 pixels
+
 // --- PID Parameters ---
 const float kP = 15.5;
 const float kI = 0.0;
@@ -52,13 +54,13 @@ void loop() {
     // Cache all pixel data in one pass
     cameraData pixels[160];
     for (uint8_t pixel = 0; pixel < 160; pixel++) {
-        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)30);
+        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)15);
         if (isBlack(pixels[pixel]))       { weightedSum += pixel; blackCount++; }
         if (isSilver(pixels[pixel]))      { silverCount++; }
         else if (isRed(pixels[pixel]))    { redCount++; }
     }
 
-    float centerOfMass = (blackCount > 0) ? (float)weightedSum / blackCount : 79.5f;
+    float centerOfMass = (blackCount > minimumBlackforLine) ? (float)weightedSum / blackCount : 79.5f;
 
     // Fixed: Added definitions and types
     int16_t comInt = (int16_t)centerOfMass;
@@ -77,36 +79,6 @@ void loop() {
     for (uint8_t pixel = leftStart;  pixel < leftEnd;  pixel++) if (isGreen(pixels[pixel])) greenLeft++;
     for (uint8_t pixel = rightStart; pixel < rightEnd; pixel++) if (isGreen(pixels[pixel])) greenRight++;
 
-
-
-    // if(greenLeft > 10 && greenRight > 10){
-    //     Serial.print("both green - ");
-    //     delay(200); return;
-    // }
-    // else if(greenLeft > 10){
-    //     Serial.print("leftgreen - ");
-    //     delay(200);
-    // }
-    // else if(greenRight > 10){
-    //     Serial.print("right green - ");
-    //     delay(200);
-    // }
-
-    // if(redCount > 50){
-    //     Serial.print("red found - ");
-    //     delay(200);
-    // }
-    // if(silverCount > 20){
-    //     Serial.print("silver found - ");
-    //     delay(200);
-    // }
-
-
-
-
-
-
-
     // --- PID ---
     float error   = centerOfMass - 79.5f;    //-79.5 ~ 79.5
     float pidGain = pid(error, (float)1);
@@ -116,14 +88,31 @@ void loop() {
     uint8_t pidByte = (uint8_t)map((long)pidGain, -500, 500, 0, 254);
 
     // Serial.print(pidGain);
-    Serial.println(pidByte);
+    // Serial.println(pidByte);
     teensy.send(0x01, (uint8_t)0);
     teensy.send(0x02, pidByte);
 
-    // Serial.printf("COM: %5.1f | pid: %3d | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
-    //     centerOfMass, pidByte, blackCount, redCount, silverCount,
-    //     greenLeft, leftStart, leftEnd,
-    //     greenRight, rightStart, rightEnd);
+    // --- address defenition (0x02) ---
+    // 0.PID   1.U-T   2.Leftgreen 3.RightGreen 4.Red 5.Silver
+    if(greenLeft > 10 && greenRight > 10) {Serial.print("Detected U-turn"); teensy.send(0x01, (uint8_t) 1);}  //u turn
+    else if(greenLeft> 10) {Serial.print("Detected leftGreen"); teensy.send(0x01, (uint8_t) 2);}             // left  g
+    else if(greenRight> 10) {Serial.print("Detected rightGreen"); teensy.send(0x01, (uint8_t) 3);}           // right g
+
+    if(redCount > 50) {Serial.print("Detected Red"); teensy.send(0x01, (uint8_t) 4);}                        // red
+
+    // if(silverCount > 20){                                                                            // silver
+    //     Serial.print("silver found - ");
+    //     delay(200);
+    // }
+
+
+
+
+
+    Serial.printf("COM: %5.1f | pid: %3d | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
+        centerOfMass, pidByte, blackCount, redCount, silverCount,
+        greenLeft, leftStart, leftEnd,
+        greenRight, rightStart, rightEnd);
 
     // Serial.print(millis() - lastTime);
     // Serial.print(" ");
