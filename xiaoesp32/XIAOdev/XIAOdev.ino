@@ -7,7 +7,7 @@
 
 YacheEncodedSerial teensy(Serial1);
 
-#define minimumBlackforLine 8 // Ignore anything smaller than 5 pixels
+#define minimumBlackforLine 3 // Ignore anything smaller than 5 pixels
 
 // --- PID Parameters ---
 const float kP = 15.5;
@@ -32,7 +32,7 @@ void setup() {
     delay(500);
 }
 
-void loop() {
+void loop() {      // --------- LOOP ----------
     static unsigned long lastTime = 0;
     if (millis() - lastTime < 10) return;
     lastTime = millis();
@@ -43,18 +43,27 @@ void loop() {
         return;
     }
 
+    // updateRawGrayHSV(fb, 5/*40*/, (uint8_t)15, true);
+    // updateRawGrayHSV(fb, 38/*40*/, (uint8_t)15, true);
+    // updateRawGrayHSV(fb, 79/*40*/, (uint8_t)15, true);
+    updateRawGrayHSV(fb, 88/*40*/, (uint8_t)30, true);
+    // updateRawGrayHSV(fb, 155/*40*/, (uint8_t)15, true);
+    // stream(fb);
+    // Camera_Return(fb);
+    // return;
+
     int32_t weightedSum = 0;
     uint8_t blackCount  = 0;
     uint8_t redCount    = 0;
     uint8_t silverCount = 0;
 
-    const uint8_t greenWidth = 40;
-    const uint8_t greenGap   = 8;
+    const uint8_t greenWidth = 25;
+    const uint8_t greenGap   = 0;
 
     // Cache all pixel data in one pass
     cameraData pixels[160];
-    for (uint8_t pixel = 0; pixel < 160; pixel++) {
-        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)15);
+    for (uint8_t pixel = 50; pixel < 120; pixel++) {
+        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)30);
         if (isBlack(pixels[pixel]))       { weightedSum += pixel; blackCount++; }
         if (isSilver(pixels[pixel]))      { silverCount++; }
         else if (isRed(pixels[pixel]))    { redCount++; }
@@ -64,7 +73,7 @@ void loop() {
 
     // Fixed: Added definitions and types
     int16_t comInt = (int16_t)centerOfMass;
-    const uint8_t lineHalfWidth = 10; 
+    const uint8_t lineHalfWidth = 4; 
 
     // Green detection window around line center
     int16_t leftEndSigned    = comInt - lineHalfWidth - greenGap;
@@ -84,8 +93,8 @@ void loop() {
     float pidGain = pid(error, (float)1);
 
     // Scale PID to 0-254 for UART
-    pidGain = constrain(pidGain, -500.0f, 500.0f);
-    uint8_t pidByte = (uint8_t)map((long)pidGain, -500, 500, 0, 254);
+    pidGain = constrain(pidGain, -700.0f, 700.0f);
+    uint8_t pidByte = (uint8_t)map((long)pidGain, -700, 700, 0, 254);
 
     // Serial.print(pidGain);
     // Serial.println(pidByte);
@@ -94,17 +103,14 @@ void loop() {
 
     // --- address defenition (0x02) ---
     // 0.PID   1.U-T   2.Leftgreen 3.RightGreen 4.Red 5.Silver
-    if(greenLeft > 10 && greenRight > 10) {Serial.print("Detected U-turn"); teensy.send(0x01, (uint8_t) 1);}  //u turn
-    else if(greenLeft> 10) {Serial.print("Detected leftGreen"); teensy.send(0x01, (uint8_t) 2);}             // left  g
-    else if(greenRight> 10) {Serial.print("Detected rightGreen"); teensy.send(0x01, (uint8_t) 3);}           // right g
+    if(greenLeft > 5 && greenRight > 5) {Serial.print("Detected U-turn"); teensy.send(0x01, (uint8_t) 1);}  //u turn
+    else if(greenLeft> 5) {Serial.print("Detected leftGreen"); teensy.send(0x01, (uint8_t) 2);}             // left  g
+    else if(greenRight> 5) {Serial.print("Detected rightGreen"); teensy.send(0x01, (uint8_t) 3);}           // right g
 
     if(redCount > 50) {Serial.print("Detected Red"); teensy.send(0x01, (uint8_t) 4);}                        // red
 
-    // if(silverCount > 20){                                                                            // silver
-    //     Serial.print("silver found - ");
-    //     delay(200);
-    // }
-
+    if(silverCount > 25) {Serial.print("Detected Silver"); teensy.send(0x01, (uint8_t) 5);}    
+    
 
 
 
@@ -123,22 +129,22 @@ void loop() {
 }
 
 // --- Color classifiers ---
-#define BLACK_GRAY_MIN    35
-#define SILVER_RED_MIN   240
-#define SILVER_GREEN_MIN 240
-#define SILVER_BLUE_MIN  240
+#define BLACK_GRAY_MIN    4
+#define SILVER_RAW_RED_MIN   250
+#define SILVER_RAW_GREEN_MIN 252
+#define SILVER_RAW_BLUE_MIN  252
 
 bool isBlack(const cameraData& d) {
     return d.gray <= BLACK_GRAY_MIN;
 }
 bool isSilver(const cameraData& d) {
-    return (d.avgR > SILVER_RED_MIN) && (d.avgG > SILVER_GREEN_MIN) && (d.avgB > SILVER_BLUE_MIN);
-}
+    return (d.avgR > SILVER_RAW_RED_MIN) && (d.avgG > SILVER_RAW_GREEN_MIN) && (d.avgB > SILVER_RAW_BLUE_MIN);
+}// avg is raw
 
 #define GREEN_HUE_MIN  80
-#define GREEN_HUE_MAX 160
-#define GREEN_SAT_MIN  60
-#define GREEN_VAL_MIN  40
+#define GREEN_HUE_MAX 165
+#define GREEN_SAT_MIN  150
+#define GREEN_VAL_MIN  2
 
 #define RED_SAT_MIN    80
 #define RED_VAL_MIN    40
@@ -148,6 +154,7 @@ bool isGreen(const cameraData& d) {
         && (d.hsv.s >= GREEN_SAT_MIN)
         && (d.hsv.v >= GREEN_VAL_MIN);
 }
+
 bool isRed(const cameraData& d) {
     return (d.hsv.h <= 20 || d.hsv.h >= 340)
         && (d.hsv.s >= RED_SAT_MIN)

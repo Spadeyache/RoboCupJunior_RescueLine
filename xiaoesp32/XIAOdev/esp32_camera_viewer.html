@@ -253,6 +253,13 @@ button.icon-btn:active { transform: translateY(1px); }
 canvas { display: block; image-rendering: pixelated; }
 #overlay { position: absolute; top: 0; left: 0; pointer-events: none; image-rendering: pixelated; }
 
+.dual-cam { display: flex; gap: 12px; flex-wrap: wrap; }
+.cam-caption {
+  font-size: 10px; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin: 2px 0 0 2px;
+}
+
 .fps-overlay {
   position: absolute; top: 8px; right: 8px;
   font-size: 10px; color: var(--green);
@@ -428,6 +435,28 @@ canvas { display: block; image-rendering: pixelated; }
   background-repeat: no-repeat;
   background-position: right 6px center;
 }
+
+/* ── Calibration inputs ─────────────────────────────────────── */
+.cal-input {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  height: 28px;
+  padding: 0 8px;
+  width: 74px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text);
+  outline: none;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.3);
+}
+.cal-input:focus { border-color: var(--accent); }
+.cal-badge {
+  font-size: 10px; padding: 2px 8px; border-radius: 99px;
+  background: rgba(232,132,10,0.10);
+  color: var(--accent);
+  border: 1px solid rgba(232,132,10,0.25);
+}
 </style>
 </head>
 <body>
@@ -447,6 +476,18 @@ canvas { display: block; image-rendering: pixelated; }
     </select>
   </div>
   <button id="connectBtn" class="primary">Connect</button>
+
+  <div class="toolbar-group">
+    <label>CAL</label>
+    <input id="gainR" class="cal-input" type="number" step="0.01" value="1.98598130841" min="0" title="Red gain" readonly>
+    <input id="gainG" class="cal-input" type="number" step="0.01" value="2.25265017668" min="0" title="Green gain" readonly>
+    <input id="gainB" class="cal-input" type="number" step="0.01" value="3.10" min="0" title="Blue gain" readonly>
+    <input id="dR"    class="cal-input" type="number" step="1"    value="9"    title="R_D (subtract from R)" readonly>
+    <input id="dG"    class="cal-input" type="number" step="1"    value="20"   title="G_D (subtract from G)" readonly>
+    <input id="dB"    class="cal-input" type="number" step="1"    value="13"   title="B_D (subtract from B)" readonly>
+    <span class="cal-badge" id="calBadge" title="Offset view uses these values">offset: on</span>
+  </div>
+
   <div class="toolbar-spacer"></div>
   <button id="scaleBtn" class="sm">2×</button>
   <button id="saveBtn" class="sm">&#x1F4BE; Save frame</button>
@@ -454,11 +495,23 @@ canvas { display: block; image-rendering: pixelated; }
 
 <div class="split" id="mainArea">
   <div class="cam-col">
-    <div class="canvas-wrap">
-      <canvas id="cam" width="160" height="120"></canvas>
-      <canvas id="overlay" width="160" height="120" style="width:320px;height:240px;"></canvas>
-      <div class="fps-overlay" id="fpsLabel">-- fps</div>
-      <div class="err-overlay" id="errOverlay">err: &mdash;</div>
+    <div class="dual-cam">
+      <div>
+        <div class="canvas-wrap">
+          <canvas id="cam" width="160" height="120"></canvas>
+          <canvas id="overlay" width="160" height="120" style="width:320px;height:240px;"></canvas>
+          <div class="fps-overlay" id="fpsLabel">-- fps</div>
+          <div class="err-overlay" id="errOverlay">err: &mdash;</div>
+        </div>
+        <div class="cam-caption">Raw</div>
+      </div>
+
+      <div>
+        <div class="canvas-wrap">
+          <canvas id="camOffset" width="160" height="120"></canvas>
+        </div>
+        <div class="cam-caption">Offset (PC)</div>
+      </div>
     </div>
     <div class="stats">
       <div class="stat">Frames <span id="frameCount">0</span></div>
@@ -482,15 +535,6 @@ canvas { display: block; image-rendering: pixelated; }
     <div class="mon-header">
       <span class="mon-title">Serial Monitor</span>
       <span class="mon-badge" id="lineCountBadge">0 lines</span>
-      <label style="font-size:10px;color:var(--text-faint);">LIMIT</label>
-      <select id="logLimitSel" class="limit-sel">
-        <option value="100">100</option>
-        <option value="250">250</option>
-        <option value="500">500</option>
-        <option value="1000" selected>1000</option>
-        <option value="2000">2000</option>
-        <option value="5000">5000</option>
-      </select>
       <button id="autoScrollBtn" class="sm active-dim">&#x2193; Auto</button>
       <button id="clearBtn" class="sm">Clear</button>
     </div>
@@ -511,6 +555,8 @@ const canvas         = document.getElementById('cam');
 const ctx            = canvas.getContext('2d');
 const overlay        = document.getElementById('overlay');
 const octx           = overlay.getContext('2d');
+const offsetCanvas   = document.getElementById('camOffset');
+const offsetCtx      = offsetCanvas.getContext('2d');
 const connectBtn     = document.getElementById('connectBtn');
 const saveBtn        = document.getElementById('saveBtn');
 const scaleBtn       = document.getElementById('scaleBtn');
@@ -525,7 +571,6 @@ const monLog         = document.getElementById('monLog');
 const lineCountBadge = document.getElementById('lineCountBadge');
 const clearBtn       = document.getElementById('clearBtn');
 const autoScrollBtn  = document.getElementById('autoScrollBtn');
-const logLimitSel    = document.getElementById('logLimitSel');
 const sendInput      = document.getElementById('sendInput');
 const sendBtn        = document.getElementById('sendBtn');
 const sendNlBtn      = document.getElementById('sendNlBtn');
@@ -533,6 +578,13 @@ const addMarkerBtn   = document.getElementById('addMarkerBtn');
 const placeModeBtn   = document.getElementById('placeModeBtn');
 const markerListEl   = document.getElementById('markerList');
 const markerHint     = document.getElementById('markerHint');
+const gainREl        = document.getElementById('gainR');
+const gainGEl        = document.getElementById('gainG');
+const gainBEl        = document.getElementById('gainB');
+const dREl           = document.getElementById('dR');
+const dGEl           = document.getElementById('dG');
+const dBEl           = document.getElementById('dB');
+const calBadge       = document.getElementById('calBadge');
 
 // ── Serial ────────────────────────────────────────────────────────────────────
 let port = null, reader = null, writer = null, running = false;
@@ -541,15 +593,43 @@ let port = null, reader = null, writer = null, running = false;
 let scale = 2;
 let totalFrames = 0, fpsFrames = 0, lastFpsTime = performance.now();
 let imageData = ctx.createImageData(160, 120);
+let offsetImageData = offsetCtx.createImageData(160, 120);
 let pixBuf    = new Uint8Array(160 * 120 * 2); // grows only when needed
 
 canvas.style.width  = (160 * scale) + 'px';
 canvas.style.height = (120 * scale) + 'px';
+offsetCanvas.style.width  = (160 * scale) + 'px';
+offsetCanvas.style.height = (120 * scale) + 'px';
+
+// ── Calibration (hardcoded to match vision.cpp) ───────────────────────────────
+const calActive = true;
+const cal = {
+  // const float R_Gain = 1.98598130841;
+  // const float G_Gain = 2.25265017668;
+  // const float B_Gain = 4.0;
+  rGain: 1.98598130841,
+  gGain: 2.25265017668,
+  bGain: 3.1,
+  // const uint8_t R_D = 12.4 * 0.8;  -> 9 (truncate)
+  // const uint8_t G_D = 25.2 * 0.8;  -> 20 (truncate)
+  // const uint8_t B_D = 17.4 * 0.8;  -> 13 (truncate)
+  rD: 9,
+  gD: 20,
+  bD: 13
+};
+function clamp8(x) { return x < 0 ? 0 : x > 255 ? 255 : x | 0; }
+function updateCalBadge() {
+  if (!calActive) { calBadge.textContent = 'offset: off'; return; }
+  calBadge.textContent =
+    `offset: on  (RG ${cal.rGain.toFixed(2)}  GG ${cal.gGain.toFixed(2)}  BG ${cal.bGain.toFixed(2)}  ` +
+    `RD ${cal.rD|0}  GD ${cal.gD|0}  BD ${cal.bD|0})`;
+}
+updateCalBadge();
 
 // ── Log ───────────────────────────────────────────────────────────────────────
 let autoScroll   = true;
 let logLineCount = 0;
-let MAX_LINES    = 1000;
+let MAX_LINES    = 100;
 const dec        = new TextDecoder();
 const enc        = new TextEncoder();
 
@@ -685,6 +765,13 @@ function syncOverlaySize(w, h) {
   markDirty();
 }
 
+function syncOffsetSize(w, h) {
+  offsetCanvas.width = w; offsetCanvas.height = h;
+  offsetCanvas.style.width  = canvas.style.width;
+  offsetCanvas.style.height = canvas.style.height;
+  offsetImageData = offsetCtx.createImageData(w, h);
+}
+
 // ═════════════════════════════════════════════════════════════════════════════
 //  LOG
 // ═════════════════════════════════════════════════════════════════════════════
@@ -719,12 +806,6 @@ function appendLine(text) {
   if (autoScroll) monLog.scrollTop = monLog.scrollHeight;
 }
 
-logLimitSel.onchange = () => {
-  MAX_LINES = logLimitSel.value | 0;
-  while (logLineCount > MAX_LINES && monLog.firstChild)
-    { monLog.removeChild(monLog.firstChild); logLineCount--; }
-  lineCountBadge.textContent = logLineCount + (logLineCount !== 1 ? ' lines' : ' line');
-};
 autoScrollBtn.onclick = () => {
   autoScroll = !autoScroll;
   autoScrollBtn.className   = autoScroll ? 'active-dim' : '';
@@ -890,17 +971,34 @@ function renderFrame() {
     sizeLabel.textContent  = w+'\xd7'+h;
     bytesLabel.textContent = w * h * 2;
     syncOverlaySize(w, h);
+    syncOffsetSize(w, h);
   }
   const data = imageData.data, n = w * h;
+  const odata = offsetImageData.data;
   for (let i = 0; i < n; i++) {
     const px = (pixBuf[i*2] << 8) | pixBuf[i*2+1];
     const j  = i * 4;
-    data[j]   = ((px >> 11) & 0x1F) << 3;
-    data[j+1] = ((px >>  5) & 0x3F) << 2;
-    data[j+2] =  (px        & 0x1F) << 3;
+    const r   = ((px >> 11) & 0x1F) << 3;
+    const g   = ((px >>  5) & 0x3F) << 2;
+    const b   =  (px        & 0x1F) << 3;
+    data[j]   = r;
+    data[j+1] = g;
+    data[j+2] = b;
     data[j+3] = 255;
+
+    // Offset view computed on PC, matching vision.cpp trend:
+    // calR = clamp( (r - R_D) * R_Gain ), same for G/B
+    if (calActive) {
+      odata[j]   = clamp8((r - cal.rD) * cal.rGain);
+      odata[j+1] = clamp8((g - cal.gD) * cal.gGain);
+      odata[j+2] = clamp8((b - cal.bD) * cal.bGain);
+    } else {
+      odata[j] = 0; odata[j+1] = 0; odata[j+2] = 0;
+    }
+    odata[j+3] = 255;
   }
   ctx.putImageData(imageData, 0, 0);
+  offsetCtx.putImageData(offsetImageData, 0, 0);
   drawOverlay(); // skips if not dirty
 
   frameCountEl.textContent  = ++totalFrames;
@@ -931,6 +1029,7 @@ async function readLoop() {
 // ── Init ──────────────────────────────────────────────────────────────────────
 renderMarkerList();
 syncOverlaySize(160, 120);
+syncOffsetSize(160, 120);
 </script>
 </body>
 </html>

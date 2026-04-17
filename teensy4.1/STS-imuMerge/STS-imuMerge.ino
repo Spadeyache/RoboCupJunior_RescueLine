@@ -12,6 +12,10 @@
 
 
 #define buzzerPin 37
+// static constexpr uint8_t BUZZER_DUTY = 116;      // matches setup() beep
+// static constexpr uint16_t BUZZER_ON_MS = 40;     // matches setup() beep
+// static constexpr uint16_t BUZZER_STEP_MS = 140; // 1s between beeps (easier to count)
+// static constexpr uint16_t STATE_STABLE_MS = 50;  // filter flicker from serial updates
 
 // --- ArmServo ---
 #define _HS45HB0PIN 3    // Teensy pinnumber  
@@ -25,6 +29,7 @@ const byte _74HTC126EN = 2;   // Teensy pinnumber
 const long KRSBAUDRATE = 115200; //serial servo baud rate
 const int KRSTIMEOUT = 400;     //サーボとのシリアル通信に設定する応答待ち時間
 IcsHardSerialClass krs(&Serial1,_74HTC126EN,KRSBAUDRATE,KRSTIMEOUT);
+
 
 
 
@@ -45,6 +50,72 @@ YacheEncodedSerial xiao(Serial3);
 uint8_t xiaoCommand = 0; // 0x01: 0-linefollow 1-silver 2-red 3-intersection
 float32_t pidgain = 127; // 0x02: center of 0-254 
 
+// // --- Xiao state filter (debounce / stability) ---
+// static uint8_t rawStateLast = 0;
+// static uint32_t rawStateChangedAtMs = 0;
+// static uint8_t stableState = 0;
+
+// static uint8_t filterStableState(uint8_t raw) {
+//   const uint32_t now = millis();
+//   if (raw != rawStateLast) {
+//     rawStateLast = raw;
+//     rawStateChangedAtMs = now;
+//   }
+//   if (raw != stableState && (uint32_t)(now - rawStateChangedAtMs) >= STATE_STABLE_MS) {
+//     stableState = raw;
+//   }
+//   return stableState;
+// }
+
+// // --- Buzzer (non-blocking, beep only on state change) ---
+// static uint8_t buzzerState = 0;
+// static uint8_t buzzerBeepIdx = 0;
+// static bool buzzerOn = false;
+// static bool buzzerBurstActive = false;
+// static uint32_t buzzerNextStepAtMs = 0;
+// static uint32_t buzzerOffAtMs = 0;
+
+// static inline void buzzerSet_(bool on) {
+//   if (on) analogWrite(buzzerPin, BUZZER_DUTY);
+//   else analogWrite(buzzerPin, 0);
+// }
+
+// // Pattern:
+// // - state = 0: silent
+// // - state = N (>0): emit N short beeps (1s apart) ONCE when state changes.
+// static void updateBuzzer(uint8_t state) {
+//   const uint32_t now = millis();
+
+//   if (buzzerOn && (int32_t)(now - buzzerOffAtMs) >= 0) {
+//     buzzerOn = false;
+//     buzzerSet_(false);
+//   }
+
+//   if (state != buzzerState) {
+//     buzzerState = state;
+//     buzzerBeepIdx = 0;
+//     buzzerNextStepAtMs = now; // allow immediate start
+//     buzzerBurstActive = (buzzerState != 0);
+//     if (buzzerOn) {
+//       buzzerOn = false;
+//       buzzerSet_(false);
+//     }
+//   }
+
+//   if (!buzzerBurstActive) return;
+
+//   if ((int32_t)(now - buzzerNextStepAtMs) >= 0) {
+//     buzzerOn = true;
+//     buzzerSet_(true);
+//     buzzerOffAtMs = now + BUZZER_ON_MS;
+//     buzzerNextStepAtMs = now + BUZZER_STEP_MS;
+//     buzzerBeepIdx++;
+//     if (buzzerBeepIdx >= buzzerState) {
+//       buzzerBurstActive = false; // done until next state change
+//     }
+//   }
+// }
+
 
 // A funciton that has priority in precicly updating the imu & motorGains
 FASTRUN void motorOutput(){
@@ -60,11 +131,12 @@ FASTRUN void motorOutput(){
 FLASHMEM void setup() {
   Serial.begin(115200);
   _sts.begin(Serial2);
-  //   _imu.begin(Wire, 200.0f);
+  // _imu.begin(Wire, 200.0f);
   xiao.begin(115200); //XIAO
   //   Serial5.begin(115200); //K230
 
   pinMode(buzzerPin, OUTPUT);
+  analogWrite(buzzerPin, 21);
 
   // ---HS45HB servo---
   // Start conservative: 1000–2000 us
@@ -76,21 +148,19 @@ FLASHMEM void setup() {
   delay(50);
   _sts.setWheelMode(true);
   krs.begin();  //サーボモータの通信初期設定
-  krs.setSpd(_KRSID, 43); //speed 1-127
+  krs.setSpd(_KRSID, 60); //speed 1-127
 
   delay(5);
 
-  // grabARM(true);
-  // liftARM(true);
-  // delay(175);
+  grabARM(true);
+  liftARM(true);
+  // delay(1759);
   _HS45HB0.detach();
   _HS45HB1.detach();
 
   // _imu.loadOffsetsFromEEPROM();
   // imu.calibrate(); 
 
-  analogWrite(buzzerPin, 116);
-  delay(40);
   analogWrite(buzzerPin,0);
 
   controlTimer.begin(motorOutput, 20000); // 5ms = 5000 microsecond
@@ -107,11 +177,12 @@ void loop() {
 
     xiaoCommand = xiao.get(0x01); 
     pidgain = (float32_t)xiao.get(0x02);
+    // updateBuzzer(filterStableState(xiaoCommand));
 
   // デバッグ表示（500msごと）
   static unsigned long lastPrint = 0;
   if (millis() - lastPrint > 20) {
-    pidgain = map(pidgain, 0, 254, -180, 180); // motor output constained (-30 ~ 100)
+    pidgain = map(pidgain, 0, 254, -220, 220); // motor output constained (-30 ~ 100)
   
   // Serial.print("L: "); Serial.print(40+pidgain);
   // Serial.print(" | RMot: "); Serial.println(40-pidgain);
@@ -124,12 +195,6 @@ void loop() {
     //   xiao.send(0x02, pidgain);
       
       lastPrint = millis();
-  }
-  if(xiaoCommand != 0){
-    Serial.println("non");
-    motor(0,0);
-    _sts.power(0,0,0,0);
-    delay(670);
   }
 
   
@@ -189,13 +254,13 @@ void grabARM(bool closed){
 }
 void liftARM(bool lift){
     if(lift){
-        krs.setPos(_KRSID,10800);  //setPose range: 3500〜11500 11500 は今だけ高めにしてる
+        krs.setPos(_KRSID,11050);  //setPose range: 3500〜11500 11500 は今だけ高めにしてる
     }
     else{
       krs.setPos(_KRSID,4400);  //位置指令　ID:0サーボを7500へ 中央
     }
     delay(800);
-    krs.setFree(_KRSID); 
+    krs.setFree(_KRSID);
 }
 
 // make a struct and when arm is droped withingh any command arm will drop and open the hs45hb if its not holding a ball
