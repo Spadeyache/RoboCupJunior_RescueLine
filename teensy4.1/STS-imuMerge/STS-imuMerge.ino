@@ -162,6 +162,9 @@ FLASHMEM void setup() {
   // imu.calibrate(); 
 
   analogWrite(buzzerPin,0);
+  analogWrite(buzzerPin,160);
+  delay(40);
+  analogWrite(buzzerPin,0);
 
   controlTimer.begin(motorOutput, 20000); // 5ms = 5000 microsecond
 
@@ -182,7 +185,7 @@ void loop() {
   // デバッグ表示（500msごと）
   static unsigned long lastPrint = 0;
   if (millis() - lastPrint > 20) {
-    pidgain = map(pidgain, 0, 254, -220, 220); // motor output constained (-30 ~ 100)
+    pidgain = map(pidgain, 0, 254, -320, 320); // motor output constained (-30 ~ 100)
   
   // Serial.print("L: "); Serial.print(40+pidgain);
   // Serial.print(" | RMot: "); Serial.println(40-pidgain);
@@ -195,6 +198,13 @@ void loop() {
     //   xiao.send(0x02, pidgain);
       
       lastPrint = millis();
+  }
+  if(xiaoCommand != 0){
+    motor(0,0);
+    analogWrite(buzzerPin,160);
+    delay(20);
+    analogWrite(buzzerPin,0);
+    delay(110);
   }
 
   

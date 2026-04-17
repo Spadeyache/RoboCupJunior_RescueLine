@@ -107,9 +107,9 @@ void loop() {      // --------- LOOP ----------
     else if(greenLeft> 5) {Serial.print("Detected leftGreen"); teensy.send(0x01, (uint8_t) 2);}             // left  g
     else if(greenRight> 5) {Serial.print("Detected rightGreen"); teensy.send(0x01, (uint8_t) 3);}           // right g
 
-    if(redCount > 50) {Serial.print("Detected Red"); teensy.send(0x01, (uint8_t) 4);}                        // red
+    if(redCount > 30) {Serial.print("Detected Red"); teensy.send(0x01, (uint8_t) 4);}                        // red
 
-    if(silverCount > 25) {Serial.print("Detected Silver"); teensy.send(0x01, (uint8_t) 5);}    
+    if(silverCount > 25) {Serial.print("Detected Silver"); teensy.send(0x01, (uint8_t) 5);}  // silver reed must be updated depending on the angle the row dim apear differs  
     
 
 
