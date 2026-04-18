@@ -9,6 +9,7 @@
 #include "IcsHardSerialClass.h"
 #include <Servo.h>
 
+#define max 65 //max motor speed
 
 
 #define buzzerPin 37
@@ -119,6 +120,7 @@ float32_t pidgain = 127; // 0x02: center of 0-254
 
 // A funciton that has priority in precicly updating the imu & motorGains
 FASTRUN void motorOutput(){
+
     // _imu.update();
     // pitch = _imu.getPitch();
     // roll = _imu.getRoll();
@@ -126,73 +128,81 @@ FASTRUN void motorOutput(){
     // ADD LOGIC to encoporate the pitch and roll.
     _sts.power(frontLeftGain, frontRightGain, backLeftGain, backRightGain);
     // a note here if _sts.power takes more than 5ms we are in a infinite loop. Since we run 4 STS3032 at 1Mbps should take arround 100 microsec so we are chill.
-}
+
+    Serial.print("L: "); Serial.print(frontLeftGain);
+    Serial.print(" | RMot: "); Serial.println(frontRightGain);
+  }
 
 FLASHMEM void setup() {
   Serial.begin(115200);
   _sts.begin(Serial2);
   // _imu.begin(Wire, 200.0f);
-  xiao.begin(115200); //XIAO
+  xiao.begin(4000000); //XIAO
   //   Serial5.begin(115200); //K230
 
-  pinMode(buzzerPin, OUTPUT);
-  analogWrite(buzzerPin, 21);
 
-  // ---HS45HB servo---
-  // Start conservative: 1000–2000 us
-  _HS45HB0.attach(_HS45HB0PIN, 1000, 2000);
-  _HS45HB1.attach(_HS45HB1PIN, 1000, 2000);
+  
+  // _imu.loadOffsetsFromEEPROM();
+  // imu.calibrate(); 
 
   pinMode(_74HTC126EN, OUTPUT);
   digitalWrite(_74HTC126EN, HIGH);
-  delay(50);
-  _sts.setWheelMode(true);
-  krs.begin();  //サーボモータの通信初期設定
-  krs.setSpd(_KRSID, 60); //speed 1-127
 
-  delay(5);
-
+  // // ---HS45HB servo---
+  // // Start conservative: 1000–2000 us
+  _HS45HB0.attach(_HS45HB0PIN, 1000, 2000);
+  _HS45HB1.attach(_HS45HB1PIN, 1000, 2000);
+  // krs.begin();  //サーボモータの通信初期設定
+  // krs.setSpd(_KRSID, 60); //speed 1-127
+  // liftARM(true);
   grabARM(true);
-  liftARM(true);
-  // delay(1759);
+
+// 
+  pinMode(buzzerPin, OUTPUT);
+  analogWrite(buzzerPin, 30); //30
+  delay(50);
+
+  _sts.setWheelMode(true);
   _HS45HB0.detach();
   _HS45HB1.detach();
-
-  // _imu.loadOffsetsFromEEPROM();
-  // imu.calibrate(); 
 
   analogWrite(buzzerPin,0);
   analogWrite(buzzerPin,160);
   delay(40);
   analogWrite(buzzerPin,0);
 
-  controlTimer.begin(motorOutput, 20000); // 5ms = 5000 microsecond
+  controlTimer.begin(motorOutput, 9000); // 9ms = 9000 microsecond
 
   motorTimer = 0;
 }
 
 void loop() {
     // do not call _sts.power in loop
-
     
 
     xiao.update();
-
+    
     xiaoCommand = xiao.get(0x01); 
     pidgain = (float32_t)xiao.get(0x02);
     // updateBuzzer(filterStableState(xiaoCommand));
 
+
+    pidgain = map(pidgain, 0, 254, -200, 200);
+    
+    motor(100+pidgain * 1.55,100-pidgain);   // ****** x1.3 is for the unbalance of lighting for camera
+
+
+
   // デバッグ表示（500msごと）
   static unsigned long lastPrint = 0;
-  if (millis() - lastPrint > 20) {
-    pidgain = map(pidgain, 0, 254, -320, 320); // motor output constained (-30 ~ 100)
-  
-  // Serial.print("L: "); Serial.print(40+pidgain);
-  // Serial.print(" | RMot: "); Serial.println(40-pidgain);
-    motor(100+pidgain,100-pidgain);
+  if (millis() - lastPrint > 10) {
+    // pidgain = (pidgain < 0) ? (pidgain * 7) : (pidgain * 3);
 
-    Serial.print("Cmd: "); Serial.print(xiaoCommand);
-    Serial.print(" | Gain: "); Serial.println(pidgain);
+
+    
+
+    // Serial.print("Cmd: "); Serial.print(xiaoCommand);
+    // Serial.print(" | Gain: "); Serial.println(pidgain);
       
     //   // テスト送信: 相手に現在のgainをそのまま送り返す例
     //   xiao.send(0x02, pidgain);
@@ -204,7 +214,8 @@ void loop() {
     analogWrite(buzzerPin,160);
     delay(20);
     analogWrite(buzzerPin,0);
-    delay(110);
+    motor(0,0);
+    delay(1100);
   }
 
   
@@ -245,7 +256,6 @@ void loop() {
 
 // line follow speed && intersections
 
-#define max 80
 FASTRUN void motor(float32_t left, float32_t right){
     noInterrupts(); // Safety: update all 4 at once
     frontLeftGain = constrain(left, -max, max); frontRightGain = constrain(right, -max, max);

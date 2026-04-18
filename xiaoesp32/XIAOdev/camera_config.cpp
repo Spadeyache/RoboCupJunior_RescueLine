@@ -32,9 +32,9 @@ bool Camera_Init() {
     // config.pixel_format = PIXFORMAT_GRAYSCALE;
     config.frame_size   = FRAMESIZE_QQVGA;  // 160x120
     config.jpeg_quality = 12;
-    config.fb_count     = 1;
+    config.fb_count     = 2;
     config.fb_location  = CAMERA_FB_IN_DRAM;
-    config.grab_mode    = CAMERA_GRAB_LATEST;
+    config.grab_mode    = CAMERA_GRAB_WHEN_EMPTY; // grab lasted slowers the speed as every time it checks to grab
 
     esp_err_t err = esp_camera_init(&config);
     if (err != ESP_OK) {
@@ -44,11 +44,12 @@ bool Camera_Init() {
 
     sensor_t* s = esp_camera_sensor_get();
     if (s) {
-        // s->set_framesize(s, FRAMESIZE_QQVGA);
+        s->set_reg(s, 0xff, 0xff, 0x01); // Switch to Bank 1 to access CLKRC
+        s->set_reg(s, 0x11, 0xff, 0x00); // Set CLKRC to 0 (Fastest internal clock)
                 
         // --- Manual exposure ---
         s->set_exposure_ctrl(s, 0);    // Disable AEC (0 = Manual)
-        s->set_aec_value(s, 32);      // 200  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
+        s->set_aec_value(s, 20);      // 32  Manual exposure: 0 to 1200 (Higher = brighter/slower shutter)
         s->set_aec2(s, 0);             // Disable night-mode AEC when in manual
 
         // --- Manual gain ---

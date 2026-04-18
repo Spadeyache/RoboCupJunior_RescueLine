@@ -7,12 +7,12 @@
 
 YacheEncodedSerial teensy(Serial1);
 
-#define minimumBlackforLine 3 // Ignore anything smaller than 5 pixels
+#define minimumBlackforLine 1 // Ignore anything smaller than 5 pixels
 
 // --- PID Parameters ---
-const float kP = 15.5;
+const float kP = 47.5;
 const float kI = 0.0;
-const float kD = 5;
+const float kD = 60;
 
 float lastError = 0, integral = 0;
 
@@ -21,7 +21,7 @@ void stream(camera_fb_t* fb);
 
 void setup() {
     Serial.begin(115200);
-    Serial1.begin(115200, SERIAL_8N1, D7, D6);
+    Serial1.begin(4000000, SERIAL_8N1, D7, D6);
     while (!Serial1) delay(10);
 
     Serial.println("\n=== XIAO ESP32-S3 Sense Vision System ===");
@@ -33,24 +33,30 @@ void setup() {
 }
 
 void loop() {      // --------- LOOP ----------
-    static unsigned long lastTime = 0;
-    if (millis() - lastTime < 10) return;
-    lastTime = millis();
+
+    // Serial.print("Start: ");
+    // Serial.print(millis());
 
     camera_fb_t* fb = Camera_Grab();
     if (!fb) {
         Serial.println("Camera capture failed");
         return;
     }
+    
 
     // updateRawGrayHSV(fb, 5/*40*/, (uint8_t)15, true);
     // updateRawGrayHSV(fb, 38/*40*/, (uint8_t)15, true);
     // updateRawGrayHSV(fb, 79/*40*/, (uint8_t)15, true);
-    updateRawGrayHSV(fb, 88/*40*/, (uint8_t)30, true);
+    updateRawGrayHSV(fb, 100/*40*/, (uint8_t)45, true);
     // updateRawGrayHSV(fb, 155/*40*/, (uint8_t)15, true);
     // stream(fb);
     // Camera_Return(fb);
     // return;
+
+    
+    // Serial.print(" getHGRAYHSV 1px: ");
+    // Serial.print(millis());
+
 
     int32_t weightedSum = 0;
     uint8_t blackCount  = 0;
@@ -62,14 +68,17 @@ void loop() {      // --------- LOOP ----------
 
     // Cache all pixel data in one pass
     cameraData pixels[160];
-    for (uint8_t pixel = 50; pixel < 120; pixel++) {
-        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)30);
+    for (uint8_t pixel = 50; pixel < 110/*120 is also in the range*/; pixel++) {
+        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)45);
         if (isBlack(pixels[pixel]))       { weightedSum += pixel; blackCount++; }
         if (isSilver(pixels[pixel]))      { silverCount++; }
         else if (isRed(pixels[pixel]))    { redCount++; }
     }
 
     float centerOfMass = (blackCount > minimumBlackforLine) ? (float)weightedSum / blackCount : 79.5f;
+    
+    // Serial.print(" getCOM: ");
+    // Serial.print(millis());
 
     // Fixed: Added definitions and types
     int16_t comInt = (int16_t)centerOfMass;
@@ -87,6 +96,10 @@ void loop() {      // --------- LOOP ----------
     uint8_t greenLeft = 0, greenRight = 0;
     for (uint8_t pixel = leftStart;  pixel < leftEnd;  pixel++) if (isGreen(pixels[pixel])) greenLeft++;
     for (uint8_t pixel = rightStart; pixel < rightEnd; pixel++) if (isGreen(pixels[pixel])) greenRight++;
+
+    
+    // Serial.print("datacollced: ");
+    // Serial.print(millis());
 
     // --- PID ---
     float error   = centerOfMass - 79.5f;    //-79.5 ~ 79.5
@@ -109,29 +122,31 @@ void loop() {      // --------- LOOP ----------
 
     if(redCount > 30) {Serial.print("Detected Red"); teensy.send(0x01, (uint8_t) 4);}                        // red
 
-    if(silverCount > 25) {Serial.print("Detected Silver"); teensy.send(0x01, (uint8_t) 5);}  // silver reed must be updated depending on the angle the row dim apear differs  
+    if(silverCount > 9) {Serial.print("Detected Silver"); teensy.send(0x01, (uint8_t) 5);}  // silver reed must be updated depending on the angle the row dim apear differs  
     
 
 
 
+    // Serial.print("computationDone: ");
+    // Serial.print(millis());
 
     Serial.printf("COM: %5.1f | pid: %3d | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
         centerOfMass, pidByte, blackCount, redCount, silverCount,
         greenLeft, leftStart, leftEnd,
         greenRight, rightStart, rightEnd);
 
-    // Serial.print(millis() - lastTime);
-    // Serial.print(" ");
     stream(fb);
     Camera_Return(fb);
     teensy.update();
-    // Serial.println(millis() - lastTime);
+    
+    // Serial.print("end: ");
+    // Serial.println(millis());
 }
 
 // --- Color classifiers ---
-#define BLACK_GRAY_MIN    4
+#define BLACK_GRAY_MIN    15
 #define SILVER_RAW_RED_MIN   250
-#define SILVER_RAW_GREEN_MIN 252
+#define SILVER_RAW_GREEN_MIN 252  // remember theres two ways to detect green. check bellow
 #define SILVER_RAW_BLUE_MIN  252
 
 bool isBlack(const cameraData& d) {
@@ -144,15 +159,14 @@ bool isSilver(const cameraData& d) {
 #define GREEN_HUE_MIN  80
 #define GREEN_HUE_MAX 165
 #define GREEN_SAT_MIN  150
-#define GREEN_VAL_MIN  2
+#define GREEN_VAL_MIN  135
 
 #define RED_SAT_MIN    80
 #define RED_VAL_MIN    40
 
 bool isGreen(const cameraData& d) {
-    return (d.hsv.h >= GREEN_HUE_MIN && d.hsv.h <= GREEN_HUE_MAX)
-        && (d.hsv.s >= GREEN_SAT_MIN)
-        && (d.hsv.v >= GREEN_VAL_MIN);
+    return ((d.hsv.h >= GREEN_HUE_MIN && d.hsv.h <= GREEN_HUE_MAX))
+        && (((d.hsv.s >= GREEN_SAT_MIN) && (d.hsv.v >= GREEN_VAL_MIN)) || ((d.hsv.s >= 215) && (d.hsv.v >= 20)));
 }
 
 bool isRed(const cameraData& d) {
