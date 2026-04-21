@@ -9,7 +9,7 @@
 #include "IcsHardSerialClass.h"
 #include <Servo.h>
 
-#define max 65 //max motor speed
+#define max 100 //max motor speed
 
 
 #define buzzerPin 37
@@ -51,72 +51,85 @@ YacheEncodedSerial xiao(Serial3);
 uint8_t xiaoCommand = 0; // 0x01: 0-linefollow 1-silver 2-red 3-intersection
 float32_t pidgain = 127; // 0x02: center of 0-254 
 
-// // --- Xiao state filter (debounce / stability) ---
-// static uint8_t rawStateLast = 0;
-// static uint32_t rawStateChangedAtMs = 0;
-// static uint8_t stableState = 0;
+class CommandFilter {
+private:
+    static const int QUEUE_SIZE = 15;
+    static const int THRESHOLD = 9;
+    uint8_t queue[QUEUE_SIZE];
+    uint8_t head = 0;
 
-// static uint8_t filterStableState(uint8_t raw) {
-//   const uint32_t now = millis();
-//   if (raw != rawStateLast) {
-//     rawStateLast = raw;
-//     rawStateChangedAtMs = now;
-//   }
-//   if (raw != stableState && (uint32_t)(now - rawStateChangedAtMs) >= STATE_STABLE_MS) {
-//     stableState = raw;
-//   }
-//   return stableState;
-// }
+public:
+    uint8_t votesUturn = 0;
+    uint8_t votesLeft = 0;
+    uint8_t votesRight = 0;
+    uint8_t votesRed = 0;
+    uint8_t votesSilver = 0;
 
-// // --- Buzzer (non-blocking, beep only on state change) ---
-// static uint8_t buzzerState = 0;
-// static uint8_t buzzerBeepIdx = 0;
-// static bool buzzerOn = false;
-// static bool buzzerBurstActive = false;
-// static uint32_t buzzerNextStepAtMs = 0;
-// static uint32_t buzzerOffAtMs = 0;
+    CommandFilter() {
+        clear();
+    }
 
-// static inline void buzzerSet_(bool on) {
-//   if (on) analogWrite(buzzerPin, BUZZER_DUTY);
-//   else analogWrite(buzzerPin, 0);
-// }
+    void clear() {
+        for (int i = 0; i < QUEUE_SIZE; i++) {
+            queue[i] = 0;
+        }
+        head = 0;
+        votesUturn = 0;
+        votesLeft = 0;
+        votesRight = 0;
+        votesRed = 0;
+        votesSilver = 0;
+    }
 
-// // Pattern:
-// // - state = 0: silent
-// // - state = N (>0): emit N short beeps (1s apart) ONCE when state changes.
-// static void updateBuzzer(uint8_t state) {
-//   const uint32_t now = millis();
+    uint8_t update(uint8_t rawCmd) {
+        queue[head] = rawCmd;
+        head = (head + 1) % QUEUE_SIZE;
 
-//   if (buzzerOn && (int32_t)(now - buzzerOffAtMs) >= 0) {
-//     buzzerOn = false;
-//     buzzerSet_(false);
-//   }
+        votesUturn = 0;
+        votesLeft = 0;
+        votesRight = 0;
+        votesRed = 0;
+        votesSilver = 0;
 
-//   if (state != buzzerState) {
-//     buzzerState = state;
-//     buzzerBeepIdx = 0;
-//     buzzerNextStepAtMs = now; // allow immediate start
-//     buzzerBurstActive = (buzzerState != 0);
-//     if (buzzerOn) {
-//       buzzerOn = false;
-//       buzzerSet_(false);
-//     }
-//   }
+        for (int i = 0; i < QUEUE_SIZE; i++) {
+            uint8_t cmd = queue[i];
+            if (cmd == 1) { // U-Turn
+                votesUturn++;
+                votesLeft++;
+                votesRight++;
+            } else if (cmd == 2) { // Left
+                votesLeft++;
+            } else if (cmd == 3) { // Right
+                votesRight++;
+            } else if (cmd == 4) { // Red
+                votesRed++;
+            } else if (cmd == 5) { // Silver
+                votesSilver++;
+            }
+        }
 
-//   if (!buzzerBurstActive) return;
+        // Higher priority ones checked first
+        if (votesRed >= THRESHOLD) return 4;
+        if (votesSilver >= THRESHOLD) return 5;
 
-//   if ((int32_t)(now - buzzerNextStepAtMs) >= 0) {
-//     buzzerOn = true;
-//     buzzerSet_(true);
-//     buzzerOffAtMs = now + BUZZER_ON_MS;
-//     buzzerNextStepAtMs = now + BUZZER_STEP_MS;
-//     buzzerBeepIdx++;
-//     if (buzzerBeepIdx >= buzzerState) {
-//       buzzerBurstActive = false; // done until next state change
-//     }
-//   }
-// }
+        // U-turn rule: We require strong evidence of one side and EVEN TRIVIAL evidence of the other.
+        // Because pure Left/Right turns will mathematically NEVER have the other color blob.
+        bool isUturn = false;
+        if (votesUturn >= 2) isUturn = true; // 2 pure U-turn signals
+        else if (votesLeft >= 6 && votesRight >= 1) isUturn = true; // mostly left, but glimpsed right
+        else if (votesRight >= 6 && votesLeft >= 1) isUturn = true; // mostly right, but glimpsed left
+        else if (votesLeft >= 4 && votesRight >= 4) isUturn = true; // balanced
 
+        if (isUturn) return 1;
+
+        if (votesLeft >= THRESHOLD) return 2;
+        if (votesRight >= THRESHOLD) return 3;
+
+        return 0; // PID / Idle
+    }
+};
+
+CommandFilter cmdFilter;
 
 // A funciton that has priority in precicly updating the imu & motorGains
 FASTRUN void motorOutput(){
@@ -129,8 +142,8 @@ FASTRUN void motorOutput(){
     _sts.power(frontLeftGain, frontRightGain, backLeftGain, backRightGain);
     // a note here if _sts.power takes more than 5ms we are in a infinite loop. Since we run 4 STS3032 at 1Mbps should take arround 100 microsec so we are chill.
 
-    Serial.print("L: "); Serial.print(frontLeftGain);
-    Serial.print(" | RMot: "); Serial.println(frontRightGain);
+    // Serial.print("L: "); Serial.print(frontLeftGain);
+    // Serial.print(" | RMot: "); Serial.println(frontRightGain);
   }
 
 FLASHMEM void setup() {
@@ -182,14 +195,20 @@ void loop() {
 
     xiao.update();
     
-    xiaoCommand = xiao.get(0x01); 
+    static unsigned long lastFilterUpdate = 0;
+    if (millis() - lastFilterUpdate >= 20) {
+        uint8_t rawXiaoCommand = xiao.get(0x01);
+        xiaoCommand = cmdFilter.update(rawXiaoCommand); 
+        lastFilterUpdate = millis();
+    }
+
     pidgain = (float32_t)xiao.get(0x02);
-    // updateBuzzer(filterStableState(xiaoCommand));
+    // updateBuzzer(xiaoCommand);
 
 
     pidgain = map(pidgain, 0, 254, -200, 200);
     
-    motor(100+pidgain * 1.55,100-pidgain);   // ****** x1.3 is for the unbalance of lighting for camera
+    motor(100+pidgain * 1.7,100-pidgain);   // ****** x1.3 is for the unbalance of lighting for camera
 
 
 
@@ -209,17 +228,103 @@ void loop() {
       
       lastPrint = millis();
   }
-  if(xiaoCommand != 0){
-    motor(0,0);
-    analogWrite(buzzerPin,160);
-    delay(20);
-    analogWrite(buzzerPin,0);
-    motor(0,0);
-    delay(1100);
+
+
+  // ADD CASE FOR BLACK BLACK with green makers on the other end ----
+
+  static uint8_t lastExecutedCommand = 0;
+  if (xiaoCommand != 0 && xiaoCommand != lastExecutedCommand) {
+
+    Serial.println("===============================================");
+    Serial.print("ACTION TRIGGERED (Cmd: "); Serial.print(xiaoCommand); Serial.println(")");
+    Serial.print("Queue state -> U-Turn: "); Serial.print(cmdFilter.votesUturn);
+    Serial.print(" | Left: "); Serial.print(cmdFilter.votesLeft);
+    Serial.print(" | Right: "); Serial.print(cmdFilter.votesRight);
+    Serial.print(" | Red: "); Serial.print(cmdFilter.votesRed);
+    Serial.print(" | Silver: "); Serial.println(cmdFilter.votesSilver);
+    Serial.println("===============================================");
+
+    switch (xiaoCommand) {
+      
+      case 0: // PID / Idle
+        // Serial.println("State 0: Maintaining PID / No Action");
+        // motor(0.5, 0.5); // Example: Base speed if 0 means "keep going"
+        break;
+
+      case 1: // U-Turn
+        Serial.println("Action: Executing U-Turn");
+        // motor(0,0);
+        // analogWrite(buzzerPin,160);
+        // delay(20);
+        // analogWrite(buzzerPin,0);
+        motor(-10, 10); // Spin in place
+        delay(1000);      // Adjust timing based on your robot's speed
+        motor(0, 0);
+        break;
+
+      case 2: // Left Turn
+        Serial.println("Action: Executing Left Turn");
+        motor(0,0);
+        analogWrite(buzzerPin,160);
+        delay(20);
+        analogWrite(buzzerPin,0);
+        motor(-70, 100); // Pivot left
+        delay(600);       // Adjust for 90 degrees
+        motor(0, 0);
+        break;
+
+      case 3: // Right Turn
+        Serial.println("Action: Executing Right Turn");
+        motor(0,0);
+        analogWrite(buzzerPin,160);
+        delay(20);
+        analogWrite(buzzerPin,0);
+        motor(100, -70); // Pivot right
+        delay(600);       // Adjust for 90 degrees
+        motor(0, 0);
+        break;
+
+      case 4: // Red Detection
+        Serial.println("Action: RED Detected - Stopping");
+        motor(0,0);
+        analogWrite(buzzerPin,160);
+        delay(20);
+        analogWrite(buzzerPin,0);
+        motor(0, 0);
+        delay(500);
+        break;
+
+      case 5: // Silver Detection
+        Serial.println("Action: SILVER Detected - Checking/Beeping");
+        motor(0,0);
+        analogWrite(buzzerPin,160);
+        delay(20);
+        analogWrite(buzzerPin,0);
+        motor(0, 0);
+        // Continuous check loop for Silver
+        while(true) {
+          Serial.println("Beep... Checking Silver status");
+          // beep(); // Call your beep function here
+          delay(500); 
+          
+          /* Note: You'll need a way to break this loop, 
+              perhaps by reading a new command from the XIAO
+          */
+        }
+        break;
+
+      default:
+        Serial.print("Unknown Command: ");
+        Serial.println(xiaoCommand);
+        break;
+    }
+    
+    lastExecutedCommand = xiaoCommand;
+    cmdFilter.clear(); // Set all past readings to 0 after movement
+  } else if (xiaoCommand == 0) {
+    lastExecutedCommand = 0; // reset so we can trigger again if needed
   }
 
-  
-  
   // --- ここにPID制御などを書く ---
   // ------------------------------------------------------------------
 //   delay(20);

@@ -23,7 +23,7 @@ class yacheSTS {
         SMS_STS _sts;
         uint8_t _ids[4] = {4, 1, 2, 3};
         int16_t _speeds[4] = {0, 0, 0, 0};   // Must be int16_t (s16)
-        uint8_t _accs[4] = {150, 150, 150, 150};
+        uint8_t _accs[4] = {0, 0, 0, 0}; //150
 };
 
 #endif

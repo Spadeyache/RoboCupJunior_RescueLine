@@ -10,9 +10,9 @@ YacheEncodedSerial teensy(Serial1);
 #define minimumBlackforLine 1 // Ignore anything smaller than 5 pixels
 
 // --- PID Parameters ---
-const float kP = 47.5;
+const float kP = 77.5; //62.5
 const float kI = 0.0;
-const float kD = 60;
+const float kD = 120; //100
 
 float lastError = 0, integral = 0;
 
@@ -47,7 +47,7 @@ void loop() {      // --------- LOOP ----------
     // updateRawGrayHSV(fb, 5/*40*/, (uint8_t)15, true);
     // updateRawGrayHSV(fb, 38/*40*/, (uint8_t)15, true);
     // updateRawGrayHSV(fb, 79/*40*/, (uint8_t)15, true);
-    updateRawGrayHSV(fb, 100/*40*/, (uint8_t)45, true);
+    // updateRawGrayHSV(fb, 100/*40*/, (uint8_t)45, true);
     // updateRawGrayHSV(fb, 155/*40*/, (uint8_t)15, true);
     // stream(fb);
     // Camera_Return(fb);
@@ -106,13 +106,14 @@ void loop() {      // --------- LOOP ----------
     float pidGain = pid(error, (float)1);
 
     // Scale PID to 0-254 for UART
-    pidGain = constrain(pidGain, -700.0f, 700.0f);
-    uint8_t pidByte = (uint8_t)map((long)pidGain, -700, 700, 0, 254);
+    pidGain = constrain(pidGain, -1400.0f, 1400.0f); //79.5 - maxerr   x kP
+    uint8_t pidByte = (uint8_t)map((long)pidGain, -1400, 1400, 0, 254);
 
-    // Serial.print(pidGain);
+    Serial.print(pidGain);
     // Serial.println(pidByte);
     teensy.send(0x01, (uint8_t)0);
     teensy.send(0x02, pidByte);
+    
 
     // --- address defenition (0x02) ---
     // 0.PID   1.U-T   2.Leftgreen 3.RightGreen 4.Red 5.Silver
@@ -135,7 +136,7 @@ void loop() {      // --------- LOOP ----------
         greenLeft, leftStart, leftEnd,
         greenRight, rightStart, rightEnd);
 
-    stream(fb);
+    // stream(fb);
     Camera_Return(fb);
     teensy.update();
     
@@ -166,7 +167,7 @@ bool isSilver(const cameraData& d) {
 
 bool isGreen(const cameraData& d) {
     return ((d.hsv.h >= GREEN_HUE_MIN && d.hsv.h <= GREEN_HUE_MAX))
-        && (((d.hsv.s >= GREEN_SAT_MIN) && (d.hsv.v >= GREEN_VAL_MIN)) || ((d.hsv.s >= 215) && (d.hsv.v >= 20)));
+        && (((d.hsv.s >= GREEN_SAT_MIN) && (d.hsv.v >= GREEN_VAL_MIN)) || ((d.hsv.s >= 215) && (d.hsv.v >= 5)));
 }
 
 bool isRed(const cameraData& d) {
