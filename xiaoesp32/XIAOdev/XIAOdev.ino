@@ -9,14 +9,7 @@ YacheEncodedSerial teensy(Serial1);
 
 #define minimumBlackforLine 1 // Ignore anything smaller than 5 pixels
 
-// --- PID Parameters ---
-const float kP = 77.5; //62.5
-const float kI = 0.0;
-const float kD = 120; //100
 
-float lastError = 0, integral = 0;
-
-float pid(float error);
 void stream(camera_fb_t* fb);
 
 void setup() {
@@ -68,7 +61,7 @@ void loop() {      // --------- LOOP ----------
 
     // Cache all pixel data in one pass
     cameraData pixels[160];
-    for (uint8_t pixel = 50; pixel < 110/*120 is also in the range*/; pixel++) {
+    for (uint8_t pixel = 50; pixel < 110/*120 is also in the range*/; pixel++) { //pixel range 50.5 ~ 109.5
         pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)45);
         if (isBlack(pixels[pixel]))       { weightedSum += pixel; blackCount++; }
         if (isSilver(pixels[pixel]))      { silverCount++; }
@@ -101,22 +94,17 @@ void loop() {      // --------- LOOP ----------
     // Serial.print("datacollced: ");
     // Serial.print(millis());
 
-    // --- PID ---
-    float error   = centerOfMass - 79.5f;    //-79.5 ~ 79.5
-    float pidGain = pid(error, (float)1);
 
-    // Scale PID to 0-254 for UART
-    pidGain = constrain(pidGain, -1400.0f, 1400.0f); //79.5 - maxerr   x kP
-    uint8_t pidByte = (uint8_t)map((long)pidGain, -1400, 1400, 0, 254);
+    // scale the center of mass to 0-254
+    float scaledCenterOfMass = map(centerOfMass, 50.5, 109.5, 0, 254);
 
-    Serial.print(pidGain);
-    // Serial.println(pidByte);
+
     teensy.send(0x01, (uint8_t)0);
-    teensy.send(0x02, pidByte);
+    teensy.send(0x02, (uint8_t)scaledCenterOfMass);
     
 
     // --- address defenition (0x02) ---
-    // 0.PID   1.U-T   2.Leftgreen 3.RightGreen 4.Red 5.Silver
+    // 0.centerofmass   1.U-T   2.Leftgreen 3.RightGreen 4.Red 5.Silver
     if(greenLeft > 5 && greenRight > 5) {Serial.print("Detected U-turn"); teensy.send(0x01, (uint8_t) 1);}  //u turn
     else if(greenLeft> 5) {Serial.print("Detected leftGreen"); teensy.send(0x01, (uint8_t) 2);}             // left  g
     else if(greenRight> 5) {Serial.print("Detected rightGreen"); teensy.send(0x01, (uint8_t) 3);}           // right g
@@ -131,8 +119,8 @@ void loop() {      // --------- LOOP ----------
     // Serial.print("computationDone: ");
     // Serial.print(millis());
 
-    Serial.printf("COM: %5.1f | pid: %3d | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
-        centerOfMass, pidByte, blackCount, redCount, silverCount,
+    Serial.printf("COM: %5.1f | black: %3d | red: %3d | silver: %3d | gL: %3d [%3d-%3d] | gR: %3d [%3d-%3d]\n",
+        centerOfMass, blackCount, redCount, silverCount,
         greenLeft, leftStart, leftEnd,
         greenRight, rightStart, rightEnd);
 
@@ -174,17 +162,6 @@ bool isRed(const cameraData& d) {
     return (d.hsv.h <= 20 || d.hsv.h >= 340)
         && (d.hsv.s >= RED_SAT_MIN)
         && (d.hsv.v >= RED_VAL_MIN);
-}
-
-// --- PID ---
-float pid(float err, float dt) {
-    float P = kP * err;
-    integral += err * dt;
-    integral = constrain(integral, -1000.0f, 1000.0f);
-    float I = kI * integral;
-    float D = kD * (err - lastError) / dt;
-    lastError = err;
-    return (P + I + D);
 }
 
 // --- Stream frame over Serial ---
