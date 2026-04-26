@@ -66,3 +66,8 @@
 // --- Evacuation Zone ---
 // #define EVAC_BEEP_ON_MS     20       // Buzzer on-time per beep
 // #define EVAC_BEEP_PERIOD_MS 500      // Time between beep starts
+
+// --- K230D AI Processor (K230.ino) ---
+#define K230_BAUD           115200UL
+#define K230_MAX_DETECTIONS 8          // Max objects per frame
+#define K230_CMD_INTERVAL   100        // ms between Teensy→K230 command sends

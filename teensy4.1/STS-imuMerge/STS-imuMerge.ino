@@ -26,6 +26,8 @@ void updateSensors();
 // Comms.ino
 void initComms();
 void updateComms();
+void initK230();
+void updateK230();
 
 // Drive.ino
 void initDrive();
@@ -66,6 +68,7 @@ FLASHMEM void setup() {
     initDrive();    // STS motors + control timer          (Drive.ino)
     initSensors();  // IMU                                 (Sensors.ino)
     initComms();    // XIAO serial                         (Comms.ino)
+    initK230();     // K230D AI processor UART             (K230.ino)
 
     // Confirmation beep after motors are ready
     delay(50); analogWrite(BUZZER_PIN, 160); delay(40);analogWrite(BUZZER_PIN, 0);
@@ -78,6 +81,7 @@ void loop() {
     // delay(20);
     updateComms();    // Parse XIAO packets → xiaoCommand, xiaoLineError
     updateSensors();  // Update pitch / roll / yaw from IMU
+    updateK230();     // Send run/idle cmd; parse K230D detections → detections[]
 
     switch (robotState) {
 
@@ -136,11 +140,12 @@ void loop() {
     // Debug at ~10 Hz
     static unsigned long lastDebug = 0;
     if (millis() - lastDebug >= 250) {
-        Serial.printf("State:%d Cmd:%u Err:%.1f Busy:%d NoGrn:%d | U:%u L:%u R:%u Red:%u Slv:%u\n",
+        Serial.printf("State:%d Cmd:%u Err:%.1f Busy:%d NoGrn:%d | U:%u L:%u R:%u Red:%u Slv:%u | K230:%s dets:%u\n",
                       (int)robotState, xiaoCommand, xiaoLineError,
                       (int)isBusyTurning, (int)disableGreen,
                       cmdFilter.votesUturn, cmdFilter.votesLeft,
-                      cmdFilter.votesRight, cmdFilter.votesRed, cmdFilter.votesSilver);
+                      cmdFilter.votesRight, cmdFilter.votesRed, cmdFilter.votesSilver,
+                      k230Running ? "RUN" : "IDL", detectionCount);
         lastDebug = millis();
     }
 }
