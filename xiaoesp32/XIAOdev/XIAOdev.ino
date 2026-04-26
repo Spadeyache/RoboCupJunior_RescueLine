@@ -62,7 +62,7 @@ void loop() {      // --------- LOOP ----------
     // Cache all pixel data in one pass
     cameraData pixels[160];
     for (uint8_t pixel = 50; pixel < 110/*120 is also in the range*/; pixel++) { //pixel range 50.5 ~ 109.5
-        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)45);
+        pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)55);//45
         if (isBlack(pixels[pixel]))       { weightedSum += pixel; blackCount++; }
         if (isSilver(pixels[pixel]))      { silverCount++; }
         else if (isRed(pixels[pixel]))    { redCount++; }
@@ -124,7 +124,7 @@ void loop() {      // --------- LOOP ----------
         greenLeft, leftStart, leftEnd,
         greenRight, rightStart, rightEnd);
 
-    // stream(fb);
+    stream(fb);
     Camera_Return(fb);
     teensy.update();
     

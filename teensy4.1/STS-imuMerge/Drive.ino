@@ -79,6 +79,6 @@ void runLinePID() {
 
     motor(leftSpeed, rightSpeed);
 
-    Serial.printf("PID err: %.1f  corr: %.1f  L: %.0f  R: %.0f\n",
-                  error, correction, leftSpeed, rightSpeed);
+    // Serial.printf("PID err: %.1f  corr: %.1f  L: %.0f  R: %.0f\n",
+    //               error, correction, leftSpeed, rightSpeed);
 }

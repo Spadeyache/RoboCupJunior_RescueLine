@@ -24,7 +24,8 @@ enum RobotState {
     STALLED_RED      // Red tape — stopped until XIAO clears
 };
 extern RobotState robotState;
-extern bool       isBusyTurning; // True while a turn is running; blocks new commands
+extern bool       isBusyTurning;  // True while a turn is running; blocks new commands
+extern bool       disableGreen;   // True during cooldown after a green turn; prevents re-trigger
 
 // --- XIAO comms (Comms.ino) ---
 extern YacheEncodedSerial xiao;

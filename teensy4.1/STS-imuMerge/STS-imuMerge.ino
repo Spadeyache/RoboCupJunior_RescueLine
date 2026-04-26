@@ -41,10 +41,14 @@ void handleTurnTick();
 void handleEvacuationZone();
 void grabARM(bool closed);
 void liftARM(bool lift);
+void execForward(float speed, float distance_mm, bool usePID = false);
 
 // RobotState enum is defined in globals.h
 RobotState robotState    = FOLLOWING_LINE;
 bool       isBusyTurning = false; // Set true during turns; blocks new command dispatch
+bool       disableGreen  = false; // Set true after a green turn; prevents re-triggering the same intersection
+
+static unsigned long _disableGreenStart = 0; // Timestamp when disableGreen was set
 
 // ---------------------------------------------------------------------------
 //  setup
@@ -52,8 +56,7 @@ bool       isBusyTurning = false; // Set true during turns; blocks new command d
 FLASHMEM void setup() {
     Serial.begin(115200);
 
-    // Startup beep sequence
-    analogWrite(BUZZER_PIN, 30); delay(50); analogWrite(BUZZER_PIN, 0);
+    analogWrite(BUZZER_PIN, 30);
 
     pinMode(PIN_74HCT126_EN , OUTPUT);
     digitalWrite(PIN_74HCT126_EN , HIGH);
@@ -65,7 +68,7 @@ FLASHMEM void setup() {
     initComms();    // XIAO serial                         (Comms.ino)
 
     // Confirmation beep after motors are ready
-    analogWrite(BUZZER_PIN, 160); delay(40);analogWrite(BUZZER_PIN, 0);
+    delay(50); analogWrite(BUZZER_PIN, 160); delay(40);analogWrite(BUZZER_PIN, 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -81,16 +84,30 @@ void loop() {
         // ------------------------------------------------------------------
         case FOLLOWING_LINE:
         // ------------------------------------------------------------------
-            if (!isBusyTurning) {
-                // Priority: U-Turn > Intersection (L/R) > Red > Silver > PID
-                if      (xiaoCommand == 1) { doUTurn();                    }
-                else if (xiaoCommand == 2) { executeTurn(-90.0f);          }
-                else if (xiaoCommand == 3) { executeTurn( 90.0f);          }
-                else if (xiaoCommand == 4) { robotState = STALLED_RED;     }
-                else if (xiaoCommand == 5) { enterEvacuationZone();        }
-                else                       { runLinePID(); } // no command → follow line
+            // Auto-reset disableGreen after cooldown elapses
+        if (disableGreen && millis() - _disableGreenStart >= DISABLE_GREEN_MS) {
+            disableGreen = false;
+            Serial.println("Green re-enabled");
+        }
+
+        if (!isBusyTurning) {
+            // Priority: U-Turn > Intersection (L/R) > Red > Silver > PID
+            if      (xiaoCommand == 1) { doUTurn(); }
+            else if (xiaoCommand == 2 && !disableGreen) {
+                analogWrite(BUZZER_PIN, 60); // stays on until handleTurnTick() finishes
+                execForward(70, 28); executeTurn(-90.0f);
+                disableGreen = true; _disableGreenStart = millis();
             }
-            break;
+            else if (xiaoCommand == 3 && !disableGreen) {
+                analogWrite(BUZZER_PIN, 160); // stays on until handleTurnTick() finishes
+                execForward(70, 28); executeTurn(90.0f);
+                disableGreen = true; _disableGreenStart = millis();
+            }
+            else if (xiaoCommand == 4) { robotState = STALLED_RED;  }
+            else if (xiaoCommand == 5) { enterEvacuationZone();     }
+            else                       { runLinePID(); } // no command → follow line
+        }
+        break;
 
         // ------------------------------------------------------------------
         case EXECUTING_TURN:
@@ -118,9 +135,10 @@ void loop() {
 
     // Debug at ~10 Hz
     static unsigned long lastDebug = 0;
-    if (millis() - lastDebug >= 100) {
-        Serial.printf("State:%d Cmd:%u Err:%.1f Busy:%d | U:%u L:%u R:%u Red:%u Slv:%u\n",
-                      (int)robotState, xiaoCommand, xiaoLineError, (int)isBusyTurning,
+    if (millis() - lastDebug >= 250) {
+        Serial.printf("State:%d Cmd:%u Err:%.1f Busy:%d NoGrn:%d | U:%u L:%u R:%u Red:%u Slv:%u\n",
+                      (int)robotState, xiaoCommand, xiaoLineError,
+                      (int)isBusyTurning, (int)disableGreen,
                       cmdFilter.votesUturn, cmdFilter.votesLeft,
                       cmdFilter.votesRight, cmdFilter.votesRed, cmdFilter.votesSilver);
         lastDebug = millis();

@@ -39,8 +39,8 @@ public:
             }
         }
 
-        if (votesRed    >= FILTER_THRESHOLD) return 4;
-        if (votesSilver >= FILTER_THRESHOLD) return 5;
+        if (votesRed    >= FILTER_THRESHOLD_RED) return 4;
+        if (votesSilver >= FILTER_THRESHOLD_SILVER) return 5;
 
         bool isUturn = (votesUturn >= 2)
                     || (votesLeft  >= 6 && votesRight >= 1)
