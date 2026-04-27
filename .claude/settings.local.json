@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git rm *)",
+      "Bash(git mv *)",
+      "PowerShell(cd \"C:\\\\Users\\\\magic\\\\Documents\\\\robocup\\\\RoboCupJunior_RescueLine\"; try { Rename-Item -Path \"teensy4.1\" -NewName \"teensy\" -ErrorAction Stop } catch { $_.Exception.Message })",
+      "PowerShell($handles = @\\(\\); Get-Process | Where-Object { $_.MainWindowTitle -match \"teensy|arduino|visual studio|code\" } | Select-Object Name, Id, MainWindowTitle)",
+      "PowerShell(\\(Get-Item \"C:\\\\Users\\\\magic\\\\Documents\\\\robocup\\\\RoboCupJunior_RescueLine\\\\teensy4.1\"\\).Attributes)",
+      "Bash(git add *)",
+      "PowerShell($?)"
+    ]
+  }
+}

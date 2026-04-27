@@ -1,9 +1,9 @@
-Electronics/fp-info-cache
-Electronics/sym-lib-table
+electronics/fp-info-cache
+electronics/sym-lib-table
 *.lck
 
-Firmware_debugSoftware/*.gz
-Firmware_debugSoftware/*.img
+dev-tools/*.gz
+dev-tools/*.img
 
 *.vscode/
 
