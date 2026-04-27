@@ -76,3 +76,11 @@ struct Detection {
 extern Detection detections[K230_MAX_DETECTIONS];
 extern uint8_t   detectionCount;  // Number of valid entries in detections[]
 extern bool      k230Running;     // True while DETECT command is being sent
+
+// --- Evacuation-zone mapping (Mapping.ino) ---
+struct Pose;          // Pose.h
+struct EvacMap;       // MapGrid.h
+class  yacheVL53L7CX; // yacheVL53L7CX.h
+extern Pose          g_pose;
+extern EvacMap       g_map;
+extern yacheVL53L7CX g_tof[TOF_COUNT];

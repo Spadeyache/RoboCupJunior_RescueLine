@@ -27,7 +27,7 @@ uint8_t   detectionCount = 0;
 bool      k230Running    = false;
 
 // ---------------------------------------------------------------------------
-//  K230D frame parser — 4-state byte-by-byte state machine
+//  K230D frame parser — 4-state byte-by-byte state machine 
 // ---------------------------------------------------------------------------
 namespace {
     enum ParseState : uint8_t { WAIT_HEADER, WAIT_COUNT, WAIT_DATA, WAIT_CHKSUM };
@@ -84,20 +84,16 @@ static void _parseK230() {
 
 void initComms() {
     xiao.begin(XIAO_BAUD);
-}
-
-void initK230() {
     Serial5.begin(K230_BAUD);
 }
 
 // Call every loop iteration.
 // Parses all pending XIAO packets, then re-runs the vote filter every 20 ms.
 void updateComms() {
-    xiao.update();
 
+    xiao.update();
     // Line error is time-critical; update every loop without debounce.
     xiaoLineError = (float)xiao.get(0x02);
-
     // Filter at 50 Hz — responsive but immune to single-frame glitches.
     static unsigned long lastFilter = 0;
     if (millis() - lastFilter >= 20) {
@@ -105,17 +101,14 @@ void updateComms() {
         xiaoCommand = cmdFilter.update(raw);
         lastFilter  = millis();
     }
-}
 
 // Sends run/idle command to K230D at K230_CMD_INTERVAL ms; always parses incoming frames.
-void updateK230() {
     k230Running = (robotState == EVACUATION_ZONE);
-
     static unsigned long _lastCmd = 0;
     if (millis() - _lastCmd >= K230_CMD_INTERVAL) {
         Serial5.write(k230Running ? (uint8_t)0x01 : (uint8_t)0x00);
         _lastCmd = millis();
     }
-
-    _parseK230();
+    _parseK230(); // Decode the K230 Message
 }
+

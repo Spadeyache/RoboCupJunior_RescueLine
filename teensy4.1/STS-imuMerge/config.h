@@ -71,3 +71,61 @@
 #define K230_BAUD           115200UL
 #define K230_MAX_DETECTIONS 8          // Max objects per frame
 #define K230_CMD_INTERVAL   100        // ms between Teensy→K230 command sends
+
+// =============================================================================
+//  Evacuation-zone mapping (Mapping.ino + MapGrid + Pose + ToF)
+// =============================================================================
+
+// --- Map ---
+#define EVAC_ZONE_W_MM      1200
+#define EVAC_ZONE_H_MM       900
+#define MAP_CELL_MM           30
+#define MAP_DIM               40        // 40x40 cells (handles either entrance-wall orientation)
+
+// --- Robot geometry ---
+#define WHEELBASE_MM        140.0f      // CALIBRATE — distance between left and right wheels
+#define ENTRANCE_X_MM         0.0f      // robot starts at robot-frame origin
+#define ENTRANCE_Y_MM         0.0f
+
+// --- ToF (VL53L7CX) ---
+#define TOF_COUNT              1        // Phase 1: front only. Driver array-ready for 4.
+#define TOF_MAX_MM          1320        // 120 cm * 1.1 safety margin
+#define TOF_MIN_MM            20
+#define TOF_RES                4        // zones per side (4 → 16 zones, 8 → 64)
+#define TOF_FREQ_HZ           15        // 4x4 supports 1..60 Hz; 8x8 supports 1..15
+#define TOF_FOV_DEG         60.0f
+#define TOF_LPN_PIN_FRONT     -1        // -1 = use default I2C addr (no LPn juggling)
+#define TOF_I2C_RST_PIN       -1
+// Front sensor mount (sensor-frame origin relative to robot center, sensor +x = forward):
+#define TOF_FRONT_DX_MM       0.0f
+#define TOF_FRONT_DY_MM       0.0f
+#define TOF_FRONT_YAW_RAD     0.0f
+
+// --- Log-odds occupancy ---
+#define LO_HIT                 6
+#define LO_MISS               -2
+#define LO_CLAMP              64
+#define LO_DECISIVE           30
+
+// --- EKF noise ---
+#define EKF_Q_V_FRAC          0.15f     // process std as fraction of commanded v
+#define EKF_Q_OMEGA           0.20f     // process std on omega (rad/s)
+#define EKF_Q_THETA_RAD       0.05f     // process std on theta drift per tick
+#define EKF_R_YAW_RAD2        0.0012f   // ≈ (2°)^2 in rad^2
+#define EKF_R_WALL_MM2      100.0f      // (10 mm)^2
+
+// --- Recalibration ---
+#define RECAL_STUCK_MS         1000
+#define RECAL_MIN_VCMD_MMPS      30
+#define RECAL_DPOSE_MM            5
+#define RECAL_WIN_XY_MM          60
+#define RECAL_WIN_TH_DEG         10
+#define RECAL_STEP_XY_MM         15
+#define RECAL_STEP_TH_DEG         2
+
+// --- EEPROM ---
+#define EEPROM_MAP_BASE       0x0020    // after IMU calib block at 0x0000-0x001B
+#define EEPROM_MAP_MAGIC      0xE7ACC001UL
+#define EEPROM_MAP_VERSION       1
+#define MAP_CHECKPOINT_MS    30000      // periodic checkpoint cadence
+#define MAP_CHECKPOINT_MIN_DIRTY 60     // skip checkpoint unless ≥N cells changed

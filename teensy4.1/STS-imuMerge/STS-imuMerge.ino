@@ -26,8 +26,6 @@ void updateSensors();
 // Comms.ino
 void initComms();
 void updateComms();
-void initK230();
-void updateK230();
 
 // Drive.ino
 void initDrive();
@@ -44,6 +42,12 @@ void handleEvacuationZone();
 void grabARM(bool closed);
 void liftARM(bool lift);
 void execForward(float speed, float distance_mm, bool usePID = false);
+
+// Mapping.ino
+void mappingInit(bool restart);
+void mappingTick();
+void mappingPersist();
+void mappingHandleSerial(char c);
 
 // RobotState enum is defined in globals.h
 RobotState robotState    = FOLLOWING_LINE;
@@ -64,11 +68,10 @@ FLASHMEM void setup() {
     digitalWrite(PIN_74HCT126_EN , HIGH);
 
 
-    initActions();  // Servos, buzzer, KRS, startup beep  (Actions.ino)
+    initActions();  // Servos, buzzer, KRS, startup beep   (Actions.ino)
     initDrive();    // STS motors + control timer          (Drive.ino)
-    initSensors();  // IMU                                 (Sensors.ino)
-    initComms();    // XIAO serial                         (Comms.ino)
-    initK230();     // K230D AI processor UART             (K230.ino)
+    initSensors();    // IMU (DMP on Wire1)                   (Sensors.ino)
+    initComms();    // XIAO & K230 serial                  (Comms.ino)
 
     // Confirmation beep after motors are ready
     delay(50); analogWrite(BUZZER_PIN, 160); delay(40);analogWrite(BUZZER_PIN, 0);
@@ -79,9 +82,12 @@ FLASHMEM void setup() {
 // ---------------------------------------------------------------------------
 void loop() {
     // delay(20);
-    updateComms();    // Parse XIAO packets → xiaoCommand, xiaoLineError
-    updateSensors();  // Update pitch / roll / yaw from IMU
-    updateK230();     // Send run/idle cmd; parse K230D detections → detections[]
+    updateComms();    // Parse XIAO packets → xiaoCommand, xiaoLineError & // Send run/idle cmd; parse K230D detections → detections[]
+    updateSensors();  // Update pitch / roll / yaw from DMP
+
+
+    // Debug Serial commands ('m' = map dump, 'p' = pose print)
+    while (Serial.available()) mappingHandleSerial((char)Serial.read());
 
     switch (robotState) {
 

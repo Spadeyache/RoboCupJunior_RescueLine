@@ -155,42 +155,32 @@ void enterEvacuationZone() {
 
 // ---------------------------------------------------------------------------
 //  handleEvacuationZone — call every loop tick while in EVACUATION_ZONE.
-//  Beeps periodically and exits back to FOLLOWING_LINE once XIAO stops
-//  reporting silver.
+//  Phase 1: passive mapping only (no autonomous motion). On first entry
+//  initialises the map + pose; on every tick runs the mapping pipeline.
+//  Heartbeat beep retained at 1 Hz so the operator knows we're alive.
 // ---------------------------------------------------------------------------
 void handleEvacuationZone() {
+    static bool _entered = false;
+    if (!_entered) {
+        mappingInit(/*restart=*/false);
+        _entered = true;
+    }
+
+    motor(0, 0);          // phase 1: stay parked while map fills
+    mappingTick();
+
+    static unsigned long _lastBeep = 0;
     unsigned long now = millis();
+    if (now - _lastBeep >= 1000) {
+        analogWrite(BUZZER_PIN, 160); delay(20); analogWrite(BUZZER_PIN, 0);
+        _lastBeep = now;
+    }
 
-    motor(0,0);
-    analogWrite(BUZZER_PIN, 30); delay(50); analogWrite(BUZZER_PIN, 160); delay(40);analogWrite(BUZZER_PIN, 0);
-    delay(1000);
-
-    // position adjustment
-    // state map init
-
-    // go to center of evac
-
-    // // Start a new beep pulse when the period has elapsed
-    // if (!_beepActive && (now - _lastEvacBeep >= EVAC_BEEP_PERIOD_MS)) {
-    //     analogWrite(BUZZER_PIN, 160);
-    //     _beepOnStart  = now;
-    //     _beepActive   = true;
-    //     _lastEvacBeep = now;
-    //     Serial.println("Evac: beep");
-    // }
-
-    // // End the beep pulse after EVAC_BEEP_ON_MS
-    // if (_beepActive && (now - _beepOnStart >= EVAC_BEEP_ON_MS)) {
-    //     analogWrite(BUZZER_PIN, 0);
-    //     _beepActive = false;
-    // }
-
-    // // Exit when XIAO no longer sees silver
-    // if (xiaoCommand != 5) {
-    //     cmdFilter.clear();
-    //     robotState = FOLLOWING_LINE;
-    //     Serial.println("Evac: silver cleared → FOLLOWING_LINE");
-    // }
+    // Exit hook (phase 2): once navigation declares "done" or XIAO clears silver,
+    //   mappingPersist();
+    //   _entered = false;
+    //   cmdFilter.clear();
+    //   robotState = FOLLOWING_LINE;
 }
 
 
