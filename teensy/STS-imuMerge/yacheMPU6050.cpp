@@ -21,9 +21,9 @@ void yacheMPU6050::begin() {
         while (1);
     }
 
-    _mpu.setFullScaleAccelRange(0);     // Sets accelerometer to ±2g (highest resolution: 16,384 LSB/g) Free-test also set to 0
-    _mpu.setFullScaleGyroRange(0);     // Sets gyroscope to ±250 dps (highest resolution: 131 LSB/dps)
-
+    // NOTE: do NOT call setFullScaleGyroRange() here — dmpInitialize() already set ±2000°/s
+    // and the DMP firmware is compiled for that range. Changing it would corrupt the DMP output.
+    // Accel range is also left at dmpInitialize()'s ±2g default.
     _mpu.setDLPFMode(MPU6050_DLPF_BW_188);  // 188 Hz — ~1ms group delay
     _mpu.setRate(4);                          // explicit 200 Hz (1000/(1+4))
 
@@ -36,48 +36,75 @@ void yacheMPU6050::begin() {
     _mpu.setDMPEnabled(true);
     _dmpReady = true;
     Serial.printf("IMU+DMP ready. FIFO packet: %u B\n", _mpu.dmpGetFIFOPacketSize());
+
+    // Let the DMP's internal filter converge before zeroing.
+    // The accelerometer correction needs ~1-2 s to pull the gyro integration to the true angle.
+    Serial.println("IMU settling...");
+    delay(2000);
+    zeroAttitude();  // zero all axes at current resting orientation
+    Serial.println("IMU ready.");
+}
+
+// Raw quaternion → yaw/pitch/roll in degrees (no EMA, no zero offset).
+// NO axis remapping — standard DMP output (Z-up, sensor flat).
+void yacheMPU6050::_computeYPR(float &yaw, float &pitch, float &roll) {
+    Quaternion q;
+    _mpu.dmpGetQuaternion(&q, _fifo);
+
+    VectorFloat gravity;
+    _mpu.dmpGetGravity(&gravity, &q);
+
+    float ypr[3];
+    _mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+
+    yaw   = ypr[0] * (180.0f / (float)M_PI);
+    pitch = ypr[1] * (180.0f / (float)M_PI);
+    roll  = ypr[2] * (180.0f / (float)M_PI);
+}
+
+// Capture current orientation as the zero reference; resets EMA state.
+// Called automatically by begin(); call again any time to re-zero.
+void yacheMPU6050::zeroAttitude() {
+    _mpu.resetFIFO();
+    float sumY = 0, sumP = 0, sumR = 0;
+    int n = 0;
+    uint32_t start = millis();
+    while (n < 50 && millis() - start < 2000) {
+        if (_mpu.dmpGetCurrentFIFOPacket(_fifo)) {
+            float y, p, r;
+            _computeYPR(y, p, r);
+            sumY += y;  sumP += p;  sumR += r;
+            n++;
+        }
+    }
+    if (n > 0) {
+        _yawZero   = sumY / n;
+        _pitchZero = sumP / n;
+        _rollZero  = sumR / n;
+    }
+    _yaw = _pitch = _roll = 0.0f;  // reset EMA state to zero
 }
 
 FASTRUN void yacheMPU6050::update() {
     if (!_dmpReady) return;
-    if (!_mpu.dmpGetCurrentFIFOPacket(_fifo)) return;  // 0 = no new packet
+    if (!_mpu.dmpGetCurrentFIFOPacket(_fifo)) return;
 
-    Quaternion q_raw;
-    _mpu.dmpGetQuaternion(&q_raw, _fifo);
+    float rawYaw, rawPitch, rawRoll;
+    _computeYPR(rawYaw, rawPitch, rawRoll);
 
-    
-    // -90° rotation around Y: maps sensor X(down)→DMP -Z(up), sensor Z(forward)→DMP X(forward).
-    // Sensor mounting: X=down, Y=right, Z=forward.
-    Quaternion q;
-    // const float s = 0.7071f;
-    // const float c = 0.7071f;
+    // Apply zero offset
+    float y = rawYaw   - _yawZero;
+    float p = rawPitch - _pitchZero;
+    float r = rawRoll  - _rollZero;
 
-    // q.w =  c * q_raw.w + s * q_raw.y;
-    // q.x =  c * q_raw.x - s * q_raw.z;
-    // q.y =  c * q_raw.y - s * q_raw.w;
-    // q.z =  c * q_raw.z + s * q_raw.x;
+    // Wrap yaw to ±180°
+    while (y >  180.0f) y -= 360.0f;
+    while (y < -180.0f) y += 360.0f;
 
-    // Mathematical 90-degree rotation around Y
-    q.w = 0.7071f * (q_raw.w - q_raw.y);
-    q.x = 0.7071f * (q_raw.x + q_raw.z);
-    q.y = 0.7071f * (q_raw.y + q_raw.w);
-    q.z = 0.7071f * (q_raw.z - q_raw.x);
-
-
-    // --- CALCULATE GRAVITY ---
-    // The library now calculates gravity based on our "faked" Z axis.
-    VectorFloat gravity;
-    _mpu.dmpGetGravity(&gravity, &q);
-
-    // --- STEP 3: EXTRACT YPR ---
-    // Since we remapped 'q', ypr[0] is now automatically rotating around your X-axis.
-    float ypr[3];
-    _mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
-
-    // --- STEP 4: CONVERT TO DEGREES ---
-    _yaw   =  ypr[0] * (180.0f / (float)M_PI);
-    _pitch =  ypr[1] * (180.0f / (float)M_PI);
-    _roll  = -ypr[2] * (180.0f / (float)M_PI);  // negated: sensor Y=right vs DMP Y=left
+    // Exponential moving average — tune IMU_EMA_ALPHA in config.h
+    _yaw   = IMU_EMA_ALPHA * y + (1.0f - IMU_EMA_ALPHA) * _yaw;
+    _pitch = IMU_EMA_ALPHA * p + (1.0f - IMU_EMA_ALPHA) * _pitch;
+    _roll  = IMU_EMA_ALPHA * r + (1.0f - IMU_EMA_ALPHA) * _roll;
 }
 
 void yacheMPU6050::applyOffsets() {
@@ -108,7 +135,7 @@ void yacheMPU6050::calibrate() {
                   ax_offset, ay_offset, az_offset);
     Serial.printf("    int16_t gx_offset = %d, gy_offset = %d, gz_offset = %d;\n",
                   gx_offset, gy_offset, gz_offset);
-    Serial.println("=== Final check means (should be near 0 / 16384 for az) ===");
+    Serial.println("=== Final check means (ax should be ~16384; ay, az, gyros should be ~0) ===");
     Serial.printf("    ax=%d ay=%d az=%d | gx=%d gy=%d gz=%d\n",
                   mean_ax, mean_ay, mean_az, mean_gx, mean_gy, mean_gz);
 }

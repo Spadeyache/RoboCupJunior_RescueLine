@@ -1,4 +1,4 @@
-// SHARED PROTOCOL: duplicate also lives in xiaoesp32/XIAOdev/ — keep both copies in sync
+// SHARED PROTOCOL: duplicate also lives in teensy4.1/STS-imuMerge/ — keep both copies in sync
 #ifndef YACHE_ENCODED_SERIAL_H
 #define YACHE_ENCODED_SERIAL_H
 

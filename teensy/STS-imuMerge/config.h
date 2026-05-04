@@ -34,6 +34,7 @@
 #define CALIBRATE_IMU       0
 #define IMU_SAMPLE_RATE     200.0f   // Hz for Madgwick filter (unused; DMP runs at 100 Hz)
 #define IMU_PITCH_GAIN      0.0f
+#define IMU_EMA_ALPHA       0.25f    // EMA smoothing: lower = smoother but slower (0.1–0.5)
 
 // --- Turn Motor Speeds ---
 #define TURN_UTURN_L       -70.0f

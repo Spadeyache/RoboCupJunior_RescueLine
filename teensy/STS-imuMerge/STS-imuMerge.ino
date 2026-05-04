@@ -81,7 +81,7 @@ FLASHMEM void setup() {
 //  loop
 // ---------------------------------------------------------------------------
 void loop() {
-    // delay(20);
+    delay(100);
     updateComms();    // Parse XIAO packets → xiaoCommand, xiaoLineError & // Send run/idle cmd; parse K230D detections → detections[]
     updateSensors();  // Update pitch / roll / yaw from DMP
 
@@ -145,7 +145,7 @@ void loop() {
 
     // Debug at ~10 Hz
     static unsigned long lastDebug = 0;
-    if (millis() - lastDebug >= 250) {
+    if (millis() - lastDebug >= 25000) {
         Serial.printf("State:%d Cmd:%u Err:%.1f Busy:%d NoGrn:%d | U:%u L:%u R:%u Red:%u Slv:%u | K230:%s dets:%u\n",
                       (int)robotState, xiaoCommand, xiaoLineError,
                       (int)isBusyTurning, (int)disableGreen,
