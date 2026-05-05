@@ -95,26 +95,46 @@ void loop() {      // --------- LOOP ----------
     // Serial.print(millis());
 
 
+
     // scale the center of mass to 0-254
     float scaledCenterOfMass = map(centerOfMass, 50.5, 109.5, 0, 254);
 
 
     teensy.send(0x01, (uint8_t)0);
-    teensy.send(0x02, (uint8_t)scaledCenterOfMass);
-    
+    teensy.send(0x02, (uint8_t)scaledCenterOfMass);    
+
+    // // front row check if line continues - for T, X shape intersections. I reused vars
+    // weightedSum = redCount = silverCount = 0;
+    // uint8_t frontBlackCount = 0;
+    // for (uint8_t pixel = 50; pixel < 110/*120 is also in the range*/; pixel++) { //pixel range 50.5 ~ 109.5
+    //     pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)15);//45
+    //     if (isBlack(pixels[pixel]))       { weightedSum += pixel; frontBlackCount++; }
+    // }
 
     // --- address defenition (0x02) ---
     // 0.centerofmass   1.U-T   2.Leftgreen 3.RightGreen 4.Red 5.Silver
     if(greenLeft > 5 && greenRight > 5) {Serial.print("Detected U-turn"); teensy.send(0x01, (uint8_t) 1);}  //u turn
     else if(greenLeft> 5) {Serial.print("Detected leftGreen"); teensy.send(0x01, (uint8_t) 2);}             // left  g
     else if(greenRight> 5) {Serial.print("Detected rightGreen"); teensy.send(0x01, (uint8_t) 3);}           // right g
+    else if(blackCount > 30 /*&& frontBlackCount > minimumBlackforLine*/) {Serial.print("Detected black"); teensy.send(0x01, (uint8_t) 6);}               // black
 
+
+
+
+    
     if(redCount > 30) {Serial.print("Detected Red"); teensy.send(0x01, (uint8_t) 4);}                        // red
 
     if(silverCount > 9) {Serial.print("Detected Silver"); teensy.send(0x01, (uint8_t) 5);}  // silver reed must be updated depending on the angle the row dim apear differs  
     
 
-
+    // // BACK ROW FOR GAP
+    // weightedSum = blackCount  = redCount = silverCount = 0;
+    // for (uint8_t pixel = 50; pixel < 110/*120 is also in the range*/; pixel++) { //pixel range 50.5 ~ 109.5
+    //     pixels[pixel] = updateRawGrayHSV(fb, pixel, (uint8_t)15);//45
+    //     if (isBlack(pixels[pixel]))       { weightedSum += pixel; blackCount++; }
+    // }
+    // centerOfMass = (blackCount > minimumBlackforLine) ? (float)weightedSum / blackCount : -1.0f;
+    
 
     // Serial.print("computationDone: ");
     // Serial.print(millis());
@@ -124,7 +144,7 @@ void loop() {      // --------- LOOP ----------
         greenLeft, leftStart, leftEnd,
         greenRight, rightStart, rightEnd);
 
-    stream(fb);
+    // stream(fb);
     Camera_Return(fb);
     teensy.update();
     

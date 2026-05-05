@@ -139,6 +139,7 @@ void handleTurnTick() {
         analogWrite(BUZZER_PIN, 0); // turn off buzzer that was set when the turn started
         isBusyTurning = false;
         cmdFilter.clear();
+        xiaoCommand = 0;   // clear stale command — filter votes reset but xiaoCommand lags until next 20ms tick
         robotState = FOLLOWING_LINE;
         Serial.println("Turn complete → FOLLOWING_LINE");
     }

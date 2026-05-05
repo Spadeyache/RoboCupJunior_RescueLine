@@ -70,7 +70,7 @@ FLASHMEM void setup() {
 
     initActions();  // Servos, buzzer, KRS, startup beep   (Actions.ino)
     initDrive();    // STS motors + control timer          (Drive.ino)
-    initSensors();    // IMU (DMP on Wire1)                   (Sensors.ino)
+    // initSensors();    // IMU (DMP on Wire1)                   (Sensors.ino)
     initComms();    // XIAO & K230 serial                  (Comms.ino)
 
     // Confirmation beep after motors are ready
@@ -81,9 +81,9 @@ FLASHMEM void setup() {
 //  loop
 // ---------------------------------------------------------------------------
 void loop() {
-    delay(100);
+    // delay(20);   // 50 Hz main loop (was 100 ms / 10 Hz — too slow for stable PID)
     updateComms();    // Parse XIAO packets → xiaoCommand, xiaoLineError & // Send run/idle cmd; parse K230D detections → detections[]
-    updateSensors();  // Update pitch / roll / yaw from DMP
+    // updateSensors();  // Update pitch / roll / yaw from DMP
 
 
     // Debug Serial commands ('m' = map dump, 'p' = pose print)
@@ -97,6 +97,7 @@ void loop() {
             // Auto-reset disableGreen after cooldown elapses
         if (disableGreen && millis() - _disableGreenStart >= DISABLE_GREEN_MS) {
             disableGreen = false;
+            analogWrite(BUZZER_PIN, 0);
             Serial.println("Green re-enabled");
         }
 
@@ -104,17 +105,18 @@ void loop() {
             // Priority: U-Turn > Intersection (L/R) > Red > Silver > PID
             if      (xiaoCommand == 1) { doUTurn(); }
             else if (xiaoCommand == 2 && !disableGreen) {
-                analogWrite(BUZZER_PIN, 60); // stays on until handleTurnTick() finishes
+                // analogWrite(BUZZER_PIN, 60); // stays on until handleTurnTick() finishes
                 execForward(70, 28); executeTurn(-90.0f);
-                disableGreen = true; _disableGreenStart = millis();
+                disableGreen = true;
             }
             else if (xiaoCommand == 3 && !disableGreen) {
-                analogWrite(BUZZER_PIN, 160); // stays on until handleTurnTick() finishes
+                // analogWrite(BUZZER_PIN, 160); // stays on until handleTurnTick() finishes
                 execForward(70, 28); executeTurn(90.0f);
-                disableGreen = true; _disableGreenStart = millis();
+                disableGreen = true;
             }
             else if (xiaoCommand == 4) { robotState = STALLED_RED;  }
             else if (xiaoCommand == 5) { enterEvacuationZone();     }
+            else if (xiaoCommand == 6) { motor(0,0); delay(1000); analogWrite(BUZZER_PIN, 80); cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
             else                       { runLinePID(); } // no command → follow line
         }
         break;
@@ -123,6 +125,7 @@ void loop() {
         case EXECUTING_TURN:
         // ------------------------------------------------------------------
             handleTurnTick(); // Returns to FOLLOWING_LINE when duration elapses
+            _disableGreenStart = millis();
             break;
 
         // ------------------------------------------------------------------
@@ -137,6 +140,7 @@ void loop() {
             motor(0, 0);
             if (xiaoCommand != 4) {
                 cmdFilter.clear();
+                xiaoCommand = 0;
                 robotState = FOLLOWING_LINE;
                 Serial.println("Red cleared → FOLLOWING_LINE");
             }

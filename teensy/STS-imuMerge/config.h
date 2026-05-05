@@ -21,12 +21,14 @@
 
 // --- Line-follow PID (Teensy-side) ---
 // Error is derived from xiaoLineError (0â€“254, centre = 127), scaled to Â±200
-#define PID_KP              4.5f     // Proportional gain
+#define PID_KP              3.0f     // Proportional gain (lowered from 4.5 — smoother at 50 Hz)
 #define PID_KI              0.0f     // Integral gain
-#define PID_KD              3.0f     // Derivative gain
+#define PID_KD              3.0f     // Derivative gain (now acts on error/second, freq-independent)
 #define PID_BASE_SPEED      100.0f   // Straight-ahead wheel speed
 #define PID_LEFT_SCALE      1.7f     // Extra gain on left motor (compensates camera lighting bias)
 #define PID_INTEGRAL_LIMIT  500.0f   // Anti-windup clamp on the I-term accumulator
+#define LINE_EMA_ALPHA      0.3f     // Line error EMA smoothing (lower = smoother, less responsive)
+#define DERIV_EMA_ALPHA     0.4f     // Derivative EMA smoothing (lower = smoother D-term)
 
 // --- IMU ---
 // Set CALIBRATE_IMU 1 to run calibration and print offsets to Serial,
@@ -58,13 +60,14 @@
 // --- Green marker cooldown ---
 // After a left/right turn fires, green commands are ignored for this long.
 // Prevents re-triggering the same intersection if the motion was too short.
-#define DISABLE_GREEN_MS    2000     // ms -- tune to be longer than your turn duration
+#define DISABLE_GREEN_MS    750     // ms -- tune to be longer than your turn duration
 
 // --- CommandFilter ---
 #define FILTER_QUEUE_SIZE   15       // Rolling window length
-#define FILTER_THRESHOLD    9        // Votes needed to confirm a command
+#define FILTER_THRESHOLD    4        // used to be 7 : Votes needed to confirm a command
 #define FILTER_THRESHOLD_RED 5
 #define FILTER_THRESHOLD_SILVER 4
+#define FILTER_THRESHOLD_INTERSECTION 4
 
 // --- Evacuation Zone ---
 // #define EVAC_BEEP_ON_MS     20       // Buzzer on-time per beep

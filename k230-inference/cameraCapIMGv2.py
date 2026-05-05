@@ -7,7 +7,7 @@ from media.media import *
 from machine import Pin
 
 # --- config --- change these ---
-CLASS_NAME = "victim"
+CLASS_NAME = "1s0b"
 SAVE_DIR = f"/data/dataset/{CLASS_NAME}"
 
 # --- folder setup ---
@@ -39,7 +39,7 @@ last_press = 0
 # --- camera ---
 sensor = Sensor()
 sensor.reset()
-sensor.set_framesize(Sensor.QVGA)      # 320x240 — faster, enough for YOLOv8n
+sensor.set_framesize(Sensor.VGA)      # 320x240 — faster, enough for YOLOv8n
 sensor.set_pixformat(Sensor.GRAYSCALE)
 Display.init(Display.VIRT, sensor.width(), sensor.height(), to_ide=True)
 MediaManager.init()

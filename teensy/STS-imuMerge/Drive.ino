@@ -58,18 +58,33 @@ FASTRUN void motor(float32_t left, float32_t right) {
 //  the camera's non-centred lighting response (see config.h).
 // ---------------------------------------------------------------------------
 void runLinePID() {
-    static float integral = 0.0f;
-    static float lastError = 0.0f;
+    static float integral      = 0.0f;
+    static float lastError     = 0.0f;
+    static float smoothedError = 0.0f;
+    static float smoothedDeriv = 0.0f;
+    static unsigned long lastTime = 0;
+
+    unsigned long now = micros();
+    float dt = (now - lastTime) * 1e-6f;
+    lastTime = now;
+    if (dt <= 0.0f || dt > 0.5f) dt = 0.02f;  // clamp: first call or stall
 
     // Map 0-254 → -200..+200 (positive = line is to the right → steer right)
-    float error = (xiaoLineError - 127.0f) * (200.0f / 127.0f);
+    float rawError = (xiaoLineError - 127.0f) * (200.0f / 127.0f);
 
-    integral  += error;
-    integral   = constrain(integral, -PID_INTEGRAL_LIMIT, PID_INTEGRAL_LIMIT);
-    float deriv = error - lastError;
-    lastError   = error;
+    // EMA smoothing on line error — damps sensor noise before PID sees it
+    smoothedError = LINE_EMA_ALPHA * rawError + (1.0f - LINE_EMA_ALPHA) * smoothedError;
 
-    float correction = PID_KP * error + PID_KI * integral + PID_KD * deriv;
+    // Derivative in error/second (frequency-independent) with EMA filter
+    float rawDeriv = (smoothedError - lastError) / dt;
+    smoothedDeriv  = DERIV_EMA_ALPHA * rawDeriv + (1.0f - DERIV_EMA_ALPHA) * smoothedDeriv;
+    lastError = smoothedError;
+
+    // Integral (correctly time-integrated; still off via Ki=0)
+    integral += smoothedError * dt;
+    integral  = constrain(integral, -PID_INTEGRAL_LIMIT, PID_INTEGRAL_LIMIT);
+
+    float correction = PID_KP * smoothedError + PID_KI * integral + PID_KD * smoothedDeriv;
 
     // Optional pitch compensation — zero by default (IMU_PITCH_GAIN = 0)
     float pitchAdj = (float)pitch * IMU_PITCH_GAIN;
@@ -79,6 +94,6 @@ void runLinePID() {
 
     motor(leftSpeed, rightSpeed);
 
-    // Serial.printf("PID err: %.1f  corr: %.1f  L: %.0f  R: %.0f\n",
-    //               error, correction, leftSpeed, rightSpeed);
+    // Serial.printf("PID err: %.1f  sErr: %.1f  sDrv: %.1f  corr: %.1f  L: %.0f  R: %.0f\n",
+    //               rawError, smoothedError, smoothedDeriv, correction, leftSpeed, rightSpeed);
 }
