@@ -38,6 +38,14 @@ uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b);
 HSV rgb888_to_hsv(uint8_t r8, uint8_t g8, uint8_t b8);
 cameraData updateRawGrayHSV(camera_fb_t* fb, uint8_t x, uint8_t y, bool = false);
 
-// void debugGray(camera_fb_t* fb);
+// Fills out[x] for each column x in [xMin, xMax].
+// out must have at least (xMax + 1) elements (i.e. 160 for full-width).
+void scanRow(camera_fb_t* fb, uint8_t y, uint8_t xMin, uint8_t xMax, cameraData* out);
+
+// Color classifiers — thresholds are defined in config.h
+bool isBlack(const cameraData& d);
+bool isSilver(const cameraData& d);
+bool isGreen(const cameraData& d);
+bool isRed(const cameraData& d);
 
 #endif // VISION_H

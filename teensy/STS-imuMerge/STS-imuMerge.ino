@@ -70,7 +70,7 @@ FLASHMEM void setup() {
 
     initActions();  // Servos, buzzer, KRS, startup beep   (Actions.ino)
     initDrive();    // STS motors + control timer          (Drive.ino)
-    // initSensors();    // IMU (DMP on Wire1)                   (Sensors.ino)
+    initSensors();    // IMU (DMP on Wire1)                   (Sensors.ino)
     initComms();    // XIAO & K230 serial                  (Comms.ino)
 
     // Confirmation beep after motors are ready
@@ -83,8 +83,7 @@ FLASHMEM void setup() {
 void loop() {
     // delay(20);   // 50 Hz main loop (was 100 ms / 10 Hz — too slow for stable PID)
     updateComms();    // Parse XIAO packets → xiaoCommand, xiaoLineError & // Send run/idle cmd; parse K230D detections → detections[]
-    // updateSensors();  // Update pitch / roll / yaw from DMP
-
+    updateSensors();  // Update pitch / roll / yaw from DMP & TOUCH, CONDCT update
 
     // Debug Serial commands ('m' = map dump, 'p' = pose print)
     while (Serial.available()) mappingHandleSerial((char)Serial.read());
@@ -100,6 +99,8 @@ void loop() {
             analogWrite(BUZZER_PIN, 0);
             Serial.println("Green re-enabled");
         }
+        // Serial.println(touchfront); //print the touch state
+        // delay(20); //rememebr to remove
 
         if (!isBusyTurning) {
             // Priority: U-Turn > Intersection (L/R) > Red > Silver > PID
@@ -116,7 +117,7 @@ void loop() {
             }
             else if (xiaoCommand == 4) { robotState = STALLED_RED;  }
             else if (xiaoCommand == 5) { enterEvacuationZone();     }
-            else if (xiaoCommand == 6) { motor(0,0); delay(1000); analogWrite(BUZZER_PIN, 80); cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
+            else if (xiaoCommand == 6) { /*HERE add code to go foward and check intersection or not*/motor(0,0); delay(1000); analogWrite(BUZZER_PIN, 80); cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
             else                       { runLinePID(); } // no command → follow line
         }
         break;

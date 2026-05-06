@@ -436,6 +436,59 @@ canvas { display: block; image-rendering: pixelated; }
   background-position: right 6px center;
 }
 
+/* ── Serial filter bar ──────────────────────────────────────── */
+.filter-bar {
+  display: flex; align-items: center; gap: 5px;
+  margin-bottom: 6px; flex-shrink: 0; flex-wrap: wrap;
+}
+.filter-bar > span {
+  font-size: 10px; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-right: 2px;
+}
+.filter-btn {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; height: 22px; padding: 0 8px;
+  border-radius: 5px; border: 1px solid var(--border);
+  background: var(--bg3); color: var(--text-dim);
+  cursor: pointer; letter-spacing: 0.04em;
+  transition: all 0.12s;
+  box-shadow: 0 1px 0 #0a0a0a;
+}
+.filter-btn:hover { border-color: var(--border2); color: var(--text); }
+.filter-btn.active {
+  background: rgba(232,132,10,0.12);
+  border-color: rgba(232,132,10,0.4);
+  color: var(--accent);
+}
+
+/* ── Live metrics panel ──────────────────────────────────────── */
+.metrics-panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.metrics-header {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 6px;
+}
+.metrics-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+.metric-chip {
+  font-size: 11px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 5px; padding: 3px 8px;
+  display: flex; gap: 5px; align-items: baseline;
+}
+.metric-chip .mk { color: var(--text-faint); font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; }
+.metric-chip .mv { color: var(--text); font-weight: 500; }
+.metric-chip.fresh { border-color: rgba(232,132,10,0.3); }
+.metric-chip.fresh .mv { color: var(--accent); }
+
 /* ── Calibration inputs ─────────────────────────────────────── */
 .cal-input {
   font-family: 'DM Mono', monospace;
@@ -538,6 +591,34 @@ canvas { display: block; image-rendering: pixelated; }
       <button id="autoScrollBtn" class="sm active-dim">&#x2193; Auto</button>
       <button id="clearBtn" class="sm">Clear</button>
     </div>
+
+    <div class="filter-bar">
+      <span>Filter:</span>
+      <button class="filter-btn active" data-tag="ALL">ALL</button>
+      <button class="filter-btn" data-tag="RES">[RES]</button>
+      <button class="filter-btn" data-tag="CLS">[CLS]</button>
+      <button class="filter-btn" data-tag="PIX">[PIX]</button>
+      <button class="filter-btn" data-tag="SIN">[SIN]</button>
+      <button class="filter-btn" data-tag="SOUT">[SOUT]</button>
+      <button class="filter-btn" data-tag="UNTAGGED">Other</button>
+    </div>
+
+    <div class="metrics-panel" id="metricsPanel">
+      <div class="metrics-header">Live Metrics <span style="font-weight:400;color:var(--text-faint);font-size:9px;letter-spacing:0">(from [RES] lines)</span></div>
+      <div class="metrics-grid" id="metricsGrid">
+        <div class="metric-chip" id="mc-mode"><span class="mk">mode</span><span class="mv" id="mv-mode">—</span></div>
+        <div class="metric-chip" id="mc-feat"><span class="mk">feat</span><span class="mv" id="mv-feat">—</span></div>
+        <div class="metric-chip" id="mc-com"><span class="mk">com</span><span class="mv" id="mv-com">—</span></div>
+        <div class="metric-chip" id="mc-blk"><span class="mk">blk</span><span class="mv" id="mv-blk">—</span></div>
+        <div class="metric-chip" id="mc-sil"><span class="mk">sil</span><span class="mv" id="mv-sil">—</span></div>
+        <div class="metric-chip" id="mc-red"><span class="mk">red</span><span class="mv" id="mv-red">—</span></div>
+        <div class="metric-chip" id="mc-gL"><span class="mk">gL</span><span class="mv" id="mv-gL">—</span></div>
+        <div class="metric-chip" id="mc-gR"><span class="mk">gR</span><span class="mv" id="mv-gR">—</span></div>
+        <div class="metric-chip" id="mc-ang"><span class="mk">angle</span><span class="mv" id="mv-ang">—</span></div>
+        <div class="metric-chip" id="mc-samples"><span class="mk">samples</span><span class="mv" id="mv-samples">—</span></div>
+      </div>
+    </div>
+
     <div class="mon-log" id="monLog"><div class="log-empty">Waiting for data&hellip;</div></div>
     <div class="mon-send">
       <input id="sendInput" type="text" placeholder="Send text &rarr; Enter" autocomplete="off">
@@ -787,6 +868,78 @@ function classify(t) {
   if (/\b(info|init|boot|ready|ok)\b/.test(l)) return 'info';
   return '';
 }
+// ── Serial filter ─────────────────────────────────────────────────────────────
+// Known tag prefixes produced by serial_print.h on Xiao.
+const KNOWN_TAGS = ['[RES]', '[CLS]', '[PIX]', '[SIN]', '[SOUT]'];
+let activeFilter = 'ALL';   // 'ALL' | '[RES]' | '[CLS]' | ... | 'UNTAGGED'
+
+function lineTag(text) {
+  for (const t of KNOWN_TAGS) if (text.startsWith(t)) return t;
+  return 'UNTAGGED';
+}
+
+function lineVisible(text) {
+  if (activeFilter === 'ALL') return true;
+  if (activeFilter === 'UNTAGGED') return lineTag(text) === 'UNTAGGED';
+  return text.startsWith(activeFilter);
+}
+
+// Wire filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.tag;
+    // Re-apply visibility to all existing log lines
+    monLog.querySelectorAll('.log-line').forEach(div => {
+      div.style.display = lineVisible(div._rawText || '') ? '' : 'none';
+    });
+    if (autoScroll) monLog.scrollTop = monLog.scrollHeight;
+  });
+});
+
+// ── Live metrics ──────────────────────────────────────────────────────────────
+// Parses key=value pairs out of [RES] lines and updates the metric chips.
+// Supports floats, ints, and negative numbers.
+const MODE_NAMES = { '0':'LINE', '1':'EVAC', '2':'NOGI', '3':'GAP' };
+
+function parseResLine(text) {
+  // Strip the [RES] prefix
+  const body = text.startsWith('[RES]') ? text.slice(5).trim() : text;
+  const kv = {};
+  for (const m of body.matchAll(/([\w]+)=([-\d.]+)/g)) kv[m[1]] = m[2];
+  return kv;
+}
+
+function setMetric(id, val, show) {
+  const chip = document.getElementById('mc-' + id);
+  const mv   = document.getElementById('mv-' + id);
+  if (!chip || !mv) return;
+  chip.style.display = show ? '' : 'none';
+  mv.textContent = val;
+  chip.classList.add('fresh');
+  setTimeout(() => chip.classList.remove('fresh'), 600);
+}
+
+function updateMetrics(kv) {
+  const has = k => k in kv;
+  if (has('mode')) setMetric('mode', (MODE_NAMES[kv.mode] || kv.mode) + ' (' + kv.mode + ')', true);
+  if (has('feat')) setMetric('feat', kv.feat, true);
+  if (has('com'))  setMetric('com',  parseFloat(kv.com).toFixed(1), true);
+  if (has('blk'))  setMetric('blk',  kv.blk, true);
+  if (has('sil'))  setMetric('sil',  kv.sil, true);
+  if (has('red'))  setMetric('red',  kv.red, true);
+  if (has('gL'))   setMetric('gL',   kv.gL,  true);
+  if (has('gR'))   setMetric('gR',   kv.gR,  true);
+  if (has('ang'))  setMetric('ang',  parseFloat(kv.ang).toFixed(1) + '°', true);
+  if (has('samples')) setMetric('samples', kv.samples, true);
+  // Hide chips not present in this mode's output
+  const present = new Set(Object.keys(kv));
+  for (const k of ['com','blk','sil','red','gL','gR','ang','samples']) {
+    if (!present.has(k)) document.getElementById('mc-' + k).style.display = 'none';
+  }
+}
+
 function appendLine(text) {
   // Remove "Waiting…" placeholder on first line
   if (monLog.firstChild && monLog.firstChild.classList && monLog.firstChild.classList.contains('log-empty'))
@@ -794,16 +947,22 @@ function appendLine(text) {
   // Drop oldest lines
   while (logLineCount >= MAX_LINES && monLog.firstChild)
     { monLog.removeChild(monLog.firstChild); logLineCount--; }
+
   const div = document.createElement('div');
   div.className = 'log-line ' + classify(text);
+  div._rawText  = text;   // stash for filter re-apply
   const ts = document.createElement('span');
   ts.className = 'ts'; ts.textContent = tsNow();
   div.appendChild(ts);
   div.appendChild(document.createTextNode(text));
+  div.style.display = lineVisible(text) ? '' : 'none';
   monLog.appendChild(div);
   logLineCount++;
   lineCountBadge.textContent = logLineCount + (logLineCount !== 1 ? ' lines' : ' line');
   if (autoScroll) monLog.scrollTop = monLog.scrollHeight;
+
+  // Update metrics panel from [RES] lines
+  if (text.startsWith('[RES]')) updateMetrics(parseResLine(text));
 }
 
 autoScrollBtn.onclick = () => {
@@ -816,7 +975,17 @@ clearBtn.onclick = () => {
   monLog.innerHTML = '<div class="log-empty">Waiting for data\u2026</div>';
   logLineCount = 0;
   lineCountBadge.textContent = '0 lines';
+  resetMetrics();
 };
+
+function resetMetrics() {
+  for (const k of ['mode','feat','com','blk','sil','red','gL','gR','ang','samples']) {
+    const mv = document.getElementById('mv-' + k);
+    if (mv) mv.textContent = '\u2014';
+    const chip = document.getElementById('mc-' + k);
+    if (chip) { chip.classList.remove('fresh'); chip.style.display = ''; }
+  }
+}
 
 // ── Send ──────────────────────────────────────────────────────────────────────
 async function sendText(nl) {

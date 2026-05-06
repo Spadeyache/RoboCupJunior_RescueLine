@@ -29,14 +29,20 @@ extern bool       disableGreen;   // True during cooldown after a green turn; pr
 
 // --- XIAO comms (Comms.ino) ---
 extern YacheEncodedSerial xiao;
-extern uint8_t            xiaoCommand;   // 0=idle 1=U-turn 2=left 3=right 4=red 5=silver
-extern float              xiaoLineError; // Raw line position 0-254 (127 = centre)
+extern uint8_t            xiaoCommand;   // Feature ID received on XIAO_REG_FEATURE (see XIAO_FEAT_*)
+extern float              xiaoLineError; // Line COM 0-254 (127 = centre), XIAO_REG_COM
+extern float              xiaoGapAngle;  // Gap angle 0-254 (127 = 0°), XIAO_REG_ANGLE
 extern CommandFilter      cmdFilter;
 
 // --- IMU (Sensors.ino) ---
 extern volatile float32_t pitch; // Positive = nose-up
 extern volatile float32_t roll;
 extern volatile float32_t yaw;
+extern volatile bool touchfront;
+extern volatile bool conduct0;
+extern volatile bool conduct1;
+
+
 
 // --- Motors (Drive.ino) ---
 extern yacheSTS            _sts;

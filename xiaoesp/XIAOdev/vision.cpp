@@ -1,4 +1,5 @@
 #include "vision.h"
+#include "config.h"
 #include <Arduino.h>
 
 #define boxlength 5 //must be odd
@@ -237,3 +238,29 @@ uint8_t rgbToGray(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 // Since the camra produces a green biased image, we have the gray scale leaning more to green
+
+void scanRow(camera_fb_t* fb, uint8_t y, uint8_t xMin, uint8_t xMax, cameraData* out) {
+    for (uint8_t x = xMin; x <= xMax; x++) {
+        out[x] = updateRawGrayHSV(fb, x, y);
+    }
+}
+
+bool isBlack(const cameraData& d) {
+    return d.gray <= BLACK_GRAY_MAX;
+}
+
+bool isSilver(const cameraData& d) {
+    return (d.avgR >= SILVER_RAW_R_MIN) && (d.avgG >= SILVER_RAW_G_MIN) && (d.avgB >= SILVER_RAW_B_MIN);
+}
+
+bool isGreen(const cameraData& d) {
+    return (d.hsv.h >= GREEN_HUE_MIN && d.hsv.h <= GREEN_HUE_MAX)
+        && (((d.hsv.s >= GREEN_SAT_MIN) && (d.hsv.v >= GREEN_VAL_MIN))
+            || ((d.hsv.s >= 215) && (d.hsv.v >= 5)));
+}
+
+bool isRed(const cameraData& d) {
+    return (d.hsv.h <= 20 || d.hsv.h >= 340)
+        && (d.hsv.s >= RED_SAT_MIN)
+        && (d.hsv.v >= RED_VAL_MIN);
+}

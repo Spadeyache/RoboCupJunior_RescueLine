@@ -9,9 +9,40 @@
 #define HS45HB0_PIN         3      // arm servo A
 #define HS45HB1_PIN         4      // arm servo B
 #define PIN_74HCT126_EN     2      // Direction pin for KRS half-duplex serial
+#define _touchfront 36
+#define _conductPin0 5
+#define _conductPin1 6
+
 
 // --- Serial Baud Rates ---
 #define XIAO_BAUD           4000000UL
+
+// --- Xiao serial register IDs ---
+// These match the IDs defined in the Xiao's config.h (shared protocol).
+#define XIAO_REG_FEATURE    0x01   // Xiao → Teensy : detected feature
+#define XIAO_REG_COM        0x02   // Xiao → Teensy : line centre-of-mass
+#define XIAO_REG_MODE       0x03   // Teensy → Xiao : active mode
+#define XIAO_REG_ANGLE      0x04   // Xiao → Teensy : gap line angle (mode 3)
+
+// Xiao mode values (sent on XIAO_REG_MODE)
+enum XiaoMode : uint8_t {
+    XIAO_MODE_LINE = 0,   // Line follow (default)
+    XIAO_MODE_EVAC = 1,   // Evac tape detection
+    XIAO_MODE_NOGI = 2,   // No-green intersection detection
+    XIAO_MODE_GAP  = 3,   // Gap / line-angle estimation
+};
+
+// // Xiao feature IDs (received on XIAO_REG_FEATURE)
+// #define XIAO_FEAT_NONE           0
+// #define XIAO_FEAT_UTURN          1
+// #define XIAO_FEAT_GREEN_LEFT     2
+// #define XIAO_FEAT_GREEN_RIGHT    3
+// #define XIAO_FEAT_RED            4
+// #define XIAO_FEAT_SILVER         5
+// #define XIAO_FEAT_BLACK_INTERSECT 6
+// #define XIAO_FEAT_EVAC_SILVER    7
+// #define XIAO_FEAT_EVAC_BLACK     8
+// #define XIAO_FEAT_NOGI_INTERSECT 9
 #define KRS_BAUD            115200UL
 #define KRS_TIMEOUT         400      // ms
 #define KRS_ID              1

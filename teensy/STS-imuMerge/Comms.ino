@@ -2,11 +2,15 @@
 
 // =============================================================================
 //  Comms.ino — XIAO serial link + K230D AI processor UART
-//  Exposes: initComms(), updateComms(), initK230(), updateK230()
+//  Exposes: initComms(), updateComms()
 //
-//  XIAO register map:
-//    0x01 : command  0=idle 1=U-turn 2=left 3=right 4=red 5=silver
-//    0x02 : line position 0-254, 127 = dead-centre
+//  XIAO register map (see config.h for full list and feature ID constants):
+//    Xiao → Teensy:
+//      XIAO_REG_FEATURE (0x01) : feature ID (see XIAO_FEAT_*)
+//      XIAO_REG_COM     (0x02) : line COM 0–254, 127 = dead-centre
+//      XIAO_REG_ANGLE   (0x04) : gap angle 0–254, 127 = 0° (mode 3 only)
+//    Teensy → Xiao:
+//      XIAO_REG_MODE    (0x03) : active mode (see XiaoMode enum in config.h)
 //
 //  K230D link (Serial5, TX5=pin20 → K230D RX, RX5=pin21 ← K230D TX):
 //    Teensy→K230D  1 byte every K230_CMD_INTERVAL ms:
@@ -19,6 +23,7 @@
 YacheEncodedSerial xiao(Serial3);
 uint8_t            xiaoCommand   = 0;
 float              xiaoLineError = 127.0f;
+float              xiaoGapAngle  = 127.0f;
 CommandFilter      cmdFilter;
 
 // --- K230D variable definitions (declared extern in globals.h) ---
@@ -92,15 +97,31 @@ void initComms() {
 void updateComms() {
 
     xiao.update();
-    // Line error is time-critical; update every loop without debounce.
-    xiaoLineError = (float)xiao.get(0x02);
+    // Line error and gap angle are time-critical; update every loop.
+    xiaoLineError = (float)xiao.get(XIAO_REG_COM);
+    xiaoGapAngle  = (float)xiao.get(XIAO_REG_ANGLE);
+
     // Filter at 50 Hz — responsive but immune to single-frame glitches.
     static unsigned long lastFilter = 0;
     if (millis() - lastFilter >= 20) {
-        uint8_t raw = xiao.get(0x01);
+        uint8_t raw = xiao.get(XIAO_REG_FEATURE);
         xiaoCommand = cmdFilter.update(raw);
         lastFilter  = millis();
     }
+
+    // ── Xiao mode dispatch ────────────────────────────────────────────────────
+    // Map the current RobotState to an XiaoMode and send it to Xiao so the
+    // vision system runs the appropriate algorithm.
+    // Uncomment and adjust each mapping as the corresponding robot behaviour
+    // is implemented.  The Xiao defaults to MODE_LINEFOLLOW (0) if nothing
+    // is sent, so missing mappings are safe.
+    //
+    //   FOLLOWING_LINE  → XIAO_MODE_LINE  (already the default)
+    //   EVACUATION_ZONE → XIAO_MODE_EVAC
+    //   (future state)  → XIAO_MODE_NOGI
+    //   (future state)  → XIAO_MODE_GAP
+    //
+    // xiao.send(XIAO_REG_MODE, XIAO_MODE_LINE);   // example — wire up per phase
 
 // Sends run/idle command to K230D at K230_CMD_INTERVAL ms; always parses incoming frames.
     k230Running = (robotState == EVACUATION_ZONE);
