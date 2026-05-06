@@ -90,6 +90,7 @@ static void _parseK230() {
 void initComms() {
     xiao.begin(XIAO_BAUD);
     Serial5.begin(K230_BAUD);
+    xiao.send(XIAO_REG_MODE, XIAO_MODE_LINE);   // reset Xiao to line-follow on startup
 }
 
 // Call every loop iteration.
@@ -102,26 +103,42 @@ void updateComms() {
     xiaoGapAngle  = (float)xiao.get(XIAO_REG_ANGLE);
 
     // Filter at 50 Hz — responsive but immune to single-frame glitches.
+    // Each mode gates which feature IDs reach the filter; irrelevant IDs → 0.
     static unsigned long lastFilter = 0;
     if (millis() - lastFilter >= 20) {
-        uint8_t raw = xiao.get(XIAO_REG_FEATURE);
-        xiaoCommand = cmdFilter.update(raw);
+        uint8_t raw   = xiao.get(XIAO_REG_FEATURE);
+        uint8_t gated = 0;
+
+        switch (robotState) {
+            case FOLLOWING_LINE:
+            case EXECUTING_TURN:
+            case STALLED_RED:
+                if (raw >= 1 && raw <= 6) gated = raw;           // feats 1-6 only
+                break;
+            case EVACUATION_ZONE:
+                if (raw == 7 || raw == 8) gated = raw;           // evac-silver / evac-black
+                break;
+            // Add cases for NOGI / GAP states when they exist:
+            //   NOGI: if (raw == 9) gated = raw;
+            //   GAP:  skip — angle is read directly via XIAO_REG_ANGLE
+        }
+
+        xiaoCommand = cmdFilter.update(gated);
         lastFilter  = millis();
     }
 
     // ── Xiao mode dispatch ────────────────────────────────────────────────────
-    // Map the current RobotState to an XiaoMode and send it to Xiao so the
-    // vision system runs the appropriate algorithm.
-    // Uncomment and adjust each mapping as the corresponding robot behaviour
-    // is implemented.  The Xiao defaults to MODE_LINEFOLLOW (0) if nothing
-    // is sent, so missing mappings are safe.
-    //
-    //   FOLLOWING_LINE  → XIAO_MODE_LINE  (already the default)
-    //   EVACUATION_ZONE → XIAO_MODE_EVAC
-    //   (future state)  → XIAO_MODE_NOGI
-    //   (future state)  → XIAO_MODE_GAP
-    //
-    // xiao.send(XIAO_REG_MODE, XIAO_MODE_LINE);   // example — wire up per phase
+    {
+        XiaoMode m;
+        switch (robotState) {
+            case EVACUATION_ZONE: m = XIAO_MODE_EVAC; break;
+            case FOLLOWING_LINE:
+            case EXECUTING_TURN:
+            case STALLED_RED:
+            default:              m = XIAO_MODE_LINE; break;
+        }
+        xiao.send(XIAO_REG_MODE, (uint8_t)m);
+    }
 
 // Sends run/idle command to K230D at K230_CMD_INTERVAL ms; always parses incoming frames.
     k230Running = (robotState == EVACUATION_ZONE);

@@ -117,7 +117,7 @@ void loop() {
             }
             else if (xiaoCommand == 4) { robotState = STALLED_RED;  }
             else if (xiaoCommand == 5) { enterEvacuationZone();     }
-            else if (xiaoCommand == 6) { /*HERE add code to go foward and check intersection or not*/motor(0,0); delay(1000); analogWrite(BUZZER_PIN, 80); cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
+            else if (xiaoCommand == 6) { execForward(70, 28); motor(0,0); xiao.send(XIAO_REG_MODE, XIAO_MODE_NOGI); delay(6000); updateComms(); analogWrite(BUZZER_PIN, 80); cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
             else                       { runLinePID(); } // no command → follow line
         }
         break;

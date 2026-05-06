@@ -66,9 +66,9 @@ void modeLineFollowRun(camera_fb_t* fb, YacheEncodedSerial& teensy) {
     uint8_t scaledCOM = (uint8_t)constrain(
         map((long)(centerOfMass * 10), (long)(SCAN_COL_MIN * 10), (long)(SCAN_COL_MAX * 10), 0, 254), 0, 254);
 
-    teensy.send(XIAO_REG_COM,     scaledCOM);
     teensy.send(XIAO_REG_FEATURE, featureId);
-
+    teensy.send(XIAO_REG_COM,     scaledCOM);
+    
     // ── 7. Debug output ───────────────────────────────────────────────────────
     SPRINTF(SPRINT_RESULTS, "[RES]",
         "mode=0 feat=%d com=%.1f blk=%d sil=%d red=%d gL=%d gR=%d",
