@@ -38,9 +38,9 @@ public:
                 case 4: votesRed++;    break;
                 case 5: votesSilver++; break;  // line-follow silver
                 case 6: votesBlack++;  break;  // line-follow black intersection
-                case 7: votesSilver++; break;  // evac silver  → same silver bucket/threshold
-                case 8: votesBlack++;  break;  // evac black   → same black  bucket/threshold
-                case 9: votesBlack++;  break;  // NOGI intersect → same black bucket/threshold
+                // case 7: votesSilver++; break;  // evac silver  → same silver bucket/threshold
+                // case 8: votesBlack++;  break;  // evac black   → same black  bucket/threshold
+                // case 9: votesBlack++;  break;  // NOGI intersect → same black bucket/threshold
             }
         }
 

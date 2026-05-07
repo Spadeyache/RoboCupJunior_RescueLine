@@ -44,9 +44,9 @@ void updateSensors() {
     // Serial.print("yaw:"); Serial.println(yaw);
 
     // HIGH(1) is OFF and LOW(0) is Touching 
-    touchfront = digitalRead(_touchfront);
-    conduct0 = digitalRead(_conductPin0);
-    conduct1 = digitalRead(_conductPin1);
+    touchfront = !digitalRead(_touchfront);
+    conduct0 = !digitalRead(_conductPin0);
+    conduct1 = !digitalRead(_conductPin1);
 }
 
 

@@ -25,7 +25,7 @@ void updateSensors();
 
 // Comms.ino
 void initComms();
-void updateComms();
+void updateComms(bool instantRun = false);
 
 // Drive.ino
 void initDrive();
@@ -70,7 +70,7 @@ FLASHMEM void setup() {
 
     initActions();  // Servos, buzzer, KRS, startup beep   (Actions.ino)
     initDrive();    // STS motors + control timer          (Drive.ino)
-    initSensors();    // IMU (DMP on Wire1)                   (Sensors.ino)
+    initSensors();    // IMU (DMP on Wire1)  & touch       (Sensors.ino)
     initComms();    // XIAO & K230 serial                  (Comms.ino)
 
     // Confirmation beep after motors are ready
@@ -99,9 +99,19 @@ void loop() {
             analogWrite(BUZZER_PIN, 0);
             Serial.println("Green re-enabled");
         }
-        // Serial.println(touchfront); //print the touch state
-        // delay(20); //rememebr to remove
 
+        static unsigned long lastTouch = 0;
+        if(touchfront && millis() - lastTouch >= 20){
+            Serial.println("touch - detected");
+            analogWrite(BUZZER_PIN, 80);
+            execForward(-70, 50);
+            executeTurn(-80.0f);
+
+
+            lastTouch = millis();
+            break;
+        }
+        
         if (!isBusyTurning) {
             // Priority: U-Turn > Intersection (L/R) > Red > Silver > PID
             if      (xiaoCommand == 1) { doUTurn(); }
@@ -117,7 +127,21 @@ void loop() {
             }
             else if (xiaoCommand == 4) { robotState = STALLED_RED;  }
             else if (xiaoCommand == 5) { enterEvacuationZone();     }
-            else if (xiaoCommand == 6) { execForward(70, 28); motor(0,0); xiao.send(XIAO_REG_MODE, XIAO_MODE_NOGI); delay(6000); updateComms(); analogWrite(BUZZER_PIN, 80); cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
+            else if (xiaoCommand == 6) { motor(0,0); xiao.send(XIAO_REG_MODE, XIAO_MODE_NOGI); cmdFilter.clear(); delay(200); 
+                for (int i = 0; i < 15; i++) {
+                    updateComms(true);
+                }
+                if(xiaoCommand == 6){
+                    analogWrite(BUZZER_PIN, 80);// buzzer if intersection.
+                    execForward(100,40);
+                }  else{
+                    execForward(-70, 35); // for now we just go back and go no intersection line follow.
+                    //turn to the direction of 90 deg turn.
+                }
+
+                xiao.send(XIAO_REG_MODE, XIAO_MODE_LINE);
+                delay(2000);
+                cmdFilter.clear(); disableGreen = true; _disableGreenStart = millis(); runLinePID();} // i need to distinguish 90 and T.
             else                       { runLinePID(); } // no command → follow line
         }
         break;
@@ -150,7 +174,7 @@ void loop() {
 
     // Debug at ~10 Hz
     static unsigned long lastDebug = 0;
-    if (millis() - lastDebug >= 25000) {
+    if (millis() - lastDebug >= 1000) {
         Serial.printf("State:%d Cmd:%u Err:%.1f Busy:%d NoGrn:%d | U:%u L:%u R:%u Red:%u Slv:%u | K230:%s dets:%u\n",
                       (int)robotState, xiaoCommand, xiaoLineError,
                       (int)isBusyTurning, (int)disableGreen,

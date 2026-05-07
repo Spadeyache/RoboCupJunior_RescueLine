@@ -6,13 +6,13 @@
 void modeEvacRun(camera_fb_t* fb, YacheEncodedSerial& teensy) {
     // ── 1. Scan EVAC_SCAN_ROW across the full frame width ────────────────────
     cameraData pixels[160] = {};
-    scanRow(fb, EVAC_SCAN_ROW, 0, 159, pixels);
+    scanRow(fb, EVAC_SCAN_ROW, SCAN_COL_MIN, SCAN_COL_MAX, pixels);
 
     // ── 2. Count silver and black pixels ─────────────────────────────────────
     uint8_t silverCount = 0;
     uint8_t blackCount  = 0;
 
-    for (uint8_t c = 0; c < 160; c++) {
+    for (uint8_t c = SCAN_COL_MIN; c <= SCAN_COL_MAX; c++) {
         if (isSilver(pixels[c])) silverCount++;
         if (isBlack(pixels[c]))  blackCount++;
     }

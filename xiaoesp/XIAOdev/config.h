@@ -24,20 +24,23 @@
 #define FEAT_RED           4
 #define FEAT_SILVER        5   // line-follow silver
 #define FEAT_BLACK_INTERSECT 6
-#define FEAT_EVAC_SILVER   7   // evac-mode silver tape
-#define FEAT_EVAC_BLACK    8   // evac-mode black return line
-#define FEAT_NOGI_INTERSECT 9  // no-green intersection detected
+#define FEAT_EVAC_SILVER   5   // evac-mode silver tape
+#define FEAT_EVAC_BLACK    6   // evac-mode black return line
+#define FEAT_NOGI_INTERSECT 6  // no-green intersection detected
 
 // Mode IDs received on XIAO_REG_MODE
 #define MODE_LINEFOLLOW    0
 #define MODE_EVAC          1
 #define MODE_NOGI          2
 #define MODE_GAP           3
+// evac position correct mode
+
+//  Camera Vision range
+#define SCAN_COL_MIN       50   // First column (inclusive)
+#define SCAN_COL_MAX       110  // Last column (inclusive)
 
 // ── Camera scan — line-follow row ────────────────────────────────────────────
 #define SCAN_ROW           55   // Y row used for line-follow scan
-#define SCAN_COL_MIN       50   // First column (inclusive)
-#define SCAN_COL_MAX       110  // Last column (inclusive)
 
 // ── Color thresholds ─────────────────────────────────────────────────────────
 // Applied to calibrated data (vision.cpp rgb888Calibration) unless noted "raw"
@@ -56,9 +59,10 @@
 #define RED_VAL_MIN        40
 
 // ── Mode 0 : Line Follow ─────────────────────────────────────────────────────
-#define LF_SILVER_THRESHOLD   9    // Min silver pixels → report FEAT_SILVER
-#define LF_RED_THRESHOLD      30   // Min red pixels → report FEAT_RED
-#define LF_BLACK_THRESHOLD    30   // Min black pixels → report FEAT_BLACK_INTERSECT
+#define LF_SILVER_PixCOUNT_THRESHOLD   9    // Min silver Pixel count → report FEAT_SILVER
+#define LF_RED_PixCOUNT_THRESHOLD      30   // Min red Pixel count → report FEAT_RED
+#define LF_BLACK_PixCOUNT_THRESHOLD    30   // Min black pixels → report FEAT_BLACK_INTERSECT
+#define LF_GREEN_PixCOUNT_THRESHOLD    5    // pixels needed to confirm green
 
 // ── Mode 1 : Evac ────────────────────────────────────────────────────────────
 #define EVAC_SCAN_ROW         15   // Y row (near top = further ahead of robot)
@@ -66,7 +70,8 @@
 #define EVAC_BLACK_THRESHOLD   5   // Min black pixels → report FEAT_EVAC_BLACK
 
 // ── Mode 2 : No-Green Intersection ──────────────────────────────────────────
-#define NOGI_SCAN_ROW_COUNT    5   // Rows scanned: y = 0 .. NOGI_SCAN_ROW_COUNT-1
+// #define NOGI_SCAN_ROW_COUNT   15   // Rows scanned: y = 0 .. NOGI_SCAN_ROW_COUNT-1
+#define NOGI_SCAN_ROW 15
 #define NOGI_BLACK_THRESHOLD  10   // Total black pixels across all rows → detect
 
 // ── Mode 3 : Gap (line-angle estimation) ────────────────────────────────────

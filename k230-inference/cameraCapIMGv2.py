@@ -7,7 +7,7 @@ from media.media import *
 from machine import Pin
 
 # --- config --- change these ---
-CLASS_NAME = "1s0b"
+CLASS_NAME = "2s1b"
 SAVE_DIR = f"/data/dataset/{CLASS_NAME}"
 
 # --- folder setup ---

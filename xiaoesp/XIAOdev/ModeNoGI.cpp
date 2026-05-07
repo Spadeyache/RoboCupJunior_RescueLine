@@ -8,12 +8,12 @@ void modeNoGIRun(camera_fb_t* fb, YacheEncodedSerial& teensy) {
     cameraData pixels[160] = {};
     uint16_t totalBlack = 0;
 
-    for (uint8_t row = 0; row < NOGI_SCAN_ROW_COUNT; row++) {
-        scanRow(fb, row, 0, 159, pixels);
-        for (uint8_t c = 0; c < 160; c++) {
+    // for (uint8_t row = 0; row < NOGI_SCAN_ROW_COUNT; row++) {    // preform on multiple rows
+        scanRow(fb, /*row*/NOGI_SCAN_ROW, SCAN_COL_MIN, SCAN_COL_MAX, pixels);
+        for (uint8_t c = SCAN_COL_MIN; c <= SCAN_COL_MAX; c++) {
             if (isBlack(pixels[c])) totalBlack++;
         }
-    }
+    // }
 
     // ── 2. Decide feature ─────────────────────────────────────────────────────
     uint8_t featureId = (totalBlack > NOGI_BLACK_THRESHOLD) ? FEAT_NOGI_INTERSECT : FEAT_NONE;

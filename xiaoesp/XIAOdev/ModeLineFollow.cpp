@@ -7,7 +7,6 @@
 static const uint8_t GREEN_WINDOW  = 25;
 static const uint8_t LINE_HALF_W   = 4;    // half-width of the black line
 static const uint8_t GREEN_GAP     = 0;    // gap between line edge and green window
-static const uint8_t GREEN_TRIGGER = 5;    // pixels needed to confirm green
 
 void modeLineFollowRun(camera_fb_t* fb, YacheEncodedSerial& teensy) {
     // ── 1. Scan the line-follow row ───────────────────────────────────────────
@@ -54,13 +53,13 @@ void modeLineFollowRun(camera_fb_t* fb, YacheEncodedSerial& teensy) {
     // ── 5. Feature priority: red/silver override navigation features ──────────
     uint8_t featureId = FEAT_NONE;
 
-    if      (greenLeft > GREEN_TRIGGER && greenRight > GREEN_TRIGGER) featureId = FEAT_UTURN;
-    else if (greenLeft  > GREEN_TRIGGER)                              featureId = FEAT_GREEN_LEFT;
-    else if (greenRight > GREEN_TRIGGER)                              featureId = FEAT_GREEN_RIGHT;
-    else if (blackCount > LF_BLACK_THRESHOLD)                        featureId = FEAT_BLACK_INTERSECT;
+    if      (greenLeft > LF_GREEN_PixCOUNT_THRESHOLD && greenRight > LF_GREEN_PixCOUNT_THRESHOLD) featureId = FEAT_UTURN;
+    else if (greenLeft  > LF_GREEN_PixCOUNT_THRESHOLD)                                         featureId = FEAT_GREEN_LEFT;
+    else if (greenRight > LF_GREEN_PixCOUNT_THRESHOLD)                                         featureId = FEAT_GREEN_RIGHT;
+    else if (blackCount > LF_BLACK_PixCOUNT_THRESHOLD)                                      featureId = FEAT_BLACK_INTERSECT;
 
-    if (redCount    > LF_RED_THRESHOLD)    featureId = FEAT_RED;
-    if (silverCount > LF_SILVER_THRESHOLD) featureId = FEAT_SILVER;
+    if (redCount    > LF_RED_PixCOUNT_THRESHOLD)    featureId = FEAT_RED;
+    if (silverCount > LF_SILVER_PixCOUNT_THRESHOLD) featureId = FEAT_SILVER;
 
     // ── 6. Send to Teensy ─────────────────────────────────────────────────────
     uint8_t scaledCOM = (uint8_t)constrain(
@@ -68,7 +67,7 @@ void modeLineFollowRun(camera_fb_t* fb, YacheEncodedSerial& teensy) {
 
     teensy.send(XIAO_REG_FEATURE, featureId);
     teensy.send(XIAO_REG_COM,     scaledCOM);
-    
+
     // ── 7. Debug output ───────────────────────────────────────────────────────
     SPRINTF(SPRINT_RESULTS, "[RES]",
         "mode=0 feat=%d com=%.1f blk=%d sil=%d red=%d gL=%d gR=%d",

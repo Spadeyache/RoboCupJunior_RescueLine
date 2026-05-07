@@ -99,8 +99,7 @@ void doUTurn() {
 // ---------------------------------------------------------------------------
 void execForward(float speed, float distance_mm, bool usePID = false) {
     // Scale duration by speed ratio so the same mm always gives the same distance
-    unsigned long duration = (unsigned long)(distance_mm * FORWARD_MS_PER_MM
-                                            * MAX_MOTOR_SPEED / speed);
+    unsigned long duration        = (unsigned long)fabsf(distance_mm * FORWARD_MS_PER_MM * MAX_MOTOR_SPEED / speed);
 
     Serial.printf("Forward: %.0f mm @ speed %.0f -> %lu ms\n",
                   distance_mm, speed, duration);
@@ -108,7 +107,7 @@ void execForward(float speed, float distance_mm, bool usePID = false) {
     if (!usePID) {
         // Open-loop: drive straight, wait, stop
         motor(speed, speed);
-        delay(duration);
+        delay(fabsf(duration));
         motor(0, 0);
 
     } else {
